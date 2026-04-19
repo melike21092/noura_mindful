@@ -42,6 +42,10 @@
 
     <style type="text/css">
         [x-cloak] { display: none !important; }
+        .reduce-motion *:not(.keep-animation) {
+            transition: none !important;
+            animation: none !important;
+        }
         :root { 
             --sage: #8ba88e; 
             --sand: #fdfaf7; 
@@ -172,6 +176,10 @@
             100% { transform: scale(1); }
         }
 
+        .breathing-orb { animation: breathe-pulse 10s infinite ease-in-out; }
+        .breathing-text-1 { animation: breathe-text-fade 10s infinite; }
+        .breathing-text-2 { animation: breathe-text-fade-alt 10s infinite; }
+
         .journal-textarea {
             width: 100%; background: transparent; border: none; border-left: 1.5px solid rgba(139, 168, 142, 0.1);
             padding-left: 1rem; margin-top: 0.75rem; font-family: 'Inter', sans-serif;
@@ -270,7 +278,7 @@
         }
     </style>
 </head>
-<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" :class="!state.welcomeComplete || !state.tourSeen ? 'overflow-hidden' : ''">
+<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" :class="{'overflow-hidden': !state.welcomeComplete || !state.tourSeen, 'reduce-motion': state.reduceMotion}">
 
     <!-- Global Background Glow -->
     <div class="fixed inset-0 z-0 pointer-events-none no-print overflow-hidden">
@@ -442,15 +450,12 @@
                         <!-- Outer Glow -->
                         <div class="absolute inset-0 bg-sage/5 rounded-full scale-[2.5]"></div>
                         <!-- Breathing Orb -->
-                        <div class="w-12 h-12 bg-sage rounded-full opacity-40 shadow-xl shadow-sage/20" 
-                             style="animation: breathe-pulse 10s infinite ease-in-out;"></div>
+                        <div class="w-12 h-12 bg-sage rounded-full opacity-40 shadow-xl shadow-sage/20 breathing-orb keep-animation"></div>
                         
                         <!-- Breathing Text Overlay -->
                         <div class="absolute inset-0 flex flex-col items-center justify-center overflow-hidden h-6 mt-[160px]">
-                            <span class="absolute text-lg font-serif italic text-sage/60" 
-                                  style="animation: breathe-text-fade 10s infinite;">Einatmen</span>
-                            <span class="absolute text-lg font-serif italic text-sage/60" 
-                                  style="animation: breathe-text-fade-alt 10s infinite;">Ausatmen</span>
+                            <span class="absolute text-lg font-serif italic text-sage/60 breathing-text-1 keep-animation">Einatmen</span>
+                            <span class="absolute text-lg font-serif italic text-sage/60 breathing-text-2 keep-animation">Ausatmen</span>
                         </div>
                     </div>
 
@@ -475,20 +480,22 @@
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
 
             <!-- Integrated Arrival Area -->
-            <div class="absolute bottom-10 left-6 md:left-12 z-20 text-white">
-                <h1 class="h1-serif !text-4xl md:text-6xl italic leading-tight mb-3 drop-shadow-md">
-                    <span x-text="greeting"></span>, <span x-text="state.name"></span>
-                </h1>
-                <div class="flex flex-wrap items-center gap-6 opacity-80">
-                    <span class="label-caps !text-white !text-[10px] tracking-[0.3em]">Tag <span x-text="currentDayIndex + 1"></span> von 14</span>
-                    
-                    <!-- Sleep Reminder (Whisper Style) -->
-                    <template x-if="sleepReminder">
-                        <div x-transition class="flex items-center gap-1.5 italic font-serif text-sm border-l border-white/20 pl-3 text-white/60">
-                            <i data-lucide="moon" class="w-3.5 h-3.5"></i>
-                            <span x-text="sleepReminder"></span>
-                        </div>
-                    </template>
+            <div class="absolute bottom-10 left-0 w-full z-20 text-white">
+                <div class="max-w-5xl mx-auto px-6 md:px-12">
+                    <h1 class="h1-serif !text-4xl md:text-6xl italic leading-tight mb-3 drop-shadow-md">
+                        <span x-text="greeting"></span>, <span x-text="state.name"></span>
+                    </h1>
+                    <div class="flex flex-wrap items-center gap-6 opacity-80">
+                        <span class="label-caps !text-white !text-[10px] tracking-[0.3em]">Tag <span x-text="currentDayIndex + 1"></span> von 14</span>
+                        
+                        <!-- Sleep Reminder (Whisper Style) -->
+                        <template x-if="sleepReminder">
+                            <div x-transition class="flex items-center gap-1.5 italic font-serif text-sm border-l border-white/20 pl-3 text-white/60">
+                                <i data-lucide="moon" class="w-3.5 h-3.5"></i>
+                                <span x-text="sleepReminder"></span>
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>
@@ -577,6 +584,7 @@
                     <button @click="state.why = ''; state.todayMood = ''" class="absolute -right-2 top-0 text-sage/20 hover:text-sage transition-colors p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
                 </div>
                 <div class="relative z-10 max-w-2xl mx-auto text-charcoal">
+                    <p class="text-charcoal/60 italic text-center mb-6" x-text="days[currentDayIndex].prompt"></p>
                     <textarea x-model="state.why" class="w-full bg-transparent border-b border-sand focus:border-sage py-4 text-xl md:text-2xl font-serif text-charcoal placeholder-charcoal/40 italic outline-none resize-none no-print min-h-[100px] text-center" placeholder="Ich entscheide mich heute aktiv für..., damit mein Körper mir vertraut..."></textarea>
                     <div class="hidden print:block text-xl md:text-2xl font-serif border-b border-sand pb-4 italic text-center text-charcoal" x-text="state.why"></div>
                 </div>
@@ -586,21 +594,21 @@
             <div id="das-system" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 no-print text-center md:text-left text-charcoal">
                 <!-- Nourish -->
                 <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-sage shadow-[0_20px_40px_-15px_rgba(139,168,142,0.1)]" :class="state.nourish.every(v => v) ? 'bg-sage/[0.02] border-sage/20' : ''">
-                    <div class="flex items-center justify-between mb-8"><div class="p-2 bg-sage/5 rounded-xl text-sage w-fit mx-auto md:mx-0"><i data-lucide="sprout" class="w-5 h-5"></i></div><span x-show="state.nourish.every(v => v)" class="label-caps !text-sage !text-[8px]">Aktiv</span></div>
-                    <h3 class="h2-serif text-2xl mb-2 text-center md:text-left text-charcoal text-balance italic">1. Nourish</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-center md:text-left">Deine 3 Proteinquellen, die du immer im Haus hast. Dein biologisches Fundament.</p>
+                    <div class="flex items-center justify-between mb-8"><div class="p-2 bg-sage/5 rounded-xl text-sage w-fit ml-0"><i data-lucide="sprout" class="w-5 h-5"></i></div><span x-show="state.nourish.every(v => v)" class="label-caps !text-sage !text-[8px]">Aktiv</span></div>
+                    <h3 class="h2-serif text-2xl mb-2 text-left text-charcoal text-balance italic">1. Nourish</h3>
+                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-left">Deine 3 Proteinquellen, die du immer im Haus hast. Dein biologisches Fundament.</p>
                     <div class="space-y-4 mb-8 flex-grow text-charcoal">
-                        <template x-for="(item, index) in state.nourish"><input type="text" x-model="state.nourish[index]" class="w-full bg-transparent py-2 input-focus text-sm font-light placeholder-sage/20 text-center md:text-left text-charcoal" :placeholder="'Quelle ' + (index + 1)"></template>
+                        <template x-for="(item, index) in state.nourish"><input type="text" x-model="state.nourish[index]" class="w-full bg-transparent py-2 input-focus text-sm font-light placeholder-sage/20 text-left text-charcoal" :placeholder="'Quelle ' + (index + 1)"></template>
                     </div>
-                    <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                    <div class="flex flex-wrap gap-1.5 justify-start">
                         <template x-for="tag in ['Eier', 'Quark', 'Tofu', 'Hähnchen', 'Linsen', 'Fisch']"><button @click="addProteinTag(tag)" class="text-[9px] px-2.5 py-1 rounded-full border border-sage/10 text-sage/60 hover:border-sage hover:text-sage transition-all">+ <span x-text="tag"></span></button></template>
                     </div>
                 </div>
                 <!-- Flow -->
                 <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-terracotta shadow-[0_20px_40px_-15px_rgba(166,139,124,0.1)]" :class="state.pivot ? 'bg-terracotta/[0.02] border-terracotta/20' : ''">
-                    <div class="flex items-center justify-between mb-8"><div class="p-2 bg-terracotta/5 rounded-xl text-terracotta w-fit mx-auto md:mx-0"><i data-lucide="shuffle" class="w-5 h-5"></i></div><span x-show="state.pivot" class="label-caps !text-[8px]">Aktiv</span></div>
-                    <h3 class="h2-serif text-2xl mb-2 text-center md:text-left text-charcoal text-balance italic">2. Flow</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-center md:text-left">Dein Plan B für das Familienessen. Flexibel bleiben, ohne extra zu kochen.</p>
+                    <div class="flex items-center justify-between mb-8"><div class="p-2 bg-terracotta/5 rounded-xl text-terracotta w-fit ml-0"><i data-lucide="shuffle" class="w-5 h-5"></i></div><span x-show="state.pivot" class="label-caps !text-[8px]">Aktiv</span></div>
+                    <h3 class="h2-serif text-2xl mb-2 text-left text-charcoal text-balance italic">2. Flow</h3>
+                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-left">Dein Plan B für das Familienessen. Flexibel bleiben, ohne extra zu kochen.</p>
                     <textarea x-model="state.pivot" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-center md:text-left text-charcoal mb-6" placeholder="z.B. Nudelsauce mit Quark strecken..."></textarea>
                     <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
                         <template x-for="tag in ['Extra Quark', 'Eier dazu', 'Nur Belag', 'Gemüse-Basis']"><button @click="state.pivot = tag" class="text-[9px] px-2.5 py-1 rounded-full border border-terracotta/10 text-terracotta/60 hover:border-terracotta hover:text-terracotta transition-all">+ <span x-text="tag"></span></button></template>
@@ -629,7 +637,7 @@
                         <button @click="resetWegweiser()" class="text-[9px] uppercase tracking-[0.3em] opacity-40 mt-10 text-center block mx-auto text-white hover:opacity-100 transition-opacity">Reset</button>
                     </div>
                 </template>
-                <h3 class="h2-serif text-center mb-16 text-3xl text-charcoal italic">14-Tage-Wegweiser</h3>
+                <h3 class="h2-serif text-left mb-16 text-3xl text-charcoal italic">14-Tage-Wegweiser</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 text-charcoal text-left">
                     <template x-for="(day, index) in days">
                         <div class="flex flex-col gap-2 relative transition-all duration-700" :class="index > currentDayIndex ? 'opacity-20 grayscale pointer-events-none' : ''">
@@ -679,12 +687,17 @@
                     <p class="text-sm text-charcoal/50 leading-relaxed">Browser -> <span class="text-sage font-bold">"Zum Home-Bildschirm"</span>. So wird NOURA zu deiner täglichen Rettungsinsel.</p>
                 </div>
                 <div class="bg-sage/5 p-8 rounded-[2rem] border border-sage/10 text-charcoal shadow-sm">
-                    <h4 class="h2-serif !text-xl mb-3 flex items-center gap-2 italic text-sage text-center md:text-left">Etwas hakt?</h4>
-                    <p class="text-sm text-charcoal/50 mb-8 text-center md:text-left leading-relaxed">Fragen zum System oder deinem Weg? Schreib mir einfach.</p>
+                    <h4 class="h2-serif !text-xl mb-3 flex items-center gap-2 italic text-sage md:text-left">Etwas hakt?</h4>
+                    <p class="text-sm text-charcoal/50 mb-8 md:text-left leading-relaxed">Fragen zum System oder deinem Weg? Schreib mir einfach.</p>
                     <div class="flex justify-center md:justify-start">
                         <a href="https://t.me/+i0UScdQXV7owMDEy" target="_blank" class="inline-flex items-center gap-3 text-sm font-black uppercase tracking-[0.2em] text-sage hover:text-terracotta transition-colors">Schreib mir direkt <i data-lucide="arrow-right" class="w-5 h-5"></i></a>
                     </div>
                 </div>
+            </div>
+            <div class="text-center mb-12">
+                <button @click="state.reduceMotion = !state.reduceMotion" class="text-charcoal/40 hover:text-charcoal transition-colors text-xs font-bold uppercase tracking-widest">
+                    <span x-text="state.reduceMotion ? 'Animationen: aus' : 'Animationen: an'"></span>
+                </button>
             </div>
             <p class="h2-serif !text-lg italic opacity-40 text-center text-charcoal">In Liebe für dich selbst, deine Mukaddes Mandirali.</p>
         </footer>
@@ -723,6 +736,7 @@
                     startDate: null, 
                     tourSeen: false, 
                     welcomeComplete: false,
+                    reduceMotion: false,
                     todayMood: '',
                     name: '', 
                     why: '', 
@@ -743,20 +757,20 @@
                     return Math.max(0, Math.min(13, diff));
                 },
                 days: [
-                    { title: 'Teller-Hoheit', mission: "Iss heute keine Reste. Deck dir einen eigenen Teller. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> erkläre ich dir, warum das dein wichtigster Sieg ist." },
-                    { title: 'Protein-Anker', mission: "Zu jeder Mahlzeit heute eine Faustgröße Protein. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für meine Liste der besten Quellen!" },
-                    { title: 'Liquid Gold', mission: "Trinke 500ml Wasser vor dem ersten Kaffee. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> erfährst du, wie Wasser deinen Heißhunger steuert." },
-                    { title: '5-Minuten-Stille', mission: "Halte kurz inne, bevor du isst. Atme 3x tief. Hör dir dazu meinen Quick-Reset Audio-Impuls in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> an." },
-                    { title: 'Flow-Check', mission: "Pass dein Essen dem Familienchaos an, ohne extra zu kochen. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir heute meine 3 besten Flow-Hacks." },
-                    { title: 'Body Respect', mission: "Nenne eine Sache, für die du deinem Körper heute dankbar bist. Teile sie mit uns in der <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Gruppe</a>!" },
-                    { title: 'Rest & Reflect', mission: "Sonntags-Reset: Was darf heute gehen? Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für unsere gemeinsame Reflektions-Runde." },
-                    { title: 'Blutzucker-Liebe', mission: "Achte auf die Reihenfolge: Erst Gemüse, dann Protein. Warum das alles ändert, erkläre ich dir heute in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>." },
-                    { title: 'Intuitive Wahl', mission: "Hunger oder Emotion? Frag dich vor dem Snack: Was brauche ich gerade wirklich? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> gehen wir heute tief." },
-                    { title: 'Morgen-Anker', mission: "2 Minuten Stille vor dem Handy. Starte bei dir, nicht bei den anderen. Tipps für Morgen-Rituale findest du in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>." },
-                    { title: 'Sanfter Flow', mission: "Bewege deinen Körper für 5 Minuten so, wie es sich gut anfühlt. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> teile ich heute eine sanfte Routine mit dir." },
-                    { title: 'Echtzeit-Genuss', mission: "Iss die ersten 3 Bissen in voller Stille. Was schmeckst du? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> besprechen wir heute das Thema Achtsamkeit." },
-                    { title: 'Safety First', mission: "Bereite heute Abend deinen Rettungsanker für morgen vor. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir, wie mein Schutzschild aussieht." },
-                    { title: 'Dein Licht', mission: "Tag 14! Du hast dir vertraut. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für das große Finale und deinen Weg in die Zukunft mit mir." }
+                    { title: 'Teller-Hoheit', mission: "Iss heute keine Reste. Deck dir einen eigenen Teller. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> erkläre ich dir, warum das dein wichtigster Sieg ist.", prompt: "Wie hat es sich angefühlt, heute nur für dich einen Teller anzurichten?" },
+                    { title: 'Protein-Anker', mission: "Zu jeder Mahlzeit heute eine Faustgröße Protein. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für meine Liste der besten Quellen!", prompt: "Welche Proteinquelle hat dir heute am meisten Energie gegeben?" },
+                    { title: 'Liquid Gold', mission: "Trinke 500ml Wasser vor dem ersten Kaffee. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> erfährst du, wie Wasser deinen Heißhunger steuert.", prompt: "Was hat sich durch das Wasser am Morgen in deinem Körper verändert?" },
+                    { title: '5-Minuten-Stille', mission: "Halte kurz inne, bevor du isst. Atme 3x tief. Hör dir dazu meinen Quick-Reset Audio-Impuls in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> an.", prompt: "Welcher Gedanke kam dir in der Stille vor dem Essen?" },
+                    { title: 'Flow-Check', mission: "Pass dein Essen dem Familienchaos an, ohne extra zu kochen. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir heute meine 3 besten Flow-Hacks.", prompt: "Wie hast du es heute geschafft, flexibel zu bleiben?" },
+                    { title: 'Body Respect', mission: "Nenne eine Sache, für die du deinem Körper heute dankbar bist. Teile sie mit uns in der <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Gruppe</a>!", prompt: "Wofür bist du deinem Körper heute besonders dankbar?" },
+                    { title: 'Rest & Reflect', mission: "Sonntags-Reset: Was darf heute gehen? Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für unsere gemeinsame Reflektions-Runde.", prompt: "Was darfst du heute loslassen, um leichter in die neue Woche zu starten?" },
+                    { title: 'Blutzucker-Liebe', mission: "Achte auf die Reihenfolge: Erst Gemüse, dann Protein. Warum das alles ändert, erkläre ich dir heute in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat dein Körper auf die neue Reihenfolge beim Essen reagiert?" },
+                    { title: 'Intuitive Wahl', mission: "Hunger oder Emotion? Frag dich vor dem Snack: Was brauche ich gerade wirklich? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> gehen wir heute tief.", prompt: "Was war heute der Unterschied zwischen emotionalem und körperlichem Hunger?" },
+                    { title: 'Morgen-Anker', mission: "2 Minuten Stille vor dem Handy. Starte bei dir, nicht bei den anderen. Tipps für Morgen-Rituale findest du in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat die Stille am Morgen deinen Tag beeinflusst?" },
+                    { title: 'Sanfter Flow', mission: "Bewege deinen Körper für 5 Minuten so, wie es sich gut anfühlt. In <a href='https.t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> teile ich heute eine sanfte Routine mit dir.", prompt: "Welche Bewegung hat dein Körper heute am meisten gebraucht?" },
+                    { title: 'Echtzeit-Genuss', mission: "Iss die ersten 3 Bissen in voller Stille. Was schmeckst du? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> besprechen wir heute das Thema Achtsamkeit.", prompt: "Was hast du bei den ersten drei Bissen heute bewusst wahrgenommen?" },
+                    { title: 'Safety First', mission: "Bereite heute Abend deinen Rettungsanker für morgen vor. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir, wie mein Schutzschild aussieht.", prompt: "Was ist dein persönlicher 'Rettungsanker' für stressige Momente?" },
+                    { title: 'Dein Licht', mission: "Tag 14! Du hast dir vertraut. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für das große Finale und deinen Weg in die Zukunft mit mir.", prompt: "Was ist die wichtigste Erkenntnis, die du aus den letzten 14 Tagen mitnimmst?" }
                 ],
                 init() {
                     if (window.location.search.includes('reset=true')) {
