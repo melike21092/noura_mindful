@@ -66,12 +66,20 @@
         .label-caps { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.25em; font-weight: 800; color: var(--terracotta); }
         
         .noura-card {
-            background: white; padding: 2.5rem; border-radius: 3.5rem;
-            border: 1px solid rgba(139, 168, 142, 0.08); transition: all 0.5s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 2.5rem; border-radius: 3.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .noura-glow { box-shadow: 0 30px 60px -20px rgba(139, 168, 142, 0.15); }
+        .noura-glow { box-shadow: 0 20px 50px -10px rgba(139, 168, 142, 0.1); }
 
-        .input-focus { outline: none; border-bottom: 1px solid rgba(139, 168, 142, 0.2); transition: all 0.3s ease; }
+        /* Mobile Haptics & Optimization */
+        * { -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        .input-focus { outline: none; border-bottom: 1px solid rgba(139, 168, 142, 0.1); transition: all 0.3s ease; }
         .input-focus:focus { border-bottom: 1px solid var(--sage); }
 
         .checkbox-custom {
@@ -98,6 +106,28 @@
         }
         .journal-textarea:focus { border-left: 1.5px solid var(--sage); background: rgba(139, 168, 142, 0.02); }
 
+        /* Dashboard Rituals */
+        .mood-btn {
+            width: 60px; height: 60px; border-radius: 1.25rem; display: flex; align-items: center; justify-content: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: white; border: 1.5px solid rgba(139, 168, 142, 0.1); cursor: pointer; font-size: 1.5rem;
+        }
+        .mood-btn.active { 
+            border-color: var(--sage); 
+            box-shadow: 0 0 0 2px var(--sage), 0 10px 20px -5px rgba(139, 168, 142, 0.2);
+            transform: scale(1.1);
+            opacity: 1 !important; 
+        }
+
+        .progress-ring {
+            position: relative; width: 64px; height: 64px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .progress-ring svg { transform: rotate(-90deg); width: 64px; height: 64px; }
+        .progress-ring circle {
+            fill: none; stroke-width: 3; stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
         @media print {
             .no-print { display: none !important; }
             body { background: white; }
@@ -107,6 +137,16 @@
     </style>
 </head>
 <body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" :class="showSOS || showTour || !state.hasAccess ? 'overflow-hidden' : ''">
+
+    <!-- Global Background Glow -->
+    <div class="fixed inset-0 z-0 pointer-events-none no-print overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out" 
+             :style="'width: 1200px; height: 1200px; border-radius: 50%; filter: blur(120px); background: radial-gradient(circle, ' + 
+                    (state.todayMood === 'zentriert' ? 'rgba(139, 168, 142, 0.5)' : 
+                     state.todayMood === 'gestresst' ? 'rgba(166, 139, 124, 0.5)' : 
+                     state.todayMood === 'müde' ? 'rgba(45, 55, 72, 0.35)' : 
+                     'rgba(139, 168, 142, 0.15)') + ' 0%, transparent 70%);'"></div>
+    </div>
 
     <!-- Access Code Overlay -->
     <div x-show="!state.hasAccess" 
@@ -122,35 +162,54 @@
         </div>
     </div>
 
+    <!-- The Noura Welcoming Flow -->
+    <div x-show="state.hasAccess && !state.welcomeComplete" 
+         x-transition:enter="transition ease-out duration-1000"
+         x-transition:leave="transition ease-in duration-1000"
+         class="fixed inset-0 z-[180] bg-sand flex items-center justify-center p-8 no-print" x-cloak>
+        
+        <div class="zen-orb w-[600px] h-[600px] bg-sage/10 opacity-50"></div>
+
+        <div class="max-w-xl w-full text-center relative z-10">
+            <!-- Step 1: The Greeting -->
+            <div x-show="welcomeStep === 1" x-transition:enter="transition ease-out duration-1000 delay-300" class="space-y-12">
+                <h2 class="h1-serif !text-4xl md:text-5xl italic text-charcoal leading-tight">Schön, dass du da bist.<br>Atme kurz durch.</h2>
+                <div class="max-w-xs mx-auto">
+                    <p class="label-caps !text-[10px] mb-4 opacity-40">Wie darf ich dich nennen?</p>
+                    <input type="text" x-model="state.name" @keydown.enter="if(state.name) welcomeStep = 2" 
+                           class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-3xl font-serif text-charcoal outline-none placeholder-charcoal/5" 
+                           placeholder="Dein Vorname...">
+                    <button x-show="state.name.length > 1" @click="welcomeStep = 2" x-transition
+                            class="mt-12 text-[10px] font-black uppercase tracking-[0.4em] text-sage hover:text-terracotta transition-all">Weiter</button>
+                </div>
+            </div>
+
+            <!-- Step 2: The Vibe -->
+            <div x-show="welcomeStep === 2" x-transition:enter="transition ease-out duration-1000" class="space-y-12">
+                <div class="space-y-6">
+                    <h2 class="h1-serif !text-4xl md:text-5xl italic text-charcoal leading-tight">
+                        Hi <span x-text="state.name"></span>,
+                    </h2>
+                    <p class="text-xl font-serif text-charcoal/60 italic leading-relaxed">Noura ist dein Safe Space.<br>Kein Druck, nur du.</p>
+                </div>
+                <button @click="completeWelcome()" 
+                        class="mt-12 px-12 py-5 bg-charcoal text-white rounded-full text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-sage transition-all shadow-xl">
+                    Raum betreten
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Welcome Tour -->
     <div x-show="showTour" class="fixed inset-0 z-[120] flex items-center justify-center p-6 backdrop-blur-xl bg-charcoal/40 no-print" x-cloak>
         <div class="bg-white rounded-[3.5rem] max-w-md w-full p-10 shadow-2xl relative overflow-hidden border border-white/20 text-center text-charcoal">
             <div class="flex gap-1.5 mb-8 justify-center">
-                <template x-for="i in 5"><div class="h-1 w-8 rounded-full transition-all duration-500" :class="tourStep >= i ? 'bg-sage' : 'bg-sand'"></div></template>
+                <template x-for="i in 4"><div class="h-1 w-8 rounded-full transition-all duration-500" :class="tourStep >= i ? 'bg-sage' : 'bg-sand'"></div></template>
             </div>
             <!-- Fixed Height Container for Onboarding -->
             <div class="h-[400px] relative w-full overflow-hidden">
-                <!-- Step 1: Willkommen -->
+                <!-- Step 1: Dein Licht (formerly Step 2) -->
                 <div x-show="tourStep === 1" 
-                     x-transition:enter="transition ease-out duration-500"
-                     x-transition:enter-start="opacity-0 translate-x-8"
-                     x-transition:enter-end="opacity-100 translate-x-0"
-                     x-transition:leave="transition ease-in duration-300"
-                     x-transition:leave-start="opacity-100 translate-x-0"
-                     x-transition:leave-end="opacity-0 -translate-x-8"
-                     class="absolute inset-0 flex flex-col items-center pt-12">
-                    <div class="w-20 h-20 bg-sage/10 rounded-[2rem] flex items-center justify-center mb-8 text-sage shrink-0">
-                        <i data-lucide="sparkles" class="w-10 h-10"></i>
-                    </div>
-                    <h3 class="h2-serif text-4xl italic mb-6 shrink-0">Willkommen</h3>
-                    <div class="w-full max-w-[280px]">
-                        <p class="text-sm text-charcoal/60 leading-relaxed mb-8 text-center">Schön, dass du da bist.<br>Wie darf ich dich nennen?</p>
-                        <input type="text" x-model="state.name" class="w-full bg-sand border-b-2 border-sage py-3 text-center text-xl font-serif text-charcoal outline-none placeholder-charcoal/10" placeholder="Dein Name...">
-                    </div>
-                </div>
-
-                <!-- Step 2: Dein Licht -->
-                <div x-show="tourStep === 2" 
                      x-transition:enter="transition ease-out duration-500"
                      x-transition:enter-start="opacity-0 translate-x-8"
                      x-transition:enter-end="opacity-100 translate-x-0"
@@ -167,8 +226,8 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Das System -->
-                <div x-show="tourStep === 3" 
+                <!-- Step 2: Das System (formerly Step 3) -->
+                <div x-show="tourStep === 2" 
                      x-transition:enter="transition ease-out duration-500"
                      x-transition:enter-start="opacity-0 translate-x-8"
                      x-transition:enter-end="opacity-100 translate-x-0"
@@ -196,8 +255,8 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Die Mission -->
-                <div x-show="tourStep === 4" 
+                <!-- Step 3: Dein Navigator -->
+                <div x-show="tourStep === 3" 
                      x-transition:enter="transition ease-out duration-500"
                      x-transition:enter-start="opacity-0 translate-x-8"
                      x-transition:enter-end="opacity-100 translate-x-0"
@@ -208,14 +267,14 @@
                     <div class="w-20 h-20 bg-charcoal/5 rounded-[2rem] flex items-center justify-center mb-8 text-charcoal shrink-0">
                         <i data-lucide="check-circle" class="w-10 h-10"></i>
                     </div>
-                    <h3 class="h2-serif text-4xl italic mb-6 shrink-0">Die Mission</h3>
+                    <h3 class="h2-serif text-4xl italic mb-6 shrink-0">Dein Navigator</h3>
                     <div class="w-full max-w-[280px]">
-                        <p class="text-sm text-charcoal/60 leading-relaxed text-center">Jeden Tag eine kleine Aufgabe im Navigator. Hake sie ab und spüre deinen Fortschritt.</p>
+                        <p class="text-sm text-charcoal/60 leading-relaxed text-center">Jeden Tag ein kleiner Impuls im Navigator. Hake ihn ab und spüre deinen Fortschritt.</p>
                     </div>
                 </div>
 
-                <!-- Step 5: Wir & Du -->
-                <div x-show="tourStep === 5" 
+                <!-- Step 4: Wir & Du (formerly Step 5) -->
+                <div x-show="tourStep === 4" 
                      x-transition:enter="transition ease-out duration-500"
                      x-transition:enter-start="opacity-0 translate-x-8"
                      x-transition:enter-end="opacity-100 translate-x-0"
@@ -232,8 +291,8 @@
                     </div>
                 </div>
             </div>
-            <button @click="tourStep < 5 ? tourStep++ : completeTour()" class="w-full bg-sage text-white py-4 rounded-3xl font-bold uppercase tracking-widest text-[10px] mt-8 shadow-lg shadow-sage/20">
-                <span x-text="tourStep < 5 ? 'Weiter' : 'Starten'"></span>
+            <button @click="tourStep < 4 ? tourStep++ : completeTour()" class="w-full bg-sage text-white py-4 rounded-3xl font-bold uppercase tracking-widest text-[10px] mt-8 shadow-lg shadow-sage/20">
+                <span x-text="tourStep < 4 ? 'Weiter' : 'Starten'"></span>
             </button>
         </div>
     </div>
@@ -291,30 +350,76 @@
         <div class="h-full bg-sage transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(139,168,142,0.4)]" :style="'width: ' + progress + '%'"></div>
     </div>
 
-    <main class="max-w-5xl mx-auto px-6 pb-40 pt-20 print-container text-charcoal">
-        <!-- Hero (Zen Orb) -->
-        <section class="relative h-[40vh] flex flex-col items-center justify-center no-print overflow-visible text-charcoal">
-            <div class="zen-orb" :style="'background: radial-gradient(circle, rgba(139, 168, 142, 0.6) 0%, transparent 100%); width: ' + (300 + (progress * 2)) + 'px; height: ' + (300 + (progress * 2)) + 'px;'"></div>
-            <div class="relative z-10 text-center">
-                <h2 class="h1-serif mb-6 text-center">14 Tage für dich.</h2>
-                <div class="flex items-center justify-center gap-3">
-                    <div class="h-px w-8 bg-sage/30"></div>
-                    <p class="label-caps opacity-60"><span x-text="progress"></span>% LICHT</p>
-                    <div class="h-px w-8 bg-sage/30"></div>
+    <main class="max-w-6xl mx-auto px-6 pb-40 pt-20 print-container text-charcoal">
+        <!-- Dashboard Sanctuary -->
+        <section id="dashboard" class="relative min-h-[60vh] flex items-center justify-center no-print py-10 overflow-visible">
+            
+            <!-- Single Minimalist Card with Dynamic Background -->
+            <div class="noura-card !p-12 md:!p-20 noura-glow border-white/50 relative z-10 w-full max-w-xl text-center transition-all duration-1000 ease-in-out"
+                 :class="state.todayMood === 'zentriert' ? '!bg-sage/5' : 
+                         state.todayMood === 'gestresst' ? '!bg-terracotta/5' : 
+                         state.todayMood === 'müde' ? '!bg-charcoal/5' : '!bg-white/70'">
+                
+                <!-- 1. Headline -->
+                <div class="mb-16">
+                    <h1 class="h1-serif !text-5xl md:text-6xl text-center italic text-charcoal">
+                        <span x-text="greeting"></span><span x-text="state.name ? ', ' + state.name : ''"></span>.
+                    </h1>
+                    <p class="text-sm md:text-base font-serif italic text-charcoal/40 mt-6">Welche Kraft darf dich heute leiten?</p>
+                </div>
+
+                <!-- 2. Pure Mood Check-In with Labels -->
+                <div class="mb-10 flex gap-6 md:gap-10 justify-center items-start">
+                    <template x-for="intent in [
+                        {icon:'waves', label:'Regulieren', val:'Nervensystem regulieren', color:'text-sage', feedback: 'Du findest zurück in deine Mitte. Atme tief.'}, 
+                        {icon:'compass', label:'Steuern', val:'Fokus aktiv steuern', color:'text-terracotta', feedback: 'Deine Aufmerksamkeit gehört jetzt dir. Sei präsent.'}, 
+                        {icon:'battery-medium', label:'Schützen', val:'Ressourcen schützen', color:'text-charcoal', feedback: 'Deine Energie ist kostbar. Du darfst auftanken.'}
+                    ]">
+                        <div class="flex flex-col items-center gap-3">
+                            <button @click="state.todayMood = intent.val; state.activeFeedback = intent.feedback" 
+                                    class="mood-btn !w-16 !h-16 shadow-none border-sage/5 hover:border-sage/20 transition-all duration-500"
+                                    :class="state.todayMood === intent.val ? 'active !bg-sage/5' : 'opacity-30 hover:opacity-100 hover:scale-110'">
+                                <i :data-lucide="intent.icon" :class="intent.color" class="w-6 h-6"></i>
+                            </button>
+                            <span class="label-caps !text-[7px] tracking-[0.2em] opacity-40 transition-opacity duration-500" 
+                                  :class="state.todayMood === intent.val ? '!opacity-100 !text-charcoal font-black' : ''"
+                                  x-text="intent.label"></span>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- 3. Dynamic CTA -->
+                <div class="h-8 mb-12">
+                    <p x-show="state.todayMood" x-transition.opacity class="text-[11px] uppercase tracking-[0.3em] text-sage font-black">
+                        <span x-text="state.activeFeedback"></span>
+                    </p>
+                    <p x-show="!state.todayMood" class="text-[10px] uppercase tracking-widest text-charcoal/20 font-bold">
+                        Wähle deinen Intent für diesen Moment
+                    </p>
+                </div>
+
+                <!-- 4. The Daily Quote (Mission) -->
+                <div class="pt-12 border-t border-sage/5">
+                    <p class="text-lg font-serif italic text-charcoal/60 leading-relaxed max-w-sm mx-auto text-balance" x-text="days[currentDayIndex].mission"></p>
+                    
+                    <button @click="scrollTo('checklist')" class="mt-12 text-[9px] font-black uppercase tracking-[0.4em] text-terracotta/40 hover:text-terracotta transition-colors flex items-center gap-2 mx-auto">
+                        Dein Navigator <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- Dein Licht -->
+        <!-- Dein Licht (Intention) -->
         <section id="dein-licht" class="max-w-3xl mx-auto mb-24 noura-card noura-glow relative z-10 overflow-hidden text-center text-charcoal">
             <div class="absolute inset-0 bg-gradient-to-tr from-sage/[0.02] to-transparent opacity-50"></div>
             <div class="text-center mb-12 relative z-10 text-charcoal">
-                <span class="label-caps !text-[10px]" x-text="greeting"></span>
-                <h3 class="h2-serif text-charcoal mt-2 italic text-center">Dein Licht für heute</h3>
-                <button @click="state.why = ''" class="absolute -right-2 top-0 text-sage/20 hover:text-sage transition-colors p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+                <span class="label-caps !text-[10px]">Kommandozentrale</span>
+                <h3 class="h2-serif text-charcoal mt-2 italic text-center">Deine heutige Steuerung</h3>
+                <p x-show="state.todayMood" x-transition class="text-[10px] uppercase tracking-[0.3em] text-sage font-black mt-4" x-text="'Modus: ' + state.todayMood"></p>
+                <button @click="state.why = ''; state.todayMood = ''" class="absolute -right-2 top-0 text-sage/20 hover:text-sage transition-colors p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
             </div>
             <div class="relative z-10 max-w-2xl mx-auto text-charcoal">
-                <textarea x-model="state.why" class="w-full bg-transparent border-b border-sand focus:border-sage py-4 text-xl md:text-2xl font-serif text-charcoal placeholder-charcoal/10 outline-none resize-none no-print min-h-[100px] text-center" placeholder="Heute entscheide ich mich für mich, damit ich..."></textarea>
+                <textarea x-model="state.why" class="w-full bg-transparent border-b border-sand focus:border-sage py-4 text-xl md:text-2xl font-serif text-charcoal placeholder-charcoal/10 outline-none resize-none no-print min-h-[100px] text-center" placeholder="Ich entscheide mich heute aktiv für..., damit mein System..."></textarea>
                 <div class="hidden print:block text-xl md:text-2xl font-serif border-b border-sand pb-4 italic text-center text-charcoal" x-text="state.why"></div>
             </div>
         </section>
@@ -418,15 +523,15 @@
                 showSOS: false, 
                 showTour: false, 
                 tourStep: 1, 
+                welcomeStep: 1,
                 saved: false, 
                 inputCode: '', 
                 codeError: false,
                 get greeting() {
                     const h = new Date().getHours();
-                    const n = this.state.name ? `, ${this.state.name}` : '';
-                    if (h < 10) return `Guten Morgen${n}`;
-                    if (h < 17) return `Guten Tag${n}`;
-                    return `Guten Abend${n}`;
+                    if (h < 10) return `Guten Morgen`;
+                    if (h < 17) return `Guten Tag`;
+                    return `Guten Abend`;
                 },
                 get progress() {
                     let pts = 0;
@@ -441,6 +546,8 @@
                     hasAccess: false, 
                     startDate: null, 
                     tourSeen: false, 
+                    welcomeComplete: false,
+                    todayMood: '',
                     name: '', 
                     why: '', 
                     nourish: ['', '', ''], 
@@ -448,6 +555,10 @@
                     safety: '', 
                     checklist: Array.from({length: 14}, () => ({ done: false, journal: '' }))
                 }).as('noura_storage'),
+                completeWelcome() {
+                    this.state.welcomeComplete = true;
+                    if (!this.state.tourSeen) setTimeout(() => this.showTour = true, 1500);
+                },
                 checkCode() {
                     if (this.inputCode.toUpperCase() === 'TRUST') {
                         setTimeout(() => {
