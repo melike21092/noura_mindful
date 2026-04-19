@@ -1,0 +1,16 @@
+{
+  "name": "Noura Mindful",
+  "short_name": "Noura",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fdfaf7",
+  "theme_color": "#8ba88e",
+  "description": "Dein 14-Tage-Reset-Wegweiser für ein balanciertes Leben.",
+  "icons": [
+    {
+      "src": "images/n-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

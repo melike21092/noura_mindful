@@ -4,6 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOURA | 14-Tage-Reset-Wegweiser</title>
+
+    <!-- ============== PWA & Homescreen ============== -->
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iOS Fullscreen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <!-- Android/Andere Fullscreen -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- App Icons -->
+    <link rel="apple-touch-icon" href="images/n-logo.svg">
+    <link rel="icon" href="images/n-logo.svg" type="image/svg+xml">
+
+    <!-- 
+    ================================================================
+    HIER DEIN BASE64-ICON FÜR SINGLE-FILE-DEPLOYMENT EINFÜGEN
+    ================================================================
+    Ersetze die href in den obigen <link>-Tags (apple-touch-icon & icon) 
+    mit dem generierten Base64-String deines App-Icons.
+    
+    Beispiel:
+    <link rel="icon" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZ...">
+    ================================================================
+    -->
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -278,7 +305,7 @@
         }
     </style>
 </head>
-<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" :class="{'overflow-hidden': !state.welcomeComplete || !state.tourSeen, 'reduce-motion': state.reduceMotion}">
+<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" :class="{'overflow-hidden': !state.hasAccess || !state.welcomeComplete || !state.tourSeen, 'reduce-motion': state.reduceMotion}">
 
     <!-- Global Background Glow -->
     <div class="fixed inset-0 z-0 pointer-events-none no-print overflow-hidden">
@@ -290,8 +317,27 @@
                      'rgba(139, 168, 142, 0.15)') + ' 0%, transparent 70%);'"></div>
     </div>
 
+    <!-- AUTH WALL -->
+    <template x-if="!state.hasAccess">
+        <div x-transition:enter="transition-opacity duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-[200] bg-sand flex flex-col items-center justify-center p-8 no-print">
+            <div class="w-full max-w-sm text-center">
+                <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-48 mx-auto mb-12">
+                <div class="max-w-xs mx-auto relative">
+                    <input :type="showPassword ? 'text' : 'password'" x-model="accessCode" @keydown.enter="checkAccessCode()" 
+                           class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-2xl font-serif text-charcoal outline-none placeholder:text-xl placeholder-charcoal/40 pr-12" 
+                           placeholder="Zugangscode">
+                    <button @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 flex items-center px-4 text-sage/40 hover:text-sage">
+                        <i x-show="!showPassword" data-lucide="eye" class="w-5 h-5"></i>
+                        <i x-show="showPassword" data-lucide="eye-off" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <button @click="checkAccessCode()" class="mt-12 btn-primary w-full">Eintreten</button>
+            </div>
+        </div>
+    </template>
+
     <!-- ONBOARDING FLOW -->
-    <template x-if="!state.welcomeComplete">
+    <template x-if="state.hasAccess && !state.welcomeComplete">
         <div class="fixed inset-0 z-[180] bg-sand flex flex-col items-center justify-start pt-[25vh] p-8 no-print">
             <div class="zen-orb w-[600px] h-[600px] bg-sage/10 opacity-50"></div>
             <div class="max-w-xl w-full text-center relative z-10 min-h-[400px]">
@@ -305,7 +351,7 @@
                                class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-3xl font-serif text-charcoal outline-none placeholder:text-xl placeholder-charcoal/40" 
                                placeholder="Dein Vorname...">
                         <button x-show="state.name.length > 1" @click="completeWelcome()" x-transition
-                                class="mt-12 btn-primary">Raum beitreten</button>
+                                class="mt-12 btn-primary">Weiter</button>
                     </div>
                 </div>
             </div>
@@ -313,7 +359,7 @@
     </template>
 
     <!-- WELCOME TOUR -->
-    <template x-if="state.welcomeComplete && !state.tourSeen">
+    <template x-if="state.hasAccess && state.welcomeComplete && !state.tourSeen">
         <div class="fixed inset-0 z-[120] bg-sand flex flex-col items-center justify-start pt-[15vh] p-8 no-print">
             <div class="zen-orb w-[800px] h-[800px] bg-sage/5 opacity-50"></div>
             <div class="max-w-xl w-full text-center relative z-10">
@@ -421,20 +467,18 @@
     </template>
 
     <!-- MAIN INTERFACE (Visible only when Onboarding & Tour are complete) -->
-    <div x-show="state.welcomeComplete && state.tourSeen" x-cloak>
+    <div x-show="state.hasAccess && state.welcomeComplete && state.tourSeen" x-cloak>
         <!-- Header -->
         <nav class="fixed top-0 left-0 w-full z-[90] transition-all duration-500 no-print" :class="scroll > 50 ? 'bg-white/80 backdrop-blur-xl py-3 border-b border-sage/5 text-charcoal' : 'bg-transparent py-8 text-white'">
             <div class="max-w-6xl mx-auto flex justify-between items-center px-6">
                 <div class="flex items-center gap-4">
-                    <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain transition-all" :class="scroll > 50 ? '' : 'brightness-0 invert'" :style="scroll > 50 ? '' : 'filter: brightness(0) invert(1)'">
+                    <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain transition-all -ml-2" :class="scroll > 50 ? '' : 'brightness-0 invert'" :style="scroll > 50 ? '' : 'filter: brightness(0) invert(1)'">
                     <div class="border-l-2 transition-colors duration-500 pl-4 text-left" :class="scroll > 50 ? 'border-sage/20' : 'border-white/20'">
                         <p class="text-base md:text-xl font-serif leading-none">nourish your mind. trust your body.</p>
                         <p class="text-[8px] uppercase tracking-[0.2em] opacity-60 mt-1 font-bold">by Mukaddes Mandirali</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <template x-if="saved"><span x-transition class="label-caps !text-sage !text-[8px] animate-pulse">Gesichert</span></template>
-                </div>
+                <div></div>
             </div>
         </nav>
 
@@ -591,9 +635,10 @@
             </section>
 
             <!-- Das System -->
-            <div id="das-system" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 no-print text-center md:text-left text-charcoal">
+            <div id="das-system" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 no-print md:text-left text-charcoal">
                 <!-- Nourish -->
-                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-sage shadow-[0_20px_40px_-15px_rgba(139,168,142,0.1)]" :class="state.nourish.every(v => v) ? 'bg-sage/[0.02] border-sage/20' : ''">
+                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-sage shadow-[0_20px_40px_-15px_rgba(139,168,142,0.1)] relative" :class="state.nourish.every(v => v) ? 'bg-sage/[0.02] border-sage/20' : ''">
+                    <button @click="state.nourish = ['', '', '']" class="absolute top-8 right-8 text-sage/20 hover:text-sage transition-colors p-2 z-10"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
                     <div class="flex items-center justify-between mb-8"><div class="p-2 bg-sage/5 rounded-xl text-sage w-fit ml-0"><i data-lucide="sprout" class="w-5 h-5"></i></div><span x-show="state.nourish.every(v => v)" class="label-caps !text-sage !text-[8px]">Aktiv</span></div>
                     <h3 class="h2-serif text-2xl mb-2 text-left text-charcoal text-balance italic">1. Nourish</h3>
                     <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-left">Deine 3 Proteinquellen, die du immer im Haus hast. Dein biologisches Fundament.</p>
@@ -605,22 +650,29 @@
                     </div>
                 </div>
                 <!-- Flow -->
-                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-terracotta shadow-[0_20px_40px_-15px_rgba(166,139,124,0.1)]" :class="state.pivot ? 'bg-terracotta/[0.02] border-terracotta/20' : ''">
+                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-terracotta shadow-[0_20px_40px_-15px_rgba(166,139,124,0.1)] relative" :class="state.pivot ? 'bg-terracotta/[0.02] border-terracotta/20' : ''">
+                    <button @click="state.pivot = ''" class="absolute top-8 right-8 text-terracotta/20 hover:text-terracotta transition-colors p-2 z-10"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
                     <div class="flex items-center justify-between mb-8"><div class="p-2 bg-terracotta/5 rounded-xl text-terracotta w-fit ml-0"><i data-lucide="shuffle" class="w-5 h-5"></i></div><span x-show="state.pivot" class="label-caps !text-[8px]">Aktiv</span></div>
                     <h3 class="h2-serif text-2xl mb-2 text-left text-charcoal text-balance italic">2. Flow</h3>
                     <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-left">Dein Plan B für das Familienessen. Flexibel bleiben, ohne extra zu kochen.</p>
-                    <textarea x-model="state.pivot" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-center md:text-left text-charcoal mb-6" placeholder="z.B. Nudelsauce mit Quark strecken..."></textarea>
-                    <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                    <textarea x-model="state.pivot" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-left text-charcoal mb-6" placeholder="z.B. Nudelsauce mit Quark strecken..."></textarea>
+                    <div class="flex flex-wrap gap-1.5 justify-start">
                         <template x-for="tag in ['Extra Quark', 'Eier dazu', 'Nur Belag', 'Gemüse-Basis']"><button @click="state.pivot = tag" class="text-[9px] px-2.5 py-1 rounded-full border border-terracotta/10 text-terracotta/60 hover:border-terracotta hover:text-terracotta transition-all">+ <span x-text="tag"></span></button></template>
                     </div>
                 </div>
                 <!-- Safety -->
-                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-charcoal shadow-[0_20px_40px_-15px_rgba(45,55,72,0.1)]" :class="state.safety ? 'bg-charcoal/[0.02] border-charcoal/20' : ''">
-                    <div class="flex items-center justify-between mb-8"><div class="p-2 bg-charcoal/5 rounded-xl text-charcoal w-fit mx-auto md:mx-0"><i data-lucide="anchor" class="w-5 h-5"></i></div><button @click="showSOS = true" class="text-sage/40 hover:text-sage transition-colors p-1"><i data-lucide="bell-ring" class="w-4 h-4"></i></button></div>
-                    <h3 class="h2-serif text-2xl mb-2 text-center md:text-left text-charcoal text-balance italic">3. Safety</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-center md:text-left">Dein 5-Minuten-Anker bei Stress. Was tust du, statt zur Schokolade zu greifen?</p>
-                    <textarea x-model="state.safety" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-center md:text-left text-charcoal mb-6" placeholder="z.B. 1 Glas Wasser & 5 tiefe Atemzüge..."></textarea>
-                    <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-charcoal shadow-[0_20px_40px_-15px_rgba(45,55,72,0.1)] relative" :class="state.safety ? 'bg-charcoal/[0.02] border-charcoal/20' : ''">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="p-2 bg-charcoal/5 rounded-xl text-charcoal w-fit ml-0"><i data-lucide="anchor" class="w-5 h-5"></i></div>
+                        <div class="flex items-center gap-2">
+                            <button @click="state.safety = ''" class="text-charcoal/20 hover:text-charcoal transition-colors p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+                            <button @click="showSOS = true" class="text-sage/40 hover:text-sage transition-colors p-1"><i data-lucide="bell-ring" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                    <h3 class="h2-serif text-2xl mb-2 text-left text-charcoal text-balance italic">3. Safety</h3>
+                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-left">Dein 5-Minuten-Anker bei Stress. Was tust du, statt zur Schokolade zu greifen?</p>
+                    <textarea x-model="state.safety" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-left text-charcoal mb-6" placeholder="z.B. 1 Glas Wasser & 5 tiefe Atemzüge..."></textarea>
+                    <div class="flex flex-wrap gap-1.5 justify-start">
                         <template x-for="tag in ['Glas Wasser', '3x Atmen', '5 Min Gehen', 'Handy weg']"><button @click="state.safety = tag" class="text-[9px] px-2.5 py-1 rounded-full border border-charcoal/10 text-charcoal/60 hover:border-charcoal hover:text-charcoal transition-all">+ <span x-text="tag"></span></button></template>
                     </div>
                 </div>
@@ -683,8 +735,11 @@
         <footer id="kontakt" class="max-w-5xl mx-auto px-6 pb-24 text-center text-charcoal">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left mb-20 text-charcoal">
                 <div class="bg-white/40 p-8 rounded-[2rem] border border-white text-charcoal shadow-sm">
-                    <h4 class="h2-serif !text-xl mb-3 flex items-center gap-2 italic text-charcoal">Immer griffbereit</h4>
-                    <p class="text-sm text-charcoal/50 leading-relaxed">Browser -> <span class="text-sage font-bold">"Zum Home-Bildschirm"</span>. So wird NOURA zu deiner täglichen Rettungsinsel.</p>
+                    <h4 class="h2-serif !text-xl mb-4 flex items-center gap-2 italic text-charcoal">Immer griffbereit</h4>
+                    <div class="space-y-4 text-sm text-charcoal/60 leading-relaxed">
+                        <p><strong class="text-sage font-bold">iPhone:</strong> In Safari das Teilen-Symbol <i data-lucide="share" class="inline w-3.5 h-3.5 -mt-1"></i> antippen<br>&rarr; "Zum Home-Bildschirm".</p>
+                        <p><strong class="text-sage font-bold">Android:</strong> In Chrome die drei Punkte <i data-lucide="more-vertical" class="inline w-3.5 h-3.5 -mt-1"></i> antippen<br>&rarr; "App installieren".</p>
+                    </div>
                 </div>
                 <div class="bg-sage/5 p-8 rounded-[2rem] border border-sage/10 text-charcoal shadow-sm">
                     <h4 class="h2-serif !text-xl mb-3 flex items-center gap-2 italic text-sage md:text-left">Etwas hakt?</h4>
@@ -703,6 +758,21 @@
         </footer>
     </div>
 
+
+    <!-- Global Save Toast -->
+    <div x-show="saved"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-4"
+         class="fixed bottom-8 left-8 z-[150] bg-charcoal text-white text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-lg flex items-center gap-2"
+         x-cloak>
+        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+        <span>Gesichert</span>
+    </div>
+
     <script>
         function nouraApp() {
             return {
@@ -711,11 +781,14 @@
                 tourStep: 1, 
                 welcomeStep: 1,
                 sparklingDays: [],
-                saved: false, 
+                saved: false,
+                accessCode: '',
+                showPassword: false,
                 get greeting() {
                     const h = new Date().getHours();
-                    if (h < 10) return `Guten Morgen`;
-                    if (h < 17) return `Guten Tag`;
+                    if (h < 4) return `Gute Nacht`;
+                    if (h < 12) return `Guten Morgen`;
+                    if (h < 18) return `Guten Tag`;
                     return `Guten Abend`;
                 },
                 get sleepReminder() {
@@ -733,6 +806,7 @@
                     return Math.min(Math.round((pts / 100) * 100), 100);
                 },
                 state: Alpine.$persist({
+                    hasAccess: false,
                     startDate: null, 
                     tourSeen: false, 
                     welcomeComplete: false,
@@ -745,6 +819,14 @@
                     safety: '', 
                     checklist: Array.from({length: 14}, () => ({ done: false, journal: '' }))
                 }).as('noura_storage'),
+                checkAccessCode() {
+                    if (this.accessCode === 'NOURA2026') {
+                        this.state.hasAccess = true;
+                    } else {
+                        alert('Falscher Code');
+                        this.accessCode = '';
+                    }
+                },
                 completeWelcome() {
                     this.state.welcomeComplete = true;
                     if (!this.state.startDate) this.state.startDate = new Date().toISOString();
