@@ -42,11 +42,19 @@
 
     <style type="text/css">
         [x-cloak] { display: none !important; }
-        :root { --sage: #8ba88e; --sand: #fdfaf7; --terracotta: #a68b7c; --charcoal: #2d3748; }
+        :root { 
+            --sage: #8ba88e; 
+            --sand: #fdfaf7; 
+            --terracotta: #a68b7c; 
+            --charcoal: #2d3748; 
+            --bg: var(--sand);
+            --text: var(--charcoal);
+            --card-bg: rgba(255, 255, 255, 0.8);
+        }
 
         body {
-            background-color: var(--sand);
-            color: var(--charcoal);
+            background-color: var(--bg);
+            color: var(--text);
             font-family: 'Inter', sans-serif;
             font-size: 15px;
             line-height: 1.6;
@@ -407,13 +415,13 @@
     <!-- MAIN INTERFACE (Visible only when Onboarding & Tour are complete) -->
     <div x-show="state.welcomeComplete && state.tourSeen" x-cloak>
         <!-- Header -->
-        <nav class="fixed top-0 left-0 w-full z-[90] transition-all duration-500 no-print px-6 text-charcoal" :class="scroll > 50 ? 'bg-white/80 backdrop-blur-xl py-3 border-b border-sage/5' : 'bg-transparent py-8'">
+        <nav class="fixed top-0 left-0 w-full z-[90] transition-all duration-500 no-print px-6" :class="scroll > 50 ? 'bg-white/80 backdrop-blur-xl py-3 border-b border-sage/5 text-charcoal' : 'bg-transparent py-8 text-white'">
             <div class="max-w-5xl mx-auto flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain transition-all" :class="scroll > 50 ? 'scale-90' : ''">
-                    <div class="border-l-2 border-sage/20 pl-4 text-left">
+                    <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain transition-all" :class="scroll > 50 ? '' : 'brightness-0 invert'" :style="scroll > 50 ? '' : 'filter: brightness(0) invert(1)'">
+                    <div class="border-l-2 transition-colors duration-500 pl-4 text-left" :class="scroll > 50 ? 'border-sage/20' : 'border-white/20'">
                         <p class="text-base md:text-xl font-serif leading-none">nourish your mind. trust your body.</p>
-                        <p class="text-[8px] uppercase tracking-[0.2em] text-terracotta mt-1 font-bold">by Mukaddes Mandirali</p>
+                        <p class="text-[8px] uppercase tracking-[0.2em] opacity-60 mt-1 font-bold">by Mukaddes Mandirali</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -422,27 +430,30 @@
             </div>
         </nav>
 
-        <!-- Bottom Nav -->
-        <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md no-print transition-all duration-500" :class="scroll > 100 ? 'translate-y-0' : 'translate-y-20 opacity-0'">
-            <div class="bg-white/90 backdrop-blur-2xl border border-white/50 rounded-full p-1.5 flex items-center justify-between shadow-xl shadow-charcoal/10">
-                <button @click="scrollTo('dein-licht')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="sun" class="mx-auto w-4 h-4"></i></button>
-                <button @click="scrollTo('das-system')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="layers" class="mx-auto w-4 h-4"></i></button>
-                <button @click="showSOS = true" class="w-12 h-12 bg-sage rounded-full text-white flex items-center justify-center shadow-lg transition-all hover:scale-105 active:scale-95"><i data-lucide="bell-ring" class="w-5 h-5"></i></button>
-                <button @click="scrollTo('checklist')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="check-circle" class="mx-auto w-4 h-4"></i></button>
-                <button @click="scrollTo('kontakt')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="message-circle" class="mx-auto w-4 h-4"></i></button>
-            </div>
-        </nav>
-
         <!-- SOS Overlay -->
         <div x-show="showSOS" x-transition class="fixed inset-0 z-[150] flex items-center justify-center p-6 backdrop-blur-md bg-charcoal/20 no-print" x-cloak>
             <div @click.away="showSOS = false" class="bg-white rounded-[3.5rem] max-w-lg w-full p-10 shadow-2xl relative border border-white/50 text-center">
                 <button @click="showSOS = false" class="absolute top-8 right-8 text-sage/40 hover:text-sage"><i data-lucide="x" class="w-6 h-6"></i></button>
                 <div class="text-center text-charcoal">
-                    <h2 class="h2-serif text-charcoal mb-8 text-4xl text-center">Atme. Du bist sicher.</h2>
-                    <div class="relative w-32 h-32 mx-auto mb-10 flex items-center justify-center text-sage">
-                        <div class="absolute inset-0 bg-sage/10 rounded-full animate-ping"></div>
-                        <div class="font-serif italic text-xl text-center">Ein... Aus...</div>
+                    <h2 class="h2-serif text-charcoal mb-12 text-4xl text-center italic">Atme. Du bist sicher.</h2>
+                    
+                    <!-- 4-6 Breathing Circle -->
+                    <div class="relative w-40 h-40 mx-auto mb-16 flex items-center justify-center">
+                        <!-- Outer Glow -->
+                        <div class="absolute inset-0 bg-sage/5 rounded-full scale-[2.5]"></div>
+                        <!-- Breathing Orb -->
+                        <div class="w-12 h-12 bg-sage rounded-full opacity-40 shadow-xl shadow-sage/20" 
+                             style="animation: breathe-pulse 10s infinite ease-in-out;"></div>
+                        
+                        <!-- Breathing Text Overlay -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center overflow-hidden h-6 mt-[160px]">
+                            <span class="absolute text-lg font-serif italic text-sage/60" 
+                                  style="animation: breathe-text-fade 10s infinite;">Einatmen</span>
+                            <span class="absolute text-lg font-serif italic text-sage/60" 
+                                  style="animation: breathe-text-fade-alt 10s infinite;">Ausatmen</span>
+                        </div>
                     </div>
+
                     <div class="space-y-4 text-left mb-10 px-4 text-charcoal/80 text-sm">
                         <p class="italic text-center">1. Trinke ein großes Glas Wasser. Spüre die Kühle.</p>
                         <p class="italic text-center">2. Was braucht dein Körper jetzt wirklich?</p>
@@ -453,52 +464,73 @@
             </div>
         </div>
 
-        <!-- Progress Tracker (Top) -->
-        <div class="fixed top-0 left-0 w-full h-1 z-[110] bg-white/20 no-print">
-            <div class="h-full bg-sage transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(139,168,142,0.4)]" :style="'width: ' + progress + '%'"></div>
+        <!-- 0. Hero Immersion (Dark Muted Style) -->
+        <div class="w-full h-[40vh] md:h-[55vh] relative overflow-hidden no-print bg-charcoal">
+            <img src="images/pexels-toni-seyfert-785961629-35324414.jpg" 
+                 class="w-full h-full object-cover" 
+                 style="animation: image-breathe 60s infinite alternate ease-in-out;"
+                 alt="Noura Mood">
+            
+            <!-- Deep Matte Shadow Gradient (No Glow) -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+
+            <!-- Integrated Arrival Area -->
+            <div class="absolute bottom-10 left-6 md:left-12 z-20 text-white">
+                <h1 class="h1-serif !text-4xl md:text-6xl italic leading-tight mb-3 drop-shadow-md">
+                    <span x-text="greeting"></span>, <span x-text="state.name"></span>
+                </h1>
+                <div class="flex flex-wrap items-center gap-6 opacity-80">
+                    <span class="label-caps !text-white !text-[10px] tracking-[0.3em]">Tag <span x-text="currentDayIndex + 1"></span> von 14</span>
+                    
+                    <!-- Sleep Reminder (Whisper Style) -->
+                    <template x-if="sleepReminder">
+                        <div x-transition class="flex items-center gap-1.5 italic font-serif text-sm border-l border-white/20 pl-3 text-white/60">
+                            <i data-lucide="moon" class="w-3.5 h-3.5"></i>
+                            <span x-text="sleepReminder"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </div>
 
-        <main class="max-w-6xl mx-auto px-6 pb-40 pt-20 print-container text-charcoal">
+        <!-- Bottom Nav -->
+        <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md no-print">
+            <div class="bg-white/90 backdrop-blur-2xl border border-white/50 rounded-full p-1.5 flex items-center justify-between shadow-xl shadow-charcoal/10">
+                <button @click="scrollTo('dashboard')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="sun" class="mx-auto w-4 h-4"></i></button>
+                <button @click="scrollTo('das-system')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="layers" class="mx-auto w-4 h-4"></i></button>
+                <button @click="showSOS = true" class="w-12 h-12 bg-sage rounded-full text-white flex items-center justify-center shadow-lg transition-all hover:scale-105 active:scale-95"><i data-lucide="bell-ring" class="w-5 h-5"></i></button>
+                <button @click="scrollTo('checklist')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="check-circle" class="mx-auto w-4 h-4"></i></button>
+                <button @click="scrollTo('kontakt')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="message-circle" class="mx-auto w-4 h-4"></i></button>
+            </div>
+        </nav>
+
+        <main class="max-w-6xl mx-auto px-6 pb-40 pt-0 print-container text-charcoal">
             <!-- Dashboard Sanctuary -->
-            <section id="dashboard" class="relative min-h-[60vh] flex items-center justify-center no-print py-10 overflow-visible">
+            <section id="dashboard" class="relative no-print py-10 overflow-visible">
                 
                 <!-- Single Minimalist Card with Dynamic Background -->
                 <div class="noura-card !p-12 md:!p-20 noura-glow border-white/50 relative z-10 w-full max-w-xl text-center transition-all duration-1000 ease-in-out"
                      :class="state.todayMood === 'zentriert' ? '!bg-sage/5' : 
                              state.todayMood === 'gestresst' ? '!bg-terracotta/5' : 
                              state.todayMood === 'müde' ? '!bg-charcoal/5' : '!bg-white/70'">
-                    
-                    <!-- Breathing Guide (Subtle Left Aligned) -->
-                    <div class="mb-12 flex items-center justify-start gap-4 group opacity-50 hover:opacity-100 transition-opacity duration-500">
-                        <div class="relative w-5 h-5 flex items-center justify-center">
-                            <div class="absolute inset-0 bg-sage/20 rounded-full scale-150"></div>
-                            <div class="w-1.5 h-1.5 bg-sage rounded-full" style="animation: breathe-pulse 10s infinite ease-in-out;"></div>
-                        </div>
-                        <div class="h-4 overflow-hidden relative w-24 text-left">
-                            <span class="absolute inset-0 text-[9px] font-black uppercase tracking-[0.3em] text-sage/60" style="animation: breathe-text-fade 10s infinite;">Einatmen</span>
-                            <span class="absolute inset-0 text-[9px] font-black uppercase tracking-[0.3em] text-sage/60" style="animation: breathe-text-fade-alt 10s infinite;">Ausatmen</span>
-                        </div>
-                    </div>
-                    <!-- 1. Headline -->
-                    <div class="mb-12">
-                        <h1 class="h1-serif !text-4xl md:text-5xl text-center italic text-charcoal">
-                            <span x-text="greeting"></span><span x-text="state.name ? ', ' + state.name : ''"></span>.
-                        </h1>
-                    </div>
 
                     <!-- 2. Pure Mood Check-In with Labels -->
                     <div class="mb-10">
-                        <p class="text-base font-medium text-charcoal/70 mb-8 text-center">Wähle deinen Fokus für heute.</p>
+                        <span class="label-caps mb-2 text-center block">Täglicher Check-In</span>
+                        <h2 class="h2-serif italic text-charcoal mb-10 text-center !text-2xl">Wie möchtest du heute durch den Tag gehen?</h2>
                         <div class="flex gap-6 md:gap-10 justify-center items-start">
                             <template x-for="intent in [
-                                {icon:'waves', label:'Regulieren', val:'Nervensystem regulieren', color:'text-sage', feedback: 'Du findest zurück in deine Mitte. Atme tief.'}, 
-                                {icon:'compass', label:'Steuern', val:'Fokus aktiv steuern', color:'text-terracotta', feedback: 'Deine Aufmerksamkeit gehört jetzt dir. Sei präsent.'}, 
-                                {icon:'battery-medium', label:'Schützen', val:'Ressourcen schützen', color:'text-charcoal', feedback: 'Deine Energie ist kostbar. Du darfst auftanken.'}
+                                {icon:'waves', label:'Regulieren', val:'Nervensystem regulieren', color:'text-sage', feedback: 'Nervensystem beruhigen. Du findest zurück in deine Mitte. Atme tief.'}, 
+                                {icon:'compass', label:'Steuern', val:'Fokus aktiv steuern', color:'text-terracotta', feedback: 'Klarheit & Fokus finden. Deine Aufmerksamkeit gehört jetzt dir. Sei präsent.'}, 
+                                {icon:'battery-medium', label:'Schützen', val:'Ressourcen schützen', color:'text-charcoal', feedback: 'Energie & Grenzen bewahren. Deine Energie ist kostbar. Du darfst auftanken.'}
                             ]">
                                 <div class="flex flex-col items-center gap-3">
                                     <button @click="state.todayMood = intent.val; state.activeFeedback = intent.feedback" 
-                                            class="mood-btn !w-16 !h-16 shadow-none border-sage/5 hover:border-sage/20 transition-all duration-500"
-                                            :class="state.todayMood === intent.val ? 'active !bg-sage/5' : 'opacity-30 hover:opacity-100 hover:scale-110'">
+                                            class="mood-btn !w-16 !h-16 shadow-none border-sage/10 hover:border-sage/30 transition-all duration-500"
+                                            :class="[
+                                                state.todayMood === intent.val ? 'active !bg-sage/5' : 'opacity-60 hover:opacity-100 hover:scale-110',
+                                                !state.todayMood ? 'animate-pulse' : ''
+                                            ]">
                                         <i :data-lucide="intent.icon" :class="intent.color" class="w-6 h-6"></i>
                                     </button>
                                     <span class="label-caps tracking-[0.2em] transition-opacity duration-500" 
@@ -516,24 +548,20 @@
                         </p>
                     </div>
 
-                    <!-- 4. The Daily Impulse (Wegweiser Bridge) -->
-                    <div class="pt-12 border-t border-sage/10">
-                        <div class="flex items-center justify-center gap-3 mb-6">
-                            <span class="label-caps !text-[8px] !text-terracotta">Tag <span x-text="currentDayIndex + 1"></span> von 14</span>
-                            <div class="w-1 h-1 bg-sage/20 rounded-full"></div>
-                            <span class="label-caps !text-[8px] !text-terracotta">Dein Impuls</span>
+                    <!-- 4. The Daily Impulse (Highlighted Action Area) -->
+                    <div class="pt-12 border-t border-sage/10 -mx-6 md:-mx-12 px-6 md:px-12 bg-sage/[0.02] rounded-b-[3.5rem] pb-12">
+                        <div class="flex flex-col items-center gap-4 mb-8">
+                            <h3 class="h2-serif italic text-charcoal !text-2xl">Dein heutiger Impuls</h3>
                         </div>
                         
-                        <p class="text-base text-charcoal/70 leading-relaxed max-w-sm mx-auto text-balance mb-10" 
-                           x-html="days[currentDayIndex].mission"></p>
+                        <div class="max-w-sm mx-auto mb-10">
+                            <p class="text-base md:text-lg text-charcoal/70 leading-relaxed font-normal text-balance" 
+                               x-html="days[currentDayIndex].mission"></p>
+                        </div>
                         
                         <button @click="scrollTo('checklist')" 
-                                class="group flex flex-col items-center gap-2 mx-auto transition-all duration-500"
-                                :class="state.todayMood ? 'opacity-100 translate-y-0' : 'opacity-40 translate-y-2'">
-                            <span class="text-[9px] font-black uppercase tracking-[0.4em] text-charcoal/40 group-hover:text-sage">Zum Wegweiser</span>
-                            <div class="p-2 text-sage/40 group-hover:text-sage transition-colors">
-                                <i data-lucide="chevron-down" class="w-5 h-5 animate-bounce"></i>
-                            </div>
+                                class="group btn-secondary !py-3 !px-8 !text-[9px] hover:!bg-sage hover:!text-white transition-all">
+                            Zum Wegweiser <i data-lucide="chevron-down" class="ml-2 w-3.5 h-3.5 inline"></i>
                         </button>
                     </div>
                 </div>
@@ -572,15 +600,21 @@
                 <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-terracotta shadow-[0_20px_40px_-15px_rgba(166,139,124,0.1)]" :class="state.pivot ? 'bg-terracotta/[0.02] border-terracotta/20' : ''">
                     <div class="flex items-center justify-between mb-8"><div class="p-2 bg-terracotta/5 rounded-xl text-terracotta w-fit mx-auto md:mx-0"><i data-lucide="shuffle" class="w-5 h-5"></i></div><span x-show="state.pivot" class="label-caps !text-[8px]">Aktiv</span></div>
                     <h3 class="h2-serif text-2xl mb-2 text-center md:text-left text-charcoal text-balance italic">2. Flow</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-center md:text-left">Dein Plan B für das Familienessen. Wie bleibst du flexibel, ohne extra zu kochen?</p>
-                    <textarea x-model="state.pivot" class="w-full bg-transparent py-3 input-focus text-sm min-h-[120px] resize-none leading-relaxed text-center md:text-left text-charcoal" placeholder="z.B. Nudelsauce mit extra Quark strecken..."></textarea>
+                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-center md:text-left">Dein Plan B für das Familienessen. Flexibel bleiben, ohne extra zu kochen.</p>
+                    <textarea x-model="state.pivot" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-center md:text-left text-charcoal mb-6" placeholder="z.B. Nudelsauce mit Quark strecken..."></textarea>
+                    <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                        <template x-for="tag in ['Extra Quark', 'Eier dazu', 'Nur Belag', 'Gemüse-Basis']"><button @click="state.pivot = tag" class="text-[9px] px-2.5 py-1 rounded-full border border-terracotta/10 text-terracotta/60 hover:border-terracotta hover:text-terracotta transition-all">+ <span x-text="tag"></span></button></template>
+                    </div>
                 </div>
                 <!-- Safety -->
                 <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-charcoal shadow-[0_20px_40px_-15px_rgba(45,55,72,0.1)]" :class="state.safety ? 'bg-charcoal/[0.02] border-charcoal/20' : ''">
                     <div class="flex items-center justify-between mb-8"><div class="p-2 bg-charcoal/5 rounded-xl text-charcoal w-fit mx-auto md:mx-0"><i data-lucide="anchor" class="w-5 h-5"></i></div><button @click="showSOS = true" class="text-sage/40 hover:text-sage transition-colors p-1"><i data-lucide="bell-ring" class="w-4 h-4"></i></button></div>
                     <h3 class="h2-serif text-2xl mb-2 text-center md:text-left text-charcoal text-balance italic">3. Safety</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-center md:text-left">Dein 5-Minuten-Anker bei Stress. Was tust du, bevor du zur Schokolade greifst?</p>
-                    <textarea x-model="state.safety" class="w-full bg-transparent py-3 input-focus text-sm min-h-[120px] resize-none leading-relaxed text-center md:text-left text-charcoal" placeholder="z.B. 1 Glas Wasser & 5 tiefe Atemzüge..."></textarea>
+                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-center md:text-left">Dein 5-Minuten-Anker bei Stress. Was tust du, statt zur Schokolade zu greifen?</p>
+                    <textarea x-model="state.safety" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-center md:text-left text-charcoal mb-6" placeholder="z.B. 1 Glas Wasser & 5 tiefe Atemzüge..."></textarea>
+                    <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                        <template x-for="tag in ['Glas Wasser', '3x Atmen', '5 Min Gehen', 'Handy weg']"><button @click="state.safety = tag" class="text-[9px] px-2.5 py-1 rounded-full border border-charcoal/10 text-charcoal/60 hover:border-charcoal hover:text-charcoal transition-all">+ <span x-text="tag"></span></button></template>
+                    </div>
                 </div>
             </div>
 
@@ -595,7 +629,7 @@
                         <button @click="resetWegweiser()" class="text-[9px] uppercase tracking-[0.3em] opacity-40 mt-10 text-center block mx-auto text-white hover:opacity-100 transition-opacity">Reset</button>
                     </div>
                 </template>
-                <h3 class="h2-serif text-center mb-16 text-3xl text-charcoal">14-Tage-Wegweiser</h3>
+                <h3 class="h2-serif text-center mb-16 text-3xl text-charcoal italic">14-Tage-Wegweiser</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 text-charcoal text-left">
                     <template x-for="(day, index) in days">
                         <div class="flex flex-col gap-2 relative transition-all duration-700" :class="index > currentDayIndex ? 'opacity-20 grayscale pointer-events-none' : ''">
@@ -671,7 +705,12 @@
                     if (h < 17) return `Guten Tag`;
                     return `Guten Abend`;
                 },
-                get progress() {
+                get sleepReminder() {
+                    const h = new Date().getHours();
+                    if (h >= 21 && h < 22) return 'Zeit zum Runterfahren. Dimme das Licht.';
+                    if (h >= 22 || h < 5) return 'Dein Körper braucht Erholung. Zeit für Schlaf.';
+                    return null;
+                },                get progress() {
                     let pts = 0;
                     if (this.state.why) pts += 5;
                     this.state.nourish.forEach(v => { if(v) pts += 2; });
