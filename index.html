@@ -423,8 +423,8 @@
     <!-- MAIN INTERFACE (Visible only when Onboarding & Tour are complete) -->
     <div x-show="state.welcomeComplete && state.tourSeen" x-cloak>
         <!-- Header -->
-        <nav class="fixed top-0 left-0 w-full z-[90] transition-all duration-500 no-print px-6" :class="scroll > 50 ? 'bg-white/80 backdrop-blur-xl py-3 border-b border-sage/5 text-charcoal' : 'bg-transparent py-8 text-white'">
-            <div class="max-w-5xl mx-auto flex justify-between items-center">
+        <nav class="fixed top-0 left-0 w-full z-[90] transition-all duration-500 no-print" :class="scroll > 50 ? 'bg-white/80 backdrop-blur-xl py-3 border-b border-sage/5 text-charcoal' : 'bg-transparent py-8 text-white'">
+            <div class="max-w-6xl mx-auto flex justify-between items-center px-6">
                 <div class="flex items-center gap-4">
                     <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain transition-all" :class="scroll > 50 ? '' : 'brightness-0 invert'" :style="scroll > 50 ? '' : 'filter: brightness(0) invert(1)'">
                     <div class="border-l-2 transition-colors duration-500 pl-4 text-left" :class="scroll > 50 ? 'border-sage/20' : 'border-white/20'">
@@ -485,12 +485,12 @@
                     <h1 class="h1-serif !text-4xl md:text-6xl italic leading-tight mb-3 drop-shadow-md">
                         <span x-text="greeting"></span>, <span x-text="state.name"></span>
                     </h1>
-                    <div class="flex flex-wrap items-center gap-6 opacity-80">
+                    <div class="flex items-baseline gap-x-4 gap-y-2 flex-wrap opacity-80">
                         <span class="label-caps !text-white !text-[10px] tracking-[0.3em]">Tag <span x-text="currentDayIndex + 1"></span> von 14</span>
                         
                         <!-- Sleep Reminder (Whisper Style) -->
                         <template x-if="sleepReminder">
-                            <div x-transition class="flex items-center gap-1.5 italic font-serif text-sm border-l border-white/20 pl-3 text-white/60">
+                            <div x-transition class="flex items-center gap-1.5 italic font-serif text-xs sm:text-sm border-l border-white/20 pl-3 text-white/60">
                                 <i data-lucide="moon" class="w-3.5 h-3.5"></i>
                                 <span x-text="sleepReminder"></span>
                             </div>
@@ -516,7 +516,7 @@
             <section id="dashboard" class="relative no-print py-10 overflow-visible">
                 
                 <!-- Single Minimalist Card with Dynamic Background -->
-                <div class="noura-card !p-12 md:!p-20 noura-glow border-white/50 relative z-10 w-full max-w-xl text-center transition-all duration-1000 ease-in-out"
+                <div class="noura-card !p-12 md:!p-20 noura-glow border-white/50 relative z-10 w-full max-w-xl text-center mx-auto transition-all duration-1000 ease-in-out"
                      :class="state.todayMood === 'zentriert' ? '!bg-sage/5' : 
                              state.todayMood === 'gestresst' ? '!bg-terracotta/5' : 
                              state.todayMood === 'müde' ? '!bg-charcoal/5' : '!bg-white/70'">
