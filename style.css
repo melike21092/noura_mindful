@@ -138,12 +138,32 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
 .breathing-text-2 { animation: breathe-text-fade-alt 10s infinite; }
 
 .journal-textarea {
-    width: 100%; background: transparent; border: none; border-left: 1.5px solid rgba(139, 168, 142, 0.1);
-    padding-left: 1rem; margin-top: 0.75rem; font-family: 'Inter', sans-serif;
-    font-size: 0.875rem; color: var(--charcoal); outline: none; resize: none; overflow: hidden;
-    transition: all 0.3s ease;
+    width: 100%; background: transparent; 
+    border: none;
+    border-left: 2px solid rgba(139, 168, 142, 0.15);
+    padding: 0.5rem 0 0.5rem 1.25rem; 
+    margin-top: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.125rem; 
+    line-height: 2rem;
+    color: var(--charcoal); 
+    outline: none; 
+    resize: none; 
+    overflow: hidden;
+    transition: all 0.4s ease;
+    background-image: linear-gradient(rgba(139, 168, 142, 0.08) 1px, transparent 1px);
+    background-size: 100% 2rem;
 }
-.journal-textarea:focus { border-left: 1.5px solid var(--sage); background: rgba(139, 168, 142, 0.02); }
+.journal-textarea:focus { 
+    border-left: 2px solid var(--sage); 
+    background-color: rgba(139, 168, 142, 0.03);
+    padding-left: 1.5rem;
+}
+.journal-textarea::placeholder {
+    font-family: 'Inter', sans-serif !important;
+    font-style: italic !important;
+    opacity: 0.4;
+}
 
 /* Die "schönen Buttons mit Rundungen" - Fixed CSS */
 .btn-base {
@@ -228,8 +248,14 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
 }
 
 @media print {
-    .no-print { display: none !important; }
-    body { background: white; }
-    .noura-card { border: 1px solid #eee; padding: 2rem; border-radius: 1rem; page-break-inside: avoid; }
-    .print-container { padding-top: 0; }
+    .no-print, .mood-btn, button, nav, .zen-orb { display: none !important; }
+    body { background: white !important; color: black !important; font-size: 12pt; }
+    main { padding-top: 0 !important; }
+    .noura-card { border: none !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; margin-bottom: 2rem; page-break-inside: avoid; }
+    .h1-serif, .h2-serif { color: black !important; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+    .label-caps { color: #888 !important; border: none !important; padding: 0 !important; }
+    .journal-textarea { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; margin-top: 0.5rem; display: block; width: 100%; min-height: auto; }
+    .print-day-entry { border-bottom: 1px solid #f0f0f0; padding: 2rem 0; page-break-inside: avoid; }
+    .print-only { display: block !important; }
 }
+.print-only { display: none; }

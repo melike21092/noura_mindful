@@ -4,6 +4,7 @@ function nouraApp() {
         showSOS: false, 
         tourStep: 1, 
         welcomeStep: 1,
+        selectedDay: null,
         sparklingDays: [],
         saved: false,
         accessCode: '',
@@ -74,6 +75,7 @@ function nouraApp() {
         },
         state: Alpine.$persist({
             hasAccess: false,
+            isCoaching: false,
             startDate: null, 
             tourSeen: false, 
             welcomeComplete: false,
@@ -97,20 +99,22 @@ function nouraApp() {
         checkAccessCode() {
             this.loginError = false;
             const codeMap = {
-                'NOURA-MERVE-26': 'Merve',
-                'NOURA-MASOOMA-26': 'Masooma',
-                'NOURA-RANA-26': 'Rana',
-                'NOURA-REBECCA-26': 'Rebecca',
-                'NOURA-EBRU-26': 'Ebru',
-                'NOURA-MUKADDES-26': 'Mukaddes',
-                'NOURA-MAMA-07-26': 'Mama',
-                'NOURA-MAMA-08-26': 'Mama',
-                'NOURA-MAMA-09-26': 'Mama',
-                'NOURA-MAMA-10-26': 'Mama'
+                'NOURA-MERVE-26': { name: 'Merve', coaching: false },
+                'NOURA-MASOOMA-26': { name: 'Masooma', coaching: false },
+                'NOURA-RANA-26': { name: 'Rana', coaching: false },
+                'NOURA-REBECCA-26': { name: 'Rebecca', coaching: false },
+                'NOURA-EBRU-26': { name: 'Ebru', coaching: false },
+                'NOURA-MUKADDES-26': { name: 'Mukaddes', coaching: true },
+                'NOURA-MAMA-07-26': { name: 'Mama', coaching: false },
+                'NOURA-MAMA-08-26': { name: 'Mama', coaching: false },
+                'NOURA-MAMA-09-26': { name: 'Mama', coaching: false },
+                'NOURA-MAMA-10-26': { name: 'Mama', coaching: false }
             };
             const enteredCode = this.accessCode.toUpperCase().trim();
             if (codeMap[enteredCode]) {
-                this.state.name = codeMap[enteredCode];
+                const user = codeMap[enteredCode];
+                this.state.name = user.name;
+                this.state.isCoaching = user.coaching;
                 this.state.hasAccess = true;
                 this.state.welcomeComplete = true;
                 if (!this.state.startDate) this.state.startDate = new Date().toISOString();
@@ -134,17 +138,17 @@ function nouraApp() {
             { title: 'Teller-Hoheit', mission: "Iss heute keine Reste. Deck dir einen eigenen Teller. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> erkläre ich dir, warum das dein wichtigster Sieg ist.", prompt: "Wie hat es sich angefühlt, heute nur für dich einen Teller anzurichten?" },
             { title: 'Protein-Anker', mission: "Zu jeder Mahlzeit heute eine Faustgröße Protein. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für meine Liste der besten Quellen!", prompt: "Welche Proteinquelle hat dir heute am meisten Energie gegeben?" },
             { title: 'Liquid Gold', mission: "Trinke 500ml Wasser vor dem ersten Kaffee. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> erfährst du, wie Wasser deinen Heißhunger steuert.", prompt: "Was hat sich durch das Wasser am Morgen in deinem Körper verändert?" },
-            { title: '5-Minuten-Stille', mission: "Halte kurz inne, bevor du isst. Atme 3x tief. Hör dir dazu meinen Quick-Reset Audio-Impuls in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> an.", prompt: "Welcher Gedanke kam dir in der Stille vor dem Essen?" },
-            { title: 'Flow-Check', mission: "Pass dein Essen dem Familienchaos an, ohne extra zu kochen. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir heute meine 3 besten Flow-Hacks.", prompt: "Wie hast du es heute geschafft, flexibel zu bleiben?" },
+            { title: 'Dein Atem-Anker', mission: "Halte kurz inne, bevor du isst. Atme 3x tief. Hör dir dazu meinen Quick-Reset Audio-Impuls in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> an.", prompt: "Welcher Gedanke kam dir in der Stille vor dem Essen?" },
+            { title: 'Familien-Harmonie', mission: "Pass dein Essen dem Familien-Flow an, ohne extra zu kochen. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir heute meine 3 besten Flow-Hacks.", prompt: "Wie hast du es heute geschafft, flexibel zu bleiben?" },
             { title: 'Body Respect', mission: "Nenne eine Sache, für die du deinem Körper heute dankbar bist. Teile sie mit uns in der <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Gruppe</a>!", prompt: "Wofür bist du deinem Körper heute besonders dankbar?" },
-            { title: 'Rest & Reflect', mission: "Sonntags-Reset: Was darf heute gehen? Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für unsere gemeinsame Reflektions-Runde.", prompt: "Was darfst du heute loslassen, um leichter in die neue Woche zu starten?" },
-            { title: 'Blutzucker-Liebe', mission: "Achte auf die Reihenfolge: Erst Gemüse, dann Protein. Warum das alles ändert, erkläre ich dir heute in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat dein Körper auf die neue Reihenfolge beim Essen reagiert?" },
-            { title: 'Intuitive Wahl', mission: "Hunger oder Emotion? Frag dich vor dem Snack: Was brauche ich gerade wirklich? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> gehen wir heute tief.", prompt: "Was war heute der Unterschied zwischen emotionalem und körperlichem Hunger?" },
-            { title: 'Morgen-Anker', mission: "2 Minuten Stille vor dem Handy. Starte bei dir, nicht bei den anderen. Tipps für Morgen-Rituale findest du in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat die Stille am Morgen deinen Tag beeinflusst?" },
-            { title: 'Sanfter Flow', mission: "Bewege deinen Körper für 5 Minuten so, wie es sich gut anfühlt. In <a href='https.t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> teile ich heute eine sanfte Routine mit dir.", prompt: "Welche Bewegung hat dein Körper heute am meisten gebraucht?" },
+            { title: 'Dein Seelen-Gepäck', mission: "Sonntags-Reset: Was darf heute gehen? Du hast Woche 1 gemeistert! Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für unsere gemeinsame Reflektions-Runde.", prompt: "Was darfst du heute loslassen, um leichter in die neue Woche zu starten?" },
+            { title: 'Die goldene Reihenfolge', mission: "Achte auf die Reihenfolge: Erst Gemüse, dann Protein. Warum das alles ändert, erkläre ich dir heute in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat dein Körper auf die neue Reihenfolge beim Essen reagiert?" },
+            { title: 'Intuitive Wahl', mission: "Hunger oder Emotion? Halte inne vor dem ersten Bissen: Was brauche ich gerade wirklich? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> gehen wir heute tief.", prompt: "Was war heute der Unterschied zwischen emotionalem und körperlichem Hunger?" },
+            { title: 'Dein heiliger Morgen', mission: "2 Minuten Stille vor dem Handy. Starte bei dir, nicht bei den anderen. Tipps für Morgen-Rituale findest du in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat die Stille am Morgen deinen Tag beeinflusst?" },
+            { title: 'Sanfter Flow', mission: "Bewege deinen Körper für 5 Minuten so, wie es sich gut anfühlt. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> teile ich heute eine sanfte Routine mit dir.", prompt: "Welche Bewegung hat dein Körper heute am meisten gebraucht?" },
             { title: 'Echtzeit-Genuss', mission: "Iss die ersten 3 Bissen in voller Stille. Was schmeckst du? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> besprechen wir heute das Thema Achtsamkeit.", prompt: "Was hast du bei den ersten drei Bissen heute bewusst wahrgenommen?" },
-            { title: 'Safety First', mission: "Bereite heute Abend deinen Rettungsanker für morgen vor. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir, wie mein Schutzschild aussieht.", prompt: "Was ist dein persönlicher 'Rettungsanker' für stressige Momente?" },
-            { title: 'Dein Licht', mission: "Tag 14! Du hast dir vertraut. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für das große Finale und deinen Weg in die Zukunft mit mir.", prompt: "Was ist die wichtigste Erkenntnis, die du aus den letzten 14 Tagen mitnimmst?" }
+            { title: 'Dein Schutzschild', mission: "Bereite heute Abend deinen Rettungsanker für morgen vor. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir, wie mein Schutzschild aussieht.", prompt: "Was ist dein persönlicher 'Rettungsanker' für stressige Momente?" },
+            { title: 'Dein Licht', mission: "Tag 14! Du hast dir vertraut. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für das große Finale. Vergiss nicht, dein Reisebuch als PDF zu sichern!", prompt: "Was ist die wichtigste Erkenntnis, die du aus den letzten 14 Tagen mitnimmst?" }
         ],
         init() {
             if (window.location.search.includes('reset=true')) {
@@ -169,6 +173,14 @@ function nouraApp() {
             } else {
                 this.state.nourish[2] = tag;
             }
+        },
+        addFlowTag(tag) {
+            if (!this.state.pivot) this.state.pivot = tag;
+            else if (!this.state.pivot.includes(tag)) this.state.pivot += ', ' + tag;
+        },
+        addSafetyTag(tag) {
+            if (!this.state.safety) this.state.safety = tag;
+            else if (!this.state.safety.includes(tag)) this.state.safety += ', ' + tag;
         },
         toggleDay(index) { 
             this.state.checklist[index].done = !this.state.checklist[index].done; 
