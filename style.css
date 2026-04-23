@@ -406,7 +406,52 @@ input[type=range]::-webkit-slider-runnable-track {
     text-align: center;
     line-height: 1.2;
 }
-@media (max-width: 640px) {
-    .impulse-circle { width: 62px; height: 62px; }
-    .impulse-item { width: 64px; }
+@keyframes noura-breathe {
+    0%, 100% { transform: scale(0.6); opacity: 0.3; }
+    40% { transform: scale(1.1); opacity: 1; } /* Einatmen fertig nach 4s */
+}
+.breath-orb-container {
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 3rem auto;
+    position: relative;
+}
+/* Der statische äußere Ring zur Orientierung */
+.breath-guide {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border: 1px solid rgba(139, 168, 142, 0.2);
+    border-radius: 50%;
+}
+/* Der animierte innere Kreis */
+.breath-orb {
+    width: 160px;
+    height: 160px;
+    background: var(--sage);
+    border-radius: 50%;
+    animation: noura-breathe 10s infinite ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px -5px rgba(139, 168, 142, 0.3);
+}
+.breath-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 800;
+    color: white;
+    z-index: 10;
+    pointer-events: none;
+}
+@keyframes breath-label-fade {
+    0%, 100% { content: 'Ausatmen...'; opacity: 0.4; }
+    40% { content: 'Einatmen...'; opacity: 1; }
 }

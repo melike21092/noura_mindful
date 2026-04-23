@@ -10,6 +10,41 @@ function nouraApp() {
         accessCode: '',
         showPassword: false,
         loginError: false,
+        activeImpulse: null, // Welcher Impuls ist gerade offen?
+        impulseContent: {
+            soul: {
+                title: 'Daily Soul',
+                text: 'Vertraue dem Prozess. Dein Körper braucht Zeit, um zu heilen. Sei heute besonders gütig zu dir selbst.',
+                icon: 'mic',
+                color: 'sage'
+            },
+            insight: {
+                title: 'Noura Insight',
+                text: 'Protein am Morgen stabilisiert deinen Blutzucker für den gesamten Tag und senkt Heißhunger am Abend.',
+                icon: 'lightbulb',
+                color: 'terracotta'
+            },
+            ritual: {
+                title: 'Dein Ritual',
+                text: 'Halte kurz inne. Atme 4 Sekunden ein, halte 4 Sekunden, atme 4 Sekunden aus. Spüre die Ruhe.',
+                icon: 'waves',
+                color: 'charcoal'
+            },
+            community: {
+                title: 'Noura Community',
+                text: 'Du bist nicht allein. Aktuell gehen 142 andere Frauen diesen Weg der Achtsamkeit mit dir.',
+                icon: 'users',
+                color: 'sage'
+            }
+        },
+        openImpulse(id) {
+            this.activeImpulse = this.impulseContent[id];
+            document.body.style.overflow = 'hidden';
+        },
+        closeImpulse() {
+            this.activeImpulse = null;
+            document.body.style.overflow = 'auto';
+        },
         // Zentrales Verzeichnis aller Challenges
         challenges: [
             {
