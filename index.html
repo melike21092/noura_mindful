@@ -64,6 +64,10 @@
                         <i x-show="!showPassword" data-lucide="eye" class="w-5 h-5"></i>
                         <i x-show="showPassword" data-lucide="eye-off" class="w-5 h-5"></i>
                     </button>
+                    <!-- Fehlermeldung -->
+                    <p x-show="loginError" x-transition class="absolute top-full left-0 w-full text-center text-[10px] text-terracotta font-bold uppercase tracking-widest mt-2">
+                        Code unbekannt. Bitte prüfe die Schreibweise.
+                    </p>
                 </div>
                 <button @click="checkAccessCode()" class="mt-12 btn-primary w-full">Eintreten</button>
             </div>

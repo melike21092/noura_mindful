@@ -8,6 +8,7 @@ function nouraApp() {
         saved: false,
         accessCode: '',
         showPassword: false,
+        loginError: false,
         get greeting() {
             const h = new Date().getHours();
             if (h < 4) return `Gute Nacht`;
@@ -53,6 +54,7 @@ function nouraApp() {
             checklist: Array.from({length: 14}, () => ({ done: false, journal: '' }))
         }).as('noura_storage'),
         checkAccessCode() {
+            this.loginError = false;
             const codeMap = {
                 'NOURA-MERVE-26': 'Merve',
                 'NOURA-MASOOMA-26': 'Masooma',
@@ -72,7 +74,7 @@ function nouraApp() {
                 this.state.hasAccess = true;
                 this.state.welcomeComplete = true; // Wir überspringen die Namenseingabe
             } else {
-                alert('Dieser Zugangscode ist uns nicht bekannt. Bitte prüfe die Schreibweise.');
+                this.loginError = true;
                 this.accessCode = '';
             }
         },
