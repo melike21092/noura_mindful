@@ -353,6 +353,60 @@ input[type=range]::-webkit-slider-runnable-track {
     background: rgba(139, 168, 142, 0.2);
     border-radius: 10px;
 }
-input[type=range]:focus {
-    outline: none;
+/* Impulse Bar (Stories) */
+.impulse-container {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.impulse-container::-webkit-scrollbar { display: none; }
+
+.impulse-item {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 72px;
+}
+.impulse-circle {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    padding: 3px;
+    background: white;
+    border: 1.5px solid rgba(139, 168, 142, 0.2);
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.impulse-item.new .impulse-circle {
+    border-color: var(--sage);
+    box-shadow: 0 0 15px rgba(139, 168, 142, 0.2);
+}
+.impulse-circle img, .impulse-circle .impulse-icon {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-cover;
+    background: var(--sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sage);
+}
+.impulse-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    opacity: 0.6;
+    text-align: center;
+    line-height: 1.2;
+}
+@media (max-width: 640px) {
+    .impulse-circle { width: 62px; height: 62px; }
+    .impulse-item { width: 64px; }
 }
