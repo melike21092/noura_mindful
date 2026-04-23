@@ -10,6 +10,25 @@ function nouraApp() {
         accessCode: '',
         showPassword: false,
         loginError: false,
+        // Zentrales Verzeichnis aller Challenges
+        challenges: [
+            {
+                id: 'reset-14',
+                title: '14-Tage-Reset Wegweiser',
+                label: 'Aktuelle Challenge',
+                description: 'Dein täglicher Begleiter für mehr Achtsamkeit, regulierte Blutzuckerwerte und ein entspanntes Nervensystem.',
+                icon: 'calendar',
+                url: 'reset.html',
+                color: 'sage',
+                active: true // Globaler Schalter: Wenn false, sieht es niemand
+            }
+        ],
+        // Getter für Challenges, die die Nutzerin sehen darf
+        get visibleChallenges() {
+            return this.challenges.filter(c => 
+                c.active && this.state.unlockedChallenges.includes(c.id)
+            );
+        },
         get greeting() {
             const h = new Date().getHours();
             const greetings = {
@@ -83,6 +102,7 @@ function nouraApp() {
             todayMood: '',
             name: '', 
             why: '', 
+            unlockedChallenges: [], // Liste der IDs freigeschalteter Challenges
             nourish: ['', '', ''], 
             pivot: '', 
             safety: '', 
@@ -99,22 +119,23 @@ function nouraApp() {
         checkAccessCode() {
             this.loginError = false;
             const codeMap = {
-                'NOURA-MERVE-26': { name: 'Merve', coaching: false },
-                'NOURA-MASOOMA-26': { name: 'Masooma', coaching: false },
-                'NOURA-RANA-26': { name: 'Rana', coaching: false },
-                'NOURA-REBECCA-26': { name: 'Rebecca', coaching: false },
-                'NOURA-EBRU-26': { name: 'Ebru', coaching: false },
-                'NOURA-MUKADDES-26': { name: 'Mukaddes', coaching: true },
-                'NOURA-MAMA-07-26': { name: 'Mama', coaching: false },
-                'NOURA-MAMA-08-26': { name: 'Mama', coaching: false },
-                'NOURA-MAMA-09-26': { name: 'Mama', coaching: false },
-                'NOURA-MAMA-10-26': { name: 'Mama', coaching: false }
+                'NOURA-MERVE-26': { name: 'Merve', coaching: false, challenges: ['reset-14'] },
+                'NOURA-MASOOMA-26': { name: 'Masooma', coaching: false, challenges: ['reset-14'] },
+                'NOURA-RANA-26': { name: 'Rana', coaching: false, challenges: ['reset-14'] },
+                'NOURA-REBECCA-26': { name: 'Rebecca', coaching: false, challenges: ['reset-14'] },
+                'NOURA-EBRU-26': { name: 'Ebru', coaching: false, challenges: ['reset-14'] },
+                'NOURA-MUKADDES-26': { name: 'Mukaddes', coaching: true, challenges: ['reset-14'] },
+                'NOURA-MAMA-07-26': { name: 'Mama', coaching: false, challenges: ['reset-14'] },
+                'NOURA-MAMA-08-26': { name: 'Mama', coaching: false, challenges: ['reset-14'] },
+                'NOURA-MAMA-09-26': { name: 'Mama', coaching: false, challenges: ['reset-14'] },
+                'NOURA-MAMA-10-26': { name: 'Mama', coaching: false, challenges: ['reset-14'] }
             };
             const enteredCode = this.accessCode.toUpperCase().trim();
             if (codeMap[enteredCode]) {
                 const user = codeMap[enteredCode];
                 this.state.name = user.name;
                 this.state.isCoaching = user.coaching;
+                this.state.unlockedChallenges = user.challenges || [];
                 this.state.hasAccess = true;
                 this.state.welcomeComplete = true;
                 if (!this.state.startDate) this.state.startDate = new Date().toISOString();
@@ -141,7 +162,7 @@ function nouraApp() {
             { title: 'Dein Atem-Anker', mission: "Halte kurz inne, bevor du isst. Atme 3x tief. Hör dir dazu meinen Quick-Reset Audio-Impuls in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> an.", prompt: "Welcher Gedanke kam dir in der Stille vor dem Essen?" },
             { title: 'Familien-Harmonie', mission: "Pass dein Essen dem Familien-Flow an, ohne extra zu kochen. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir heute meine 3 besten Flow-Hacks.", prompt: "Wie hast du es heute geschafft, flexibel zu bleiben?" },
             { title: 'Body Respect', mission: "Nenne eine Sache, für die du deinem Körper heute dankbar bist. Teile sie mit uns in der <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Gruppe</a>!", prompt: "Wofür bist du deinem Körper heute besonders dankbar?" },
-            { title: 'Dein Seelen-Gepäck', mission: "Sonntags-Reset: Was darf heute gehen? Du hast Woche 1 gemeistert! Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für unsere gemeinsame Reflektions-Runde.", prompt: "Was darfst du heute loslassen, um leichter in die neue Woche zu starten?" },
+            { title: 'Dein Seelen-Gepäck', mission: "Sonntags-Reset: Was darf heute gehen? Du hast Woche 1 gemeistert! Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für unsere gemeinsam Reflektions-Runde.", prompt: "Was darfst du heute loslassen, um leichter in die neue Woche zu starten?" },
             { title: 'Die goldene Reihenfolge', mission: "Achte auf die Reihenfolge: Erst Gemüse, dann Protein. Warum das alles ändert, erkläre ich dir heute in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat dein Körper auf die neue Reihenfolge beim Essen reagiert?" },
             { title: 'Intuitive Wahl', mission: "Hunger oder Emotion? Halte inne vor dem ersten Bissen: Was brauche ich gerade wirklich? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> gehen wir heute tief.", prompt: "Was war heute der Unterschied zwischen emotionalem und körperlichem Hunger?" },
             { title: 'Dein heiliger Morgen', mission: "2 Minuten Stille vor dem Handy. Starte bei dir, nicht bei den anderen. Tipps für Morgen-Rituale findest du in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat die Stille am Morgen deinen Tag beeinflusst?" },
