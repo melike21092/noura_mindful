@@ -101,7 +101,7 @@
     </template>
 
     <div x-show="state.hasAccess && state.welcomeComplete && state.tourSeen" x-cloak>
-        <nav class="fixed top-0 left-0 w-full z-[90] bg-white/90 backdrop-blur-xl py-4 border-b border-sage/10 text-charcoal no-print">
+        <nav class="fixed top-0 left-0 w-full z-[90] bg-white/80 backdrop-blur-xl py-4 border-b border-sage/5 text-charcoal no-print">
             <div class="max-w-6xl mx-auto flex justify-between items-center px-6">
                 <div class="flex items-center gap-4">
                     <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain -ml-2">
@@ -110,9 +110,7 @@
                         <p class="text-[8px] uppercase tracking-[0.2em] opacity-60 mt-1 font-bold">by Mukaddes Mandirali</p>
                     </div>
                 </div>
-                <a href="index.html" class="flex items-center gap-2 hover:opacity-70 transition-opacity">
-                    <i data-lucide="layout-grid" class="w-5 h-5 text-sage"></i>
-                </a>
+                <div></div>
             </div>
         </nav>
 
@@ -259,8 +257,32 @@
             </section>
         </main>
 
+        <!-- Floating Navigation -->
+        <nav class="noura-nav no-print">
+            <a href="index.html" class="noura-nav-item">
+                <i data-lucide="layout-grid"></i>
+                <span class="noura-nav-label">Home</span>
+            </a>
+            
+            <!-- Nähren (Nur für Coaching) -->
+            <template x-if="state.isCoaching">
+                <a href="naehren.html" class="noura-nav-item">
+                    <i data-lucide="utensils"></i>
+                    <span class="noura-nav-label">Nähren</span>
+                </a>
+            </template>
+
+            <!-- Journey (Nur wenn Challenge aktiv) -->
+            <template x-if="visibleChallenges.length > 0">
+                <a :href="visibleChallenges[0].url" class="noura-nav-item active">
+                    <i data-lucide="milestone"></i>
+                    <span class="noura-nav-label">Journey</span>
+                </a>
+            </template>
+        </nav>
+
         <!-- Footer -->
-        <footer id="kontakt" class="max-w-5xl mx-auto px-6 pb-24 text-center text-charcoal">
+        <footer id="kontakt" class="max-w-5xl mx-auto px-6 pb-40 text-center text-charcoal">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left mb-20 text-charcoal no-print">
                 <div class="bg-white/40 p-8 rounded-[2rem] border border-white text-charcoal shadow-sm">
                     <h4 class="h2-serif !text-xl mb-4 flex items-center gap-2 italic text-charcoal">Immer griffbereit</h4>

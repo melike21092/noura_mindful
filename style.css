@@ -259,3 +259,100 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     .print-only { display: block !important; }
 }
 .print-only { display: none; }
+
+/* Floating Navigation Dock */
+.noura-nav {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 2rem;
+    padding: 0.4rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    box-shadow: 0 15px 35px -5px rgba(45, 55, 72, 0.08);
+    z-index: 1000;
+    min-width: 260px;
+}
+.noura-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    color: var(--charcoal);
+    opacity: 0.3;
+    transition: all 0.4s ease;
+    padding: 0.5rem 0.25rem;
+    flex: 1;
+    min-width: 60px;
+    border-radius: 1.5rem;
+}
+.noura-nav-item.active {
+    opacity: 1;
+    color: var(--sage);
+    background: rgba(139, 168, 142, 0.04);
+}
+.noura-nav-item i {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.75px;
+}
+.noura-nav-label {
+    font-size: 7.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 800;
+}
+
+@media (max-width: 640px) {
+    .noura-nav {
+        bottom: 1rem;
+        width: calc(100% - 2.5rem);
+        min-width: auto;
+        padding: 0.3rem;
+    }
+    .noura-nav-item {
+        min-width: 0;
+        padding: 0.5rem 0;
+    }
+    .noura-card { 
+        padding: 1.5rem !important; 
+        border-radius: 2rem !important; 
+    }
+    .h1-serif { font-size: 2.25rem !important; }
+}
+
+/* Range Slider Custom Styling */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #8ba88e; /* var(--sage) */
+    cursor: pointer;
+    margin-top: -8px; 
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 2px;
+    cursor: pointer;
+    background: rgba(139, 168, 142, 0.2);
+    border-radius: 10px;
+}
+input[type=range]:focus {
+    outline: none;
+}

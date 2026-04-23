@@ -161,7 +161,7 @@
                 </a>
             </template>
 
-            <!-- Modul: Basis-Anamnese -->
+            <!-- Modul: Basis-Anamnese (Nur für Coaching) -->
             <template x-if="state.isCoaching">
                 <a href="anamnese.html" class="noura-card noura-glow group hover:translate-x-2 transition-all duration-700 flex flex-col md:flex-row items-center gap-8 !p-8 border-terracotta/10 hover:border-terracotta/30 bg-white/60 hover:bg-terracotta/[0.03]">
                     <div class="w-20 h-20 bg-terracotta/10 rounded-[2.5rem] flex items-center justify-center text-terracotta group-hover:scale-110 group-hover:bg-terracotta group-hover:text-white transition-all duration-700 shrink-0">
@@ -176,21 +176,6 @@
                         <i data-lucide="arrow-right" class="w-6 h-6"></i>
                     </div>
                 </a>
-            </template>
-
-            <!-- Sperr-Zustand für Nicht-Coaching-Klienten -->
-            <template x-if="!state.isCoaching">
-                <div class="noura-card !p-8 border border-charcoal/5 bg-charcoal/[0.02] flex flex-col md:flex-row items-center gap-8 opacity-60 grayscale relative overflow-hidden">
-                    <div class="w-20 h-20 bg-charcoal/5 rounded-[2.5rem] flex items-center justify-center text-charcoal/30 shrink-0">
-                        <i data-lucide="lock" class="w-10 h-10"></i>
-                    </div>
-                    <div class="flex-grow text-center md:text-left">
-                        <span class="label-caps mb-2 !text-charcoal/40">Exklusiv</span>
-                        <h2 class="h2-serif text-3xl mb-2 italic text-charcoal/40">Basis-Anamnese</h2>
-                        <p class="text-xs text-charcoal/30 leading-relaxed uppercase tracking-widest font-bold">Exklusiv für Coaching-Klientinnen</p>
-                    </div>
-                    <div class="absolute inset-0 bg-white/20 pointer-events-none"></div>
-                </div>
             </template>
 
             <!-- Zukünftige Module (Subtiler) -->
@@ -219,7 +204,31 @@
 
     </main>
 
-    <footer class="text-center pb-20 opacity-40">
+    <!-- Floating Navigation -->
+    <nav class="noura-nav no-print" x-show="state.hasAccess && state.welcomeComplete">
+        <a href="index.html" class="noura-nav-item active">
+            <i data-lucide="layout-grid"></i>
+            <span class="noura-nav-label">Home</span>
+        </a>
+        
+        <!-- Nähren (Nur für Coaching) -->
+        <template x-if="state.isCoaching">
+            <a href="naehren.html" class="noura-nav-item">
+                <i data-lucide="utensils"></i>
+                <span class="noura-nav-label">Nähren</span>
+            </a>
+        </template>
+
+        <!-- Journey (Nur wenn Challenge aktiv) -->
+        <template x-if="visibleChallenges.length > 0">
+            <a :href="visibleChallenges[0].url" class="noura-nav-item">
+                <i data-lucide="milestone"></i>
+                <span class="noura-nav-label">Journey</span>
+            </a>
+        </template>
+    </nav>
+
+    <footer class="text-center pb-32 opacity-40">
         <p class="h2-serif !text-base italic">In Liebe, deine Mukaddes Mandirali.</p>
     </footer>
 

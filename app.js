@@ -17,7 +17,7 @@ function nouraApp() {
                 title: '14-Tage-Reset Wegweiser',
                 label: 'Aktuelle Challenge',
                 description: 'Dein täglicher Begleiter für mehr Achtsamkeit, regulierte Blutzuckerwerte und ein entspanntes Nervensystem.',
-                icon: 'calendar',
+                icon: 'milestone',
                 url: 'reset.html',
                 color: 'sage',
                 active: true // Globaler Schalter: Wenn false, sieht es niemand
@@ -114,8 +114,25 @@ function nouraApp() {
                 verdauung: '',
                 ziele: ''
             },
+            protocol: {}, // {'2024-04-23': { breakfast: { food: '', satiety: 5, mood: '' }, ... }}
             checklist: Array.from({length: 14}, () => ({ done: false, journal: '' }))
         }).as('noura_storage'),
+        initProtocol() {
+            const date = new Date().toISOString().split('T')[0];
+            if (!this.state.protocol[date]) {
+                this.state.protocol[date] = {
+                    breakfast: { food: '', satiety: 5, mood: '' },
+                    lunch: { food: '', satiety: 5, mood: '' },
+                    dinner: { food: '', satiety: 5, mood: '' },
+                    snacks: { food: '', satiety: 5, mood: '' },
+                    reflection: ''
+                };
+            }
+        },
+        get todayProtocol() {
+            const date = new Date().toISOString().split('T')[0];
+            return this.state.protocol[date] || {};
+        },
         checkAccessCode() {
             this.loginError = false;
             const codeMap = {
