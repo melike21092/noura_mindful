@@ -3,34 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOURA | 14-Tage-Reset-Wegweiser</title>
+    <title>NOURA | Dein Dashboard</title>
 
-    <!-- ============== PWA & Homescreen ============== -->
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- iOS Fullscreen -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    
-    <!-- Android/Andere Fullscreen -->
-    <meta name="mobile-web-app-capable" content="yes">
-
-    <!-- App Icons -->
-    <link rel="apple-touch-icon" href="images/n-logo.svg">
     <link rel="icon" href="images/n-logo.svg" type="image/svg+xml">
-
-    <!-- 
-    ================================================================
-    HIER DEIN BASE64-ICON FÜR SINGLE-FILE-DEPLOYMENT EINFÜGEN
-    ================================================================
-    Ersetze die href in den obigen <link>-Tags (apple-touch-icon & icon) 
-    mit dem generierten Base64-String deines App-Icons.
-    
-    Beispiel:
-    <link rel="icon" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZ...">
-    ================================================================
-    -->
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,6 +20,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
     <!-- Alpine.js Core -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
 
     <script>
         window.addEventListener('alpine:init', () => {
@@ -66,260 +43,17 @@
             }
         });
     </script>
-
-    <style type="text/css">
-        [x-cloak] { display: none !important; }
-        .reduce-motion *:not(.keep-animation) {
-            transition: none !important;
-            animation: none !important;
-        }
-        :root { 
-            --sage: #8ba88e; 
-            --sand: #fdfaf7; 
-            --terracotta: #a68b7c; 
-            --charcoal: #2d3748; 
-            --bg: var(--sand);
-            --text: var(--charcoal);
-            --card-bg: rgba(255, 255, 255, 0.8);
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        /* Paper Grain Texture */
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.04; z-index: 200; pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* Typography Unity */
-        input, textarea, select, button { font-family: 'Inter', sans-serif; }
-        ::placeholder { 
-            font-family: 'Inter', sans-serif !important; 
-            color: rgba(45, 55, 72, 0.3) !important; 
-            font-style: normal !important; 
-            font-size: 0.875rem !important;
-            letter-spacing: normal !important;
-            text-transform: none !important;
-        }
-
-        .h1-serif { font-family: 'Playfair Display', serif; font-size: 3rem; line-height: 1.1; font-weight: 400; letter-spacing: -0.02em; }
-        .h2-serif { font-family: 'Playfair Display', serif; font-size: 1.5rem; line-height: 1.3; font-weight: 400; }
-        .label-caps { 
-            font-size: 0.625rem; 
-            text-transform: uppercase; 
-            letter-spacing: 0.25em; 
-            font-weight: 800; 
-            color: var(--terracotta);
-            display: block;
-        }
-        
-        .noura-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 2.5rem; border-radius: 3.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.5); 
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .noura-glow { box-shadow: 0 20px 50px -10px rgba(139, 168, 142, 0.1); }
-
-        /* Mobile Haptics & Optimization */
-        * { -webkit-tap-highlight-color: transparent; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-
-        .input-focus { outline: none; border-bottom: 1px solid rgba(139, 168, 142, 0.1); transition: all 0.3s ease; }
-        .input-focus:focus { border-bottom: 1px solid var(--sage); }
-
-        .checkbox-custom {
-            width: 22px; height: 22px; border: 1.5px solid var(--sage); border-radius: 7px;
-            display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;
-        }
-        .checkbox-custom.checked { background-color: var(--sage); }
-
-        .zen-orb {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            border-radius: 50%; filter: blur(70px); z-index: 0; opacity: 0.5;
-            transition: all 2s ease; animation: orb-pulse 8s infinite ease-in-out;
-        }
-        @keyframes orb-pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.6; }
-        }
-
-        /* Breathing Guide Animations */
-        @keyframes breathe-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(3.5); opacity: 0.7; }
-        }
-        @keyframes breathe-text-fade {
-            0%, 100% { opacity: 0; transform: translateY(5px); }
-            10%, 40% { opacity: 1; transform: translateY(0); }
-            50%, 90% { opacity: 0; transform: translateY(-5px); }
-        }
-        @keyframes breathe-text-fade-alt {
-            0%, 40% { opacity: 0; transform: translateY(5px); }
-            50%, 60% { opacity: 0; transform: translateY(5px); }
-            60%, 90% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-5px); }
-        }
-
-        /* Task Completion Sparkles */
-        @keyframes sparkle-1 {
-            0% { transform: scale(0) translate(0, 0) rotate(0deg); opacity: 0; }
-            30% { opacity: 1; }
-            100% { transform: scale(1) translate(-25px, -45px) rotate(45deg); opacity: 0; }
-        }
-        @keyframes sparkle-2 {
-            0% { transform: scale(0) translate(0, 0) rotate(0deg); opacity: 0; }
-            30% { opacity: 1; }
-            100% { transform: scale(0.8) translate(25px, -55px) rotate(-30deg); opacity: 0; }
-        }
-        @keyframes sparkle-3 {
-            0% { transform: scale(0) translate(0, 0) rotate(0deg); opacity: 0; }
-            30% { opacity: 1; }
-            100% { transform: scale(1.2) translate(5px, -65px) rotate(15deg); opacity: 0; }
-        }
-        .sparkle { position: absolute; width: 4px; height: 4px; border-radius: 50%; pointer-events: none; z-index: 50; }
-        .s-1 { background: var(--sage); animation: sparkle-1 0.8s ease-out forwards; }
-        .s-2 { background: var(--terracotta); animation: sparkle-2 0.9s ease-out forwards; }
-        .s-3 { background: var(--sage); animation: sparkle-3 1s ease-out forwards; opacity: 0.6; }
-
-        .checkbox-custom.checked { 
-            background-color: var(--sage); 
-            animation: check-pulse 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes check-pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 168, 142, 0.6); }
-            50% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(139, 168, 142, 0); }
-            100% { transform: scale(1); }
-        }
-
-        .breathing-orb { animation: breathe-pulse 10s infinite ease-in-out; }
-        .breathing-text-1 { animation: breathe-text-fade 10s infinite; }
-        .breathing-text-2 { animation: breathe-text-fade-alt 10s infinite; }
-
-        .journal-textarea {
-            width: 100%; background: transparent; border: none; border-left: 1.5px solid rgba(139, 168, 142, 0.1);
-            padding-left: 1rem; margin-top: 0.75rem; font-family: 'Inter', sans-serif;
-            font-size: 0.875rem; color: var(--charcoal); outline: none; resize: none; overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .journal-textarea:focus { border-left: 1.5px solid var(--sage); background: rgba(139, 168, 142, 0.02); }
-
-        /* Die "schönen Buttons mit Rundungen" - Fixed CSS */
-        .btn-base {
-            padding: 1.1rem 2.8rem;
-            border-radius: 9999px !important;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-
-        .btn-primary {
-            background-color: var(--sage) !important;
-            color: white !important;
-            box-shadow: 0 10px 20px -5px rgba(139, 168, 142, 0.25);
-            padding: 1.1rem 2.8rem;
-            border-radius: 9999px !important;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-        .btn-primary:hover {
-            background-color: #79987c !important;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(139, 168, 142, 0.35);
-        }
-
-        .btn-secondary {
-            background-color: white !important;
-            color: var(--charcoal) !important;
-            border: 1px solid #CDD6E2 !important;
-            padding: 1.1rem 2.8rem;
-            border-radius: 9999px !important;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .btn-secondary:hover {
-            border-color: var(--sage) !important;
-            color: var(--sage) !important;
-            transform: translateY(-1px);
-        }
-
-        .mood-btn {
-            width: 60px; height: 60px; border-radius: 1.25rem; display: flex; align-items: center; justify-content: center;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: white; border: 1.5px solid rgba(139, 168, 142, 0.1); cursor: pointer; font-size: 1.5rem;
-        }
-        .mood-btn.active { 
-            border-color: var(--sage); 
-            box-shadow: 0 0 0 2px var(--sage), 0 10px 20px -5px rgba(139, 168, 142, 0.2);
-            transform: scale(1.1);
-            opacity: 1 !important; 
-        }
-
-        .progress-ring {
-            position: relative; width: 64px; height: 64px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .progress-ring svg { transform: rotate(-90deg); width: 64px; height: 64px; }
-        .progress-ring circle {
-            fill: none; stroke-width: 3; stroke-linecap: round;
-            transition: stroke-dashoffset 1s ease-out;
-        }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; }
-            .noura-card { border: 1px solid #eee; padding: 2rem; border-radius: 1rem; page-break-inside: avoid; }
-            .print-container { padding-top: 0; }
-        }
-    </style>
 </head>
-<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" :class="{'overflow-hidden': !state.hasAccess || !state.welcomeComplete || !state.tourSeen, 'reduce-motion': state.reduceMotion}">
+<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" :class="{'overflow-hidden': !state.hasAccess, 'reduce-motion': state.reduceMotion}">
 
     <!-- Global Background Glow -->
-    <div class="fixed inset-0 z-0 pointer-events-none no-print overflow-hidden">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out" 
-             :style="'width: 1200px; height: 1200px; border-radius: 50%; filter: blur(120px); background: radial-gradient(circle, ' + 
-                    (state.todayMood === 'zentriert' ? 'rgba(139, 168, 142, 0.5)' : 
-                     state.todayMood === 'gestresst' ? 'rgba(166, 139, 124, 0.5)' : 
-                     state.todayMood === 'müde' ? 'rgba(45, 55, 72, 0.35)' : 
-                     'rgba(139, 168, 142, 0.15)') + ' 0%, transparent 70%);'"></div>
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sage/5 w-[1000px] h-[1000px] rounded-full blur-[120px]"></div>
     </div>
 
     <!-- AUTH WALL -->
     <template x-if="!state.hasAccess">
-        <div x-transition:enter="transition-opacity duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-[200] bg-sand flex flex-col items-center justify-center p-8 no-print">
+        <div class="fixed inset-0 z-[200] bg-sand flex flex-col items-center justify-center p-8">
             <div class="w-full max-w-sm text-center">
                 <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-48 mx-auto mb-12">
                 <div class="max-w-xs mx-auto relative">
@@ -336,9 +70,9 @@
         </div>
     </template>
 
-    <!-- ONBOARDING FLOW -->
+    <!-- ONBOARDING FLOW (Name abfragen) -->
     <template x-if="state.hasAccess && !state.welcomeComplete">
-        <div class="fixed inset-0 z-[180] bg-sand flex flex-col items-center justify-start pt-[25vh] p-8 no-print">
+        <div class="fixed inset-0 z-[180] bg-sand flex flex-col items-center justify-start pt-[25vh] p-8">
             <div class="zen-orb w-[600px] h-[600px] bg-sage/10 opacity-50"></div>
             <div class="max-w-xl w-full text-center relative z-10 min-h-[400px]">
                 <div class="space-y-12">
@@ -351,128 +85,19 @@
                                class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-3xl font-serif text-charcoal outline-none placeholder:text-xl placeholder-charcoal/40" 
                                placeholder="Dein Vorname...">
                         <button x-show="state.name.length > 1" @click="completeWelcome()" x-transition
-                                class="mt-12 btn-primary">Weiter</button>
+                                class="mt-12 btn-primary">Weiter zum Dashboard</button>
                     </div>
                 </div>
             </div>
         </div>
     </template>
 
-    <!-- WELCOME TOUR -->
-    <template x-if="state.hasAccess && state.welcomeComplete && !state.tourSeen">
-        <div class="fixed inset-0 z-[120] bg-sand flex flex-col items-center justify-start pt-[15vh] p-8 no-print">
-            <div class="zen-orb w-[800px] h-[800px] bg-sage/5 opacity-50"></div>
-            <div class="max-w-xl w-full text-center relative z-10">
-                <!-- Progress Dots -->
-                <div class="flex gap-2 mb-12 justify-center">
-                    <template x-for="i in 4">
-                        <div class="h-1.5 w-10 rounded-full transition-all duration-700" 
-                             :class="tourStep >= i ? 'bg-sage' : 'bg-sage/10'"></div>
-                    </template>
-                </div>
-
-                <!-- Steps Container (Stabilized) -->
-                <div class="h-[450px] relative w-full overflow-hidden">
-                    <!-- Step 1: Der Check-in -->
-                    <div x-show="tourStep === 1" 
-                         x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-700"
-                         x-transition:enter-start="opacity-0 translate-y-4"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-400 absolute inset-x-0"
-                         x-transition:leave-end="opacity-0 -translate-y-4"
-                         class="flex flex-col items-center pt-8">
-                        <div class="w-20 h-20 bg-sage/10 rounded-[2.5rem] flex items-center justify-center mb-10 text-sage shrink-0">
-                            <i data-lucide="activity" class="w-10 h-10"></i>
-                        </div>
-                        <div class="space-y-4">
-                            <h3 class="h1-serif !text-3xl md:text-4xl italic mb-4">Der Check-in</h3>
-                            <p class="label-caps">Dein Fokus</p>
-                        </div>
-                        <p class="text-lg font-serif text-charcoal/60 italic leading-relaxed max-w-sm mx-auto mt-6">Wähle jeden Morgen deinen Intent. Ein Klick, um dein Nervensystem zu regulieren oder deinen Fokus zu steuern.</p>
-                    </div>
-
-                    <!-- Step 2: Dein Versprechen -->
-                    <div x-show="tourStep === 2" 
-                         x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-700"
-                         x-transition:enter-start="opacity-0 translate-y-4"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-400 absolute inset-x-0"
-                         x-transition:leave-end="opacity-0 -translate-y-4"
-                         class="flex flex-col items-center pt-8">
-                        <div class="w-20 h-20 bg-terracotta/10 rounded-[2.5rem] flex items-center justify-center mb-10 text-terracotta shrink-0">
-                            <i data-lucide="heart" class="w-10 h-10"></i>
-                        </div>
-                        <div class="space-y-4">
-                            <h3 class="h1-serif !text-3xl md:text-4xl italic mb-4">Dein Versprechen</h3>
-                            <p class="label-caps">Selbstfürsorge</p>
-                        </div>
-                        <p class="text-lg font-serif text-charcoal/60 italic leading-relaxed max-w-sm mx-auto mt-6">Verankere deine tägliche Entscheidung schriftlich. Ein Versprechen an dich selbst, damit dein Körper dir wieder vertraut.</p>
-                    </div>
-
-                    <!-- Step 3: Das System -->
-                    <div x-show="tourStep === 3" 
-                         x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-700"
-                         x-transition:enter-start="opacity-0 translate-y-4"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-400 absolute inset-x-0"
-                         x-transition:leave-end="opacity-0 -translate-y-4"
-                         class="flex flex-col items-center pt-8">
-                        <div class="w-20 h-20 bg-sage/10 rounded-[2.5rem] flex items-center justify-center mb-10 text-sage shrink-0">
-                            <i data-lucide="shield-check" class="w-10 h-10"></i>
-                        </div>
-                        <div class="space-y-4">
-                            <h3 class="h1-serif !text-3xl md:text-4xl italic mb-4">Das System</h3>
-                            <p class="label-caps">Drei Säulen</p>
-                        </div>
-                        <div class="w-full max-w-sm space-y-4 mt-8">
-                            <div class="flex items-center gap-6 bg-white/40 p-4 rounded-2xl border border-white">
-                                <span class="label-caps !text-sage w-16 text-left">Nourish</span>
-                                <p class="text-[11px] text-charcoal/60 font-medium text-left">Dein Protein-Fundament.</p>
-                            </div>
-                            <div class="flex items-center gap-6 bg-white/40 p-4 rounded-2xl border border-white">
-                                <span class="label-caps !text-terracotta w-16 text-left">Flow</span>
-                                <p class="text-[11px] text-charcoal/60 font-medium text-left">Plan B für den Alltag.</p>
-                            </div>
-                            <div class="flex items-center gap-6 bg-white/40 p-4 rounded-2xl border border-white">
-                                <span class="label-caps !text-charcoal w-16 text-left">Safety</span>
-                                <p class="text-[11px] text-charcoal/60 font-medium text-left">Dein 5-Min-Anker.</p>
-                            </div>
-                        </div>                    </div>
-
-                    <!-- Step 4: Dein Wegweiser -->
-                    <div x-show="tourStep === 4" 
-                         x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-700"
-                         x-transition:enter-start="opacity-0 translate-y-4"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-400 absolute inset-x-0"
-                         class="flex flex-col items-center pt-8">
-                        <div class="w-20 h-20 bg-charcoal/5 rounded-[2.5rem] flex items-center justify-center mb-10 text-charcoal shrink-0">
-                            <i data-lucide="map" class="w-10 h-10"></i>
-                        </div>
-                        <div class="space-y-4">
-                            <h3 class="h1-serif !text-3xl md:text-4xl italic mb-4">Dein Wegweiser</h3>
-                            <p class="label-caps">14 Tage</p>
-                        </div>
-                        <p class="text-lg font-serif text-charcoal/60 italic leading-relaxed max-w-sm mx-auto mt-6">Impulse kommen über Telegram, das Handeln passiert hier. Gemeinsam durch diese 14 Tage.</p>
-                    </div>
-                </div>
-
-                <button @click="tourStep < 4 ? tourStep++ : completeTour()" 
-                        :class="tourStep < 4 ? 'btn-secondary' : 'btn-primary'"
-                        class="mt-12 w-full max-w-xs mx-auto">
-                    <span x-text="tourStep < 4 ? 'Weiter' : 'Starten'"></span>
-                </button>
-            </div>
-        </div>
-    </template>
-
-    <!-- MAIN INTERFACE (Visible only when Onboarding & Tour are complete) -->
-    <div x-show="state.hasAccess && state.welcomeComplete && state.tourSeen" x-cloak>
+    <div x-show="state.hasAccess && state.welcomeComplete" x-cloak>
         <!-- Header -->
-        <nav class="fixed top-0 left-0 w-full z-[90] transition-all duration-500 no-print" :class="scroll > 50 ? 'bg-white/80 backdrop-blur-xl py-3 border-b border-sage/5 text-charcoal' : 'bg-transparent py-8 text-white'">
+        <nav class="fixed top-0 left-0 w-full z-[90] transition-all duration-500 no-print py-4 border-b border-transparent" :class="scroll > 50 ? 'bg-white/80 backdrop-blur-xl border-sage/5 text-charcoal' : 'bg-transparent text-white'">
             <div class="max-w-6xl mx-auto flex justify-between items-center px-6">
                 <div class="flex items-center gap-4">
-                    <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain transition-all -ml-2" :class="scroll > 50 ? '' : 'brightness-0 invert'" :style="scroll > 50 ? '' : 'filter: brightness(0) invert(1)'">
+                    <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain -ml-2" :style="scroll > 50 ? '' : 'filter: brightness(0) invert(1)'">
                     <div class="border-l-2 transition-colors duration-500 pl-4 text-left" :class="scroll > 50 ? 'border-sage/20' : 'border-white/20'">
                         <p class="text-base md:text-xl font-serif leading-none">nourish your mind. trust your body.</p>
                         <p class="text-[8px] uppercase tracking-[0.2em] opacity-60 mt-1 font-bold">by Mukaddes Mandirali</p>
@@ -482,435 +107,93 @@
             </div>
         </nav>
 
-        <!-- SOS Overlay -->
-        <div x-show="showSOS" x-transition class="fixed inset-0 z-[150] flex items-center justify-center p-6 backdrop-blur-md bg-charcoal/20 no-print" x-cloak>
-            <div @click.away="showSOS = false" class="bg-white rounded-[3.5rem] max-w-lg w-full p-10 shadow-2xl relative border border-white/50 text-center">
-                <button @click="showSOS = false" class="absolute top-8 right-8 text-sage/40 hover:text-sage"><i data-lucide="x" class="w-6 h-6"></i></button>
-                <div class="text-center text-charcoal">
-                    <h2 class="h2-serif text-charcoal mb-12 text-4xl text-center italic">Atme. Du bist sicher.</h2>
-                    
-                    <!-- 4-6 Breathing Circle -->
-                    <div class="relative w-40 h-40 mx-auto mb-16 flex items-center justify-center">
-                        <!-- Outer Glow -->
-                        <div class="absolute inset-0 bg-sage/5 rounded-full scale-[2.5]"></div>
-                        <!-- Breathing Orb -->
-                        <div class="w-12 h-12 bg-sage rounded-full opacity-40 shadow-xl shadow-sage/20 breathing-orb keep-animation"></div>
-                        
-                        <!-- Breathing Text Overlay -->
-                        <div class="absolute inset-0 flex flex-col items-center justify-center overflow-hidden h-6 mt-[160px]">
-                            <span class="absolute text-lg font-serif italic text-sage/60 breathing-text-1 keep-animation">Einatmen</span>
-                            <span class="absolute text-lg font-serif italic text-sage/60 breathing-text-2 keep-animation">Ausatmen</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4 text-left mb-10 px-4 text-charcoal/80 text-sm">
-                        <p class="italic text-center">1. Trinke ein großes Glas Wasser. Spüre die Kühle.</p>
-                        <p class="italic text-center">2. Was braucht dein Körper jetzt wirklich?</p>
-                    </div>
-                    <button @click="showSOS = false" class="w-full btn-primary">Ich bin wieder bereit</button>
-                    <a href="https://t.me/+ZaOT7m-1ZykwYjAy" target="_blank" class="text-sage/40 text-[10px] uppercase font-bold tracking-widest mt-6 block hover:text-sage text-center transition-colors">Direktnachricht an Mukaddes</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 0. Hero Immersion (Dark Muted Style) -->
-        <div class="w-full h-[35vh] md:h-[50vh] relative overflow-hidden no-print bg-charcoal">
+        <!-- Hero Immersion -->
+        <div class="w-full h-[30vh] md:h-[40vh] relative overflow-hidden no-print bg-charcoal">
             <img src="images/pexels-toni-seyfert-785961629-35324414.jpg" 
                  class="w-full h-full object-cover" 
                  style="animation: image-breathe 60s infinite alternate ease-in-out;"
                  alt="Noura Mood">
             
-            <!-- Deep Matte Shadow Gradient (No Glow) -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
-
-            <!-- Integrated Arrival Area -->
-            <div class="absolute bottom-6 left-0 w-full z-20 text-white">
-                <div class="max-w-5xl mx-auto px-6 md:px-12">
-                    <h1 class="h1-serif !text-4xl md:text-6xl italic leading-tight mb-3 drop-shadow-md">
-                        <span x-text="greeting"></span>, <span x-text="state.name"></span>
+            <div class="absolute bottom-6 left-0 w-full z-20">
+                <div class="max-w-6xl mx-auto px-6">
+                    <h1 class="h1-serif !text-4xl md:text-6xl italic leading-tight mb-2 text-white drop-shadow-md">
+                        Hallo, <span x-text="state.name || 'schön dass du da bist'"></span>
                     </h1>
-                    <div class="flex items-baseline gap-x-4 gap-y-2 flex-wrap opacity-80">
-                        <span class="label-caps !text-white !text-[10px] tracking-[0.3em]">Tag <span x-text="currentDayIndex + 1"></span> von 14</span>
-                        
-                        <!-- Sleep Reminder (Whisper Style) -->
-                        <template x-if="sleepReminder">
-                            <div x-transition class="flex items-center gap-1.5 italic font-serif text-xs sm:text-sm border-l border-white/20 pl-3 text-white/60">
-                                <i data-lucide="moon" class="w-3.5 h-3.5"></i>
-                                <span x-text="sleepReminder"></span>
-                            </div>
-                        </template>
-                    </div>
+                    <p class="label-caps !text-white/60 !text-[10px]">Womit möchtest du heute starten?</p>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Nav -->
-        <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md no-print">
-            <div class="bg-white/90 backdrop-blur-2xl border border-white/50 rounded-full p-1.5 flex items-center justify-between shadow-xl shadow-charcoal/10">
-                <button @click="scrollTo('dashboard')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="sun" class="mx-auto w-4 h-4"></i></button>
-                <button @click="scrollTo('das-system')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="layers" class="mx-auto w-4 h-4"></i></button>
-                <button @click="showSOS = true" class="w-12 h-12 bg-sage rounded-full text-white flex items-center justify-center shadow-lg transition-all hover:scale-105 active:scale-95"><i data-lucide="bell-ring" class="w-5 h-5"></i></button>
-                <button @click="scrollTo('checklist')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="check-circle" class="mx-auto w-4 h-4"></i></button>
-                <button @click="scrollTo('kontakt')" class="flex-1 py-2 text-charcoal/30 hover:text-sage transition-colors group"><i data-lucide="message-circle" class="mx-auto w-4 h-4"></i></button>
-            </div>
-        </nav>
+        <main class="max-w-6xl mx-auto px-6 pt-20 pb-40 relative z-10 text-charcoal">
 
-        <main class="max-w-6xl mx-auto px-6 pb-40 pt-0 print-container text-charcoal">
-            <!-- Dashboard Sanctuary -->
-            <section id="dashboard" class="relative no-print py-10 overflow-visible">
-                
-                <!-- Single Minimalist Card with Dynamic Background -->
-                <div class="noura-card !p-12 md:!p-20 noura-glow border-white/50 relative z-10 w-full max-w-xl text-center mx-auto transition-all duration-1000 ease-in-out"
-                     :class="state.todayMood === 'zentriert' ? '!bg-sage/5' : 
-                             state.todayMood === 'gestresst' ? '!bg-terracotta/5' : 
-                             state.todayMood === 'müde' ? '!bg-charcoal/5' : '!bg-white/70'">
-
-                    <!-- 2. Pure Mood Check-In with Labels -->
-                    <div class="mb-10">
-                        <span class="label-caps mb-2 text-center block">Täglicher Check-In</span>
-                        <h2 class="h2-serif italic text-charcoal mb-10 text-center !text-2xl">Wie möchtest du heute durch den Tag gehen?</h2>
-                        <div class="flex gap-6 md:gap-10 justify-center items-start">
-                            <template x-for="intent in [
-                                {icon:'waves', label:'Regulieren', val:'Nervensystem regulieren', color:'text-sage', feedback: 'Nervensystem beruhigen. Du findest zurück in deine Mitte. Atme tief.'}, 
-                                {icon:'compass', label:'Steuern', val:'Fokus aktiv steuern', color:'text-terracotta', feedback: 'Klarheit & Fokus finden. Deine Aufmerksamkeit gehört jetzt dir. Sei präsent.'}, 
-                                {icon:'battery-medium', label:'Schützen', val:'Ressourcen schützen', color:'text-charcoal', feedback: 'Energie & Grenzen bewahren. Deine Energie ist kostbar. Du darfst auftanken.'}
-                            ]">
-                                <div class="flex flex-col items-center gap-3">
-                                    <button @click="state.todayMood = intent.val; state.activeFeedback = intent.feedback" 
-                                            class="mood-btn !w-16 !h-16 shadow-none border-sage/10 hover:border-sage/30 transition-all duration-500"
-                                            :class="[
-                                                state.todayMood === intent.val ? 'active !bg-sage/5' : 'opacity-60 hover:opacity-100 hover:scale-110',
-                                                !state.todayMood ? 'animate-pulse' : ''
-                                            ]">
-                                        <i :data-lucide="intent.icon" :class="intent.color" class="w-6 h-6"></i>
-                                    </button>
-                                    <span class="label-caps tracking-[0.2em] transition-opacity duration-500" 
-                                          :class="state.todayMood === intent.val ? '!opacity-100 !text-charcoal font-black' : 'opacity-40'"
-                                          x-text="intent.label"></span>
-                                </div>
-                            </template>
-                        </div>
+        <!-- Module Journey -->
+        <div class="space-y-6 max-w-4xl mx-auto">
+            
+            <!-- Modul: 14-Tage-Reset -->
+            <a href="reset.html" class="noura-card noura-glow group hover:translate-x-2 transition-all duration-700 flex flex-col md:flex-row items-center gap-8 !p-8 border-sage/10 hover:border-sage/30 bg-white/60 hover:bg-sage/[0.03]">
+                <div class="w-20 h-20 bg-sage/10 rounded-[2.5rem] flex items-center justify-center text-sage group-hover:scale-110 group-hover:bg-sage group-hover:text-white transition-all duration-700 shrink-0">
+                    <i data-lucide="calendar" class="w-10 h-10"></i>
+                </div>
+                <div class="flex-grow text-center md:text-left">
+                    <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-2 justify-center md:justify-start">
+                        <span class="label-caps !text-sage">Aktuelle Challenge</span>
+                        <template x-if="state.checklist.some(d => d.done)">
+                            <span class="text-[9px] bg-sage/10 text-sage px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">In Bearbeitung</span>
+                        </template>
                     </div>
+                    <h2 class="h2-serif text-3xl mb-2 italic">14-Tage-Reset Wegweiser</h2>
+                    <p class="text-sm text-charcoal/60 leading-relaxed max-w-xl">Dein täglicher Begleiter für mehr Achtsamkeit, regulierte Blutzuckerwerte und ein entspanntes Nervensystem.</p>
+                </div>
+                <div class="text-sage opacity-0 group-hover:opacity-100 transition-all duration-700 -translate-x-4 group-hover:translate-x-0 hidden md:block">
+                    <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                </div>
+            </a>
 
-                    <!-- 3. Dynamic CTA -->
-                    <div class="h-8 mb-12">
-                        <p x-show="state.todayMood" x-transition.opacity class="text-[11px] uppercase tracking-[0.3em] text-sage font-black">
-                            <span x-text="state.activeFeedback"></span>
-                        </p>
+            <!-- Modul: Basis-Anamnese -->
+            <a href="anamnese.html" class="noura-card noura-glow group hover:translate-x-2 transition-all duration-700 flex flex-col md:flex-row items-center gap-8 !p-8 border-terracotta/10 hover:border-terracotta/30 bg-white/60 hover:bg-terracotta/[0.03]">
+                <div class="w-20 h-20 bg-terracotta/10 rounded-[2.5rem] flex items-center justify-center text-terracotta group-hover:scale-110 group-hover:bg-terracotta group-hover:text-white transition-all duration-700 shrink-0">
+                    <i data-lucide="clipboard-list" class="w-10 h-10"></i>
+                </div>
+                <div class="flex-grow text-center md:text-left">
+                    <span class="label-caps mb-2 !text-terracotta">Status Quo</span>
+                    <h2 class="h2-serif text-3xl mb-2 italic">Basis-Anamnese</h2>
+                    <p class="text-sm text-charcoal/60 leading-relaxed max-w-xl">Halte deine aktuelle Situation fest: Schlaf, Energie, Zyklus und deine ganz persönliche Vision für deine Reise mit NOURA.</p>
+                </div>
+                <div class="text-terracotta opacity-0 group-hover:opacity-100 transition-all duration-700 -translate-x-4 group-hover:translate-x-0 hidden md:block">
+                    <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                </div>
+            </a>
+
+            <!-- Zukünftige Module (Subtiler) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+                <div class="noura-card !p-8 border-dashed border-charcoal/10 bg-transparent flex items-center gap-6 opacity-40">
+                    <div class="w-12 h-12 rounded-2xl border border-charcoal/20 flex items-center justify-center text-charcoal/30">
+                        <i data-lucide="lock" class="w-5 h-5"></i>
                     </div>
-
-                    <!-- 4. The Daily Impulse (Highlighted Action Area) -->
-                    <div class="pt-12 border-t border-sage/10 -mx-6 md:-mx-12 px-6 md:px-12 bg-sage/[0.02] rounded-b-[3.5rem] pb-12">
-                        <div class="flex flex-col items-center gap-4 mb-8">
-                            <h3 class="h2-serif italic text-charcoal !text-2xl">Dein heutiger Impuls</h3>
-                        </div>
-                        
-                        <div class="max-w-sm mx-auto mb-10">
-                            <p class="text-base md:text-lg text-charcoal/70 leading-relaxed font-normal text-balance" 
-                               x-html="days[currentDayIndex].mission"></p>
-                        </div>
-                        
-                        <button @click="scrollTo('checklist')" 
-                                class="group btn-secondary !py-3 !px-8 !text-[9px] hover:!bg-sage hover:!text-white transition-all">
-                            Zum Wegweiser <i data-lucide="chevron-down" class="ml-2 w-3.5 h-3.5 inline"></i>
-                        </button>
+                    <div>
+                        <p class="label-caps !text-charcoal/30">Rezepte & Flow</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-charcoal/20">Coming Soon</p>
                     </div>
                 </div>
-            </section>
-
-            <!-- Dein Licht (Intention) -->
-            <section id="dein-licht" class="max-w-3xl mx-auto mb-24 noura-card noura-glow relative z-10 overflow-hidden text-center text-charcoal">
-                <div class="absolute inset-0 bg-gradient-to-tr from-sage/[0.02] to-transparent opacity-50"></div>
-                <div class="text-center mb-12 relative z-10 text-charcoal">
-                    <span class="label-caps !text-[10px]">Selbstfürsorge</span>
-                    <h3 class="h2-serif text-charcoal mt-2 italic text-center">Dein Versprechen an dich</h3>
-                    <p x-show="state.todayMood" x-transition class="text-[10px] uppercase tracking-[0.3em] text-sage font-black mt-4" x-text="'Modus: ' + state.todayMood"></p>
-                    <button @click="state.why = ''; state.todayMood = ''" class="absolute -right-2 top-0 text-sage/20 hover:text-sage transition-colors p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
-                </div>
-                <div class="relative z-10 max-w-2xl mx-auto text-charcoal">
-                    <p class="text-charcoal/60 italic text-center mb-6" x-text="days[currentDayIndex].prompt"></p>
-                    <textarea x-model="state.why" class="w-full bg-transparent border-b border-sand focus:border-sage py-4 text-xl md:text-2xl font-serif text-charcoal placeholder-charcoal/40 italic outline-none resize-none no-print min-h-[100px] text-center" placeholder="Ich entscheide mich heute aktiv für..., damit mein Körper mir vertraut..."></textarea>
-                    <div class="hidden print:block text-xl md:text-2xl font-serif border-b border-sand pb-4 italic text-center text-charcoal" x-text="state.why"></div>
-                </div>
-            </section>
-
-            <!-- Das System -->
-            <div id="das-system" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 no-print md:text-left text-charcoal">
-                <!-- Nourish -->
-                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-sage shadow-[0_20px_40px_-15px_rgba(139,168,142,0.1)] relative" :class="state.nourish.every(v => v) ? 'bg-sage/[0.02] border-sage/20' : ''">
-                    <button @click="state.nourish = ['', '', '']" class="absolute top-8 right-8 text-sage/20 hover:text-sage transition-colors p-2 z-10"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
-                    <div class="flex items-center justify-between mb-8"><div class="p-2 bg-sage/5 rounded-xl text-sage w-fit ml-0"><i data-lucide="sprout" class="w-5 h-5"></i></div><span x-show="state.nourish.every(v => v)" class="label-caps !text-sage !text-[8px]">Aktiv</span></div>
-                    <h3 class="h2-serif text-2xl mb-2 text-left text-charcoal text-balance italic">1. Nourish</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-left">Deine 3 Proteinquellen, die du immer im Haus hast. Dein biologisches Fundament.</p>
-                    <div class="space-y-4 mb-8 flex-grow text-charcoal">
-                        <template x-for="(item, index) in state.nourish"><input type="text" x-model="state.nourish[index]" class="w-full bg-transparent py-2 input-focus text-sm font-light placeholder-sage/20 text-left text-charcoal" :placeholder="'Quelle ' + (index + 1)"></template>
+                <div class="noura-card !p-8 border-dashed border-charcoal/10 bg-transparent flex items-center gap-6 opacity-40">
+                    <div class="w-12 h-12 rounded-2xl border border-charcoal/20 flex items-center justify-center text-charcoal/30">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
                     </div>
-                    <div class="flex flex-wrap gap-1.5 justify-start">
-                        <template x-for="tag in ['Eier', 'Quark', 'Tofu', 'Hähnchen', 'Linsen', 'Fisch']"><button @click="addProteinTag(tag)" class="text-[9px] px-2.5 py-1 rounded-full border border-sage/10 text-sage/60 hover:border-sage hover:text-sage transition-all">+ <span x-text="tag"></span></button></template>
-                    </div>
-                </div>
-                <!-- Flow -->
-                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-terracotta shadow-[0_20px_40px_-15px_rgba(166,139,124,0.1)] relative" :class="state.pivot ? 'bg-terracotta/[0.02] border-terracotta/20' : ''">
-                    <button @click="state.pivot = ''" class="absolute top-8 right-8 text-terracotta/20 hover:text-terracotta transition-colors p-2 z-10"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
-                    <div class="flex items-center justify-between mb-8"><div class="p-2 bg-terracotta/5 rounded-xl text-terracotta w-fit ml-0"><i data-lucide="shuffle" class="w-5 h-5"></i></div><span x-show="state.pivot" class="label-caps !text-[8px]">Aktiv</span></div>
-                    <h3 class="h2-serif text-2xl mb-2 text-left text-charcoal text-balance italic">2. Flow</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-left">Dein Plan B für das Familienessen. Flexibel bleiben, ohne extra zu kochen.</p>
-                    <textarea x-model="state.pivot" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-left text-charcoal mb-6" placeholder="z.B. Nudelsauce mit Quark strecken..."></textarea>
-                    <div class="flex flex-wrap gap-1.5 justify-start">
-                        <template x-for="tag in ['Extra Quark', 'Eier dazu', 'Nur Belag', 'Gemüse-Basis']"><button @click="state.pivot = tag" class="text-[9px] px-2.5 py-1 rounded-full border border-terracotta/10 text-terracotta/60 hover:border-terracotta hover:text-terracotta transition-all">+ <span x-text="tag"></span></button></template>
-                    </div>
-                </div>
-                <!-- Safety -->
-                <div class="noura-card noura-glow flex flex-col h-full text-charcoal border-t-4 border-t-charcoal shadow-[0_20px_40px_-15px_rgba(45,55,72,0.1)] relative" :class="state.safety ? 'bg-charcoal/[0.02] border-charcoal/20' : ''">
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="p-2 bg-charcoal/5 rounded-xl text-charcoal w-fit ml-0"><i data-lucide="anchor" class="w-5 h-5"></i></div>
-                        <div class="flex items-center gap-2">
-                            <button @click="state.safety = ''" class="text-charcoal/20 hover:text-charcoal transition-colors p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
-                            <button @click="showSOS = true" class="text-sage/40 hover:text-sage transition-colors p-1"><i data-lucide="bell-ring" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>
-                    <h3 class="h2-serif text-2xl mb-2 text-left text-charcoal text-balance italic">3. Safety</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed text-left">Dein 5-Minuten-Anker bei Stress. Was tust du, statt zur Schokolade zu greifen?</p>
-                    <textarea x-model="state.safety" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed text-left text-charcoal mb-6" placeholder="z.B. 1 Glas Wasser & 5 tiefe Atemzüge..."></textarea>
-                    <div class="flex flex-wrap gap-1.5 justify-start">
-                        <template x-for="tag in ['Glas Wasser', '3x Atmen', '5 Min Gehen', 'Handy weg']"><button @click="state.safety = tag" class="text-[9px] px-2.5 py-1 rounded-full border border-charcoal/10 text-charcoal/60 hover:border-charcoal hover:text-charcoal transition-all">+ <span x-text="tag"></span></button></template>
+                    <div>
+                        <p class="label-caps !text-charcoal/30">Mehr Raum</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-charcoal/20">Wird für dich erschaffen</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Wegweiser -->
-            <section id="checklist" class="noura-card noura-glow bg-white/40 border-white relative overflow-hidden p-8 md:p-16 text-charcoal">
-                <template x-if="state.checklist.every(v => v.done)">
-                    <div x-transition class="absolute inset-0 z-20 bg-sage/95 backdrop-blur-xl flex flex-col items-center justify-center text-center p-12 text-white">
-                        <i data-lucide="sparkles" class="w-12 h-12 mb-6 animate-bounce"></i>
-                        <h3 class="h2-serif !text-5xl mb-6 text-center text-white">Dein Licht leuchtet.</h3>
-                        <p class="text-xl mb-12 italic opacity-90 max-w-sm mx-auto text-center text-white text-balance">"Du hast dir 14 Tage lang bewiesen, dass du dir selbst vertrauen kannst. Das ist der wichtigste Sieg von allen."</p>
-                        <a href="https://t.me/+ZaOT7m-1ZykwYjAy" target="_blank" class="bg-white text-sage px-12 py-5 rounded-full font-bold shadow-2xl transition-all hover:scale-105 block w-fit mx-auto">Erkenntnisse teilen</a>
-                        <button @click="resetWegweiser()" class="text-[9px] uppercase tracking-[0.3em] opacity-40 mt-10 text-center block mx-auto text-white hover:opacity-100 transition-opacity">Reset</button>
-                    </div>
-                </template>
-                <h3 class="h2-serif text-left mb-16 text-3xl text-charcoal italic">14-Tage-Wegweiser</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12 text-charcoal text-left">
-                    <template x-for="(day, index) in days">
-                        <div class="flex flex-col gap-2 relative transition-all duration-700" :class="index > currentDayIndex ? 'opacity-20 grayscale pointer-events-none' : ''">
-                            <!-- Sparkle Container -->
-                            <template x-if="sparklingDays.includes(index)">
-                                <div class="absolute left-4 top-4 pointer-events-none">
-                                    <div class="sparkle s-1"></div>
-                                    <div class="sparkle s-2"></div>
-                                    <div class="sparkle s-3"></div>
-                                </div>
-                            </template>
+        </div>
 
-                            <div class="flex items-start gap-6">
-                                <div class="checkbox-custom mt-1 flex-shrink-0 relative" :class="state.checklist[index].done ? 'checked' : ''" @click="toggleDay(index)">
-                                    <i data-lucide="check" x-show="state.checklist[index].done" class="w-3.5 h-3.5 text-white"></i>
-                                </div>
-                                <div class="flex flex-col cursor-pointer text-charcoal text-left flex-grow" @click="toggleDay(index)">
-                                    <span class="label-caps !text-[8px] mb-1 text-terracotta" x-text="'Tag ' + (index + 1)"></span>
-                                    <span class="text-charcoal font-semibold text-lg leading-tight text-left" :class="state.checklist[index].done ? 'line-through opacity-30' : ''" x-text="day.title"></span>
-                                    <p class="text-sm text-charcoal/70 mt-2 leading-relaxed font-light text-balance text-left" x-show="!state.checklist[index].done && index === currentDayIndex" x-html="day.mission"></p>
-                                    <p class="text-[10px] text-sage/40 mt-2 italic font-medium text-left text-balance" x-show="!state.checklist[index].done && index < currentDayIndex">Dieser Moment ist vorbei. Atme durch. Fokus auf Heute.</p>
-                                    <p class="text-[10px] text-sage/20 mt-2 italic font-light text-left" x-show="index > currentDayIndex">Bereitet sich in Stille vor...</p>
-                                </div>
-                            </div>
-                            <!-- Journaling Field -->
-                            <div x-show="index <= currentDayIndex" class="ml-[46px] mt-2 no-print">
-                                <textarea 
-                                    x-model="state.checklist[index].journal" 
-                                    x-init="$nextTick(() => resizeJournal($el))"
-                                    @input="resizeJournal($el)"
-                                    class="journal-textarea" 
-                                    placeholder="Deine heutige Erkenntnis..."
-                                    rows="1"></textarea>
-                            </div>
-                            <div class="hidden print:block ml-[46px] text-xs italic text-charcoal/60 mt-1" x-text="state.checklist[index].journal"></div>
-                        </div>
-                    </template>
-                </div>
-            </section>
-        </main>
+    </main>
 
-        <!-- Footer -->
-        <footer id="kontakt" class="max-w-5xl mx-auto px-6 pb-24 text-center text-charcoal">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left mb-20 text-charcoal">
-                <div class="bg-white/40 p-8 rounded-[2rem] border border-white text-charcoal shadow-sm">
-                    <h4 class="h2-serif !text-xl mb-4 flex items-center gap-2 italic text-charcoal">Immer griffbereit</h4>
-                    <div class="space-y-4 text-sm text-charcoal/60 leading-relaxed">
-                        <p><strong class="text-sage font-bold">iPhone:</strong> In Safari das Teilen-Symbol <i data-lucide="share" class="inline w-3.5 h-3.5 -mt-1"></i> antippen<br>&rarr; "Zum Home-Bildschirm".</p>
-                        <p><strong class="text-sage font-bold">Android:</strong> In Chrome die drei Punkte <i data-lucide="more-vertical" class="inline w-3.5 h-3.5 -mt-1"></i> antippen<br>&rarr; "App installieren".</p>
-                    </div>
-                </div>
-                <div class="bg-sage/5 p-8 rounded-[2rem] border border-sage/10 text-charcoal shadow-sm">
-                    <h4 class="h2-serif !text-xl mb-3 flex items-center gap-2 italic text-sage md:text-left">Etwas hakt?</h4>
-                    <p class="text-sm text-charcoal/50 mb-8 md:text-left leading-relaxed">Fragen zum System oder deinem Weg? Schreib mir einfach.</p>
-                    <div class="flex justify-center md:justify-start">
-                        <a href="https://t.me/+i0UScdQXV7owMDEy" target="_blank" class="inline-flex items-center gap-3 text-sm font-black uppercase tracking-[0.2em] text-sage hover:text-terracotta transition-colors">Schreib mir direkt <i data-lucide="arrow-right" class="w-5 h-5"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mb-12">
-                <button @click="state.reduceMotion = !state.reduceMotion" class="text-charcoal/40 hover:text-charcoal transition-colors text-xs font-bold uppercase tracking-widest">
-                    <span x-text="state.reduceMotion ? 'Animationen: aus' : 'Animationen: an'"></span>
-                </button>
-            </div>
-            <p class="h2-serif !text-lg italic opacity-40 text-center text-charcoal">In Liebe für dich selbst, deine Mukaddes Mandirali.</p>
-        </footer>
-    </div>
+    <footer class="text-center pb-20 opacity-40">
+        <p class="h2-serif !text-base italic">In Liebe, deine Mukaddes Mandirali.</p>
+    </footer>
 
-
-    <!-- Global Save Toast -->
-    <div x-show="saved"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-4"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-300"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 translate-y-4"
-         class="fixed bottom-8 left-8 z-[150] bg-charcoal text-white text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-lg flex items-center gap-2"
-         x-cloak>
-        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
-        <span>Gesichert</span>
-    </div>
-
-    <script>
-        function nouraApp() {
-            return {
-                scroll: 0, 
-                showSOS: false, 
-                tourStep: 1, 
-                welcomeStep: 1,
-                sparklingDays: [],
-                saved: false,
-                accessCode: '',
-                showPassword: false,
-                get greeting() {
-                    const h = new Date().getHours();
-                    if (h < 4) return `Gute Nacht`;
-                    if (h < 12) return `Guten Morgen`;
-                    if (h < 18) return `Guten Tag`;
-                    return `Guten Abend`;
-                },
-                get sleepReminder() {
-                    const h = new Date().getHours();
-                    if (h >= 21 && h < 22) return 'Zeit zum Runterfahren. Dimme das Licht.';
-                    if (h >= 22 || h < 5) return 'Dein Körper braucht Erholung. Zeit für Schlaf.';
-                    return null;
-                },                get progress() {
-                    let pts = 0;
-                    if (this.state.why) pts += 5;
-                    this.state.nourish.forEach(v => { if(v) pts += 2; });
-                    if (this.state.pivot) pts += 2;
-                    if (this.state.safety) pts += 2;
-                    this.state.checklist.forEach(day => { if(day.done) pts += 6; });
-                    return Math.min(Math.round((pts / 100) * 100), 100);
-                },
-                state: Alpine.$persist({
-                    hasAccess: false,
-                    startDate: null, 
-                    tourSeen: false, 
-                    welcomeComplete: false,
-                    reduceMotion: false,
-                    todayMood: '',
-                    name: '', 
-                    why: '', 
-                    nourish: ['', '', ''], 
-                    pivot: '', 
-                    safety: '', 
-                    checklist: Array.from({length: 14}, () => ({ done: false, journal: '' }))
-                }).as('noura_storage'),
-                checkAccessCode() {
-                    if (this.accessCode === 'NOURA2026') {
-                        this.state.hasAccess = true;
-                    } else {
-                        alert('Falscher Code');
-                        this.accessCode = '';
-                    }
-                },
-                completeWelcome() {
-                    this.state.welcomeComplete = true;
-                    if (!this.state.startDate) this.state.startDate = new Date().toISOString();
-                },
-                get currentDayIndex() {
-                    if (!this.state.startDate) return 0;
-                    const s = new Date(this.state.startDate); s.setHours(0,0,0,0);
-                    const n = new Date(); n.setHours(0,0,0,0);
-                    const diff = Math.floor((n - s) / 86400000);
-                    return Math.max(0, Math.min(13, diff));
-                },
-                days: [
-                    { title: 'Teller-Hoheit', mission: "Iss heute keine Reste. Deck dir einen eigenen Teller. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> erkläre ich dir, warum das dein wichtigster Sieg ist.", prompt: "Wie hat es sich angefühlt, heute nur für dich einen Teller anzurichten?" },
-                    { title: 'Protein-Anker', mission: "Zu jeder Mahlzeit heute eine Faustgröße Protein. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für meine Liste der besten Quellen!", prompt: "Welche Proteinquelle hat dir heute am meisten Energie gegeben?" },
-                    { title: 'Liquid Gold', mission: "Trinke 500ml Wasser vor dem ersten Kaffee. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> erfährst du, wie Wasser deinen Heißhunger steuert.", prompt: "Was hat sich durch das Wasser am Morgen in deinem Körper verändert?" },
-                    { title: '5-Minuten-Stille', mission: "Halte kurz inne, bevor du isst. Atme 3x tief. Hör dir dazu meinen Quick-Reset Audio-Impuls in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> an.", prompt: "Welcher Gedanke kam dir in der Stille vor dem Essen?" },
-                    { title: 'Flow-Check', mission: "Pass dein Essen dem Familienchaos an, ohne extra zu kochen. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir heute meine 3 besten Flow-Hacks.", prompt: "Wie hast du es heute geschafft, flexibel zu bleiben?" },
-                    { title: 'Body Respect', mission: "Nenne eine Sache, für die du deinem Körper heute dankbar bist. Teile sie mit uns in der <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Gruppe</a>!", prompt: "Wofür bist du deinem Körper heute besonders dankbar?" },
-                    { title: 'Rest & Reflect', mission: "Sonntags-Reset: Was darf heute gehen? Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für unsere gemeinsame Reflektions-Runde.", prompt: "Was darfst du heute loslassen, um leichter in die neue Woche zu starten?" },
-                    { title: 'Blutzucker-Liebe', mission: "Achte auf die Reihenfolge: Erst Gemüse, dann Protein. Warum das alles ändert, erkläre ich dir heute in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat dein Körper auf die neue Reihenfolge beim Essen reagiert?" },
-                    { title: 'Intuitive Wahl', mission: "Hunger oder Emotion? Frag dich vor dem Snack: Was brauche ich gerade wirklich? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> gehen wir heute tief.", prompt: "Was war heute der Unterschied zwischen emotionalem und körperlichem Hunger?" },
-                    { title: 'Morgen-Anker', mission: "2 Minuten Stille vor dem Handy. Starte bei dir, nicht bei den anderen. Tipps für Morgen-Rituale findest du in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a>.", prompt: "Wie hat die Stille am Morgen deinen Tag beeinflusst?" },
-                    { title: 'Sanfter Flow', mission: "Bewege deinen Körper für 5 Minuten so, wie es sich gut anfühlt. In <a href='https.t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> teile ich heute eine sanfte Routine mit dir.", prompt: "Welche Bewegung hat dein Körper heute am meisten gebraucht?" },
-                    { title: 'Echtzeit-Genuss', mission: "Iss die ersten 3 Bissen in voller Stille. Was schmeckst du? In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> besprechen wir heute das Thema Achtsamkeit.", prompt: "Was hast du bei den ersten drei Bissen heute bewusst wahrgenommen?" },
-                    { title: 'Safety First', mission: "Bereite heute Abend deinen Rettungsanker für morgen vor. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir, wie mein Schutzschild aussieht.", prompt: "Was ist dein persönlicher 'Rettungsanker' für stressige Momente?" },
-                    { title: 'Dein Licht', mission: "Tag 14! Du hast dir vertraut. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für das große Finale und deinen Weg in die Zukunft mit mir.", prompt: "Was ist die wichtigste Erkenntnis, die du aus den letzten 14 Tagen mitnimmst?" }
-                ],
-                init() {
-                    if (window.location.search.includes('reset=true')) {
-                        localStorage.removeItem('noura_storage');
-                        window.location.href = window.location.pathname;
-                    }
-                    if (Array.isArray(this.state.checklist) && typeof this.state.checklist[0] === 'boolean') {
-                        this.state.checklist = this.state.checklist.map(done => ({ done: done, journal: '' }));
-                    }
-                    this.$nextTick(() => lucide.createIcons());
-                    this.$watch('state', () => { 
-                        this.saved = true; 
-                        setTimeout(() => this.saved = false, 2000); 
-                        this.$nextTick(() => lucide.createIcons()); 
-                    });
-                },
-                completeTour() { this.state.tourSeen = true; },
-                addProteinTag(tag) {
-                    const emptyIndex = this.state.nourish.findIndex(v => v === '');
-                    if (emptyIndex !== -1) {
-                        this.state.nourish[emptyIndex] = tag;
-                    } else {
-                        this.state.nourish[2] = tag;
-                    }
-                },
-                toggleDay(index) { 
-                    this.state.checklist[index].done = !this.state.checklist[index].done; 
-                    if (this.state.checklist[index].done) {
-                        this.sparklingDays.push(index);
-                        setTimeout(() => {
-                            this.sparklingDays = this.sparklingDays.filter(i => i !== index);
-                        }, 1000);
-                    }
-                },
-                resetWegweiser() {
-                    if(confirm('Möchtest du den Wegweiser wirklich zurücksetzen?')) {
-                        this.state.checklist = Array.from({length: 14}, () => ({ done: false, journal: '' }));
-                    }
-                },
-                printWegweiser() { window.print(); },
-                resizeJournal(el) {
-                    if (!el) return;
-                    el.style.height = 'auto';
-                    el.style.height = el.scrollHeight + 'px';
-                },
-                scrollTo(id) {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        const offset = 100;
-                        const bodyRect = document.body.getBoundingClientRect().top;
-                        const elementRect = el.getBoundingClientRect().top;
-                        const elementPosition = elementRect - bodyRect;
-                        const offsetPosition = elementPosition - offset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
