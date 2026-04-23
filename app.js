@@ -11,10 +11,51 @@ function nouraApp() {
         loginError: false,
         get greeting() {
             const h = new Date().getHours();
-            if (h < 4) return `Gute Nacht`;
-            if (h < 12) return `Guten Morgen`;
-            if (h < 18) return `Guten Tag`;
-            return `Guten Abend`;
+            const greetings = {
+                morning: [
+                    'Bismillah, in einen neuen Tag',
+                    'Dein Morgen-Anker für heute',
+                    'Starte bei dir selbst',
+                    'Ein Geschenk, dieser Morgen'
+                ],
+                day: [
+                    'Bismillah, Schritt für Schritt', 
+                    'Vertraue deinem Weg, Mama',
+                    'In tiefer Verbundenheit',
+                    'Dein Herz findet Ruhe'
+                ],
+                evening: [
+                    'Alhamdulillah für diesen Tag',
+                    'Zeit zum Loslassen',
+                    'Komm zur Ruhe, Mama',
+                    'Dein sanfter Abschluss'
+                ],
+                night: [
+                    'In Frieden ruhen',
+                    'Dein Körper regeneriert',
+                    'Vertraue dem Morgen',
+                    'Schlaf in Geborgenheit'
+                ]
+            };
+            let key = 'day';
+            if (h < 4) key = 'night';
+            else if (h < 12) key = 'morning';
+            else if (h < 18) key = 'day';
+            else key = 'evening';
+            const list = greetings[key];
+            return list[h % list.length];
+        },
+        get soulfulQuote() {
+            const quotes = [
+                "Dein Körper ist dein Zuhause. Sei gütig zu ihm.",
+                "Nähre dich mit Liebe, nicht nur mit Essen.",
+                "Du darfst dir selbst vertrauen. Dein Instinkt leitet dich.",
+                "Ein reguliertes Nervensystem ist dein größter Sieg.",
+                "Du bist genug, genau so wie du heute hier bist.",
+                "Achtsamkeit beginnt mit einem einzigen Atemzug."
+            ];
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+            return quotes[dayOfYear % quotes.length];
         },
         get sleepReminder() {
             const h = new Date().getHours();
@@ -67,12 +108,12 @@ function nouraApp() {
                 'NOURA-MAMA-09-26': 'Mama',
                 'NOURA-MAMA-10-26': 'Mama'
             };
-            
             const enteredCode = this.accessCode.toUpperCase().trim();
             if (codeMap[enteredCode]) {
                 this.state.name = codeMap[enteredCode];
                 this.state.hasAccess = true;
-                this.state.welcomeComplete = true; // Wir überspringen die Namenseingabe
+                this.state.welcomeComplete = true;
+                if (!this.state.startDate) this.state.startDate = new Date().toISOString();
             } else {
                 this.loginError = true;
                 this.accessCode = '';

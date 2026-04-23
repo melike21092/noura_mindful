@@ -112,18 +112,23 @@
         </nav>
 
         <!-- Hero Immersion -->
-        <div class="w-full h-[30vh] md:h-[40vh] relative overflow-hidden no-print bg-charcoal">
+        <div class="w-full h-[35vh] md:h-[45vh] relative overflow-hidden no-print bg-charcoal">
             <img src="images/pexels-toni-seyfert-785961629-35324414.jpg" 
-                 class="w-full h-full object-cover" 
-                 style="animation: image-breathe 60s infinite alternate ease-in-out;"
+                 class="w-full h-full object-cover opacity-80 scale-110" 
+                 :style="'transform: translateY(' + (scroll * 0.3) + 'px); animation: image-breathe 60s infinite alternate ease-in-out;'"
                  alt="Noura Mood">
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-charcoal/60 to-transparent"></div>
             
             <div class="absolute bottom-6 left-0 w-full z-20">
                 <div class="max-w-6xl mx-auto px-6">
-                    <h1 class="h1-serif !text-4xl md:text-6xl italic leading-tight mb-2 text-white drop-shadow-md">
-                        Hallo, <span x-text="state.name || 'schön dass du da bist'"></span>
+                    <h1 class="h1-serif !text-4xl md:text-6xl italic leading-tight text-white drop-shadow-md mb-2">
+                        <span x-text="state.name"></span>
                     </h1>
-                    <p class="label-caps !text-white/60 !text-[10px]">Womit möchtest du heute starten?</p>
+                    <span class="label-caps !text-white/60 flex items-center gap-2">
+                        <span class="w-px h-3 bg-white/30"></span>
+                        <span x-text="greeting"></span>
+                    </span>
                 </div>
             </div>
         </div>
