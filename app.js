@@ -60,9 +60,22 @@ function nouraApp() {
         ],
         // Getter für Challenges, die die Nutzerin sehen darf
         get visibleChallenges() {
-            return this.challenges.filter(c => 
-                c.active && this.state.unlockedChallenges.includes(c.id)
-            );
+            return this.challenges.filter(c => {
+                const isUnlocked = this.state.unlockedChallenges.includes(c.id);
+                if (c.id === 'reset-14') {
+                    // Die Reset-Karte verschwindet aus dem Grid, wenn die Tour gesehen wurde
+                    return isUnlocked && !this.state.tourSeen;
+                }
+                return isUnlocked;
+            });
+        },
+        startTour() {
+            if (!this.state.tourSeen) {
+                // In einer realen App würde hier ein komplexeres Tour-System starten.
+                // Für diesen chirurgischen Eingriff simulieren wir das Ende der Tour.
+                this.state.tourSeen = true;
+                this.scrollTo('focus-area');
+            }
         },
         get greeting() {
             const h = new Date().getHours();
@@ -129,10 +142,12 @@ function nouraApp() {
         },
         state: Alpine.$persist({
             hasAccess: false,
+            isAdmin: false,
             isCoaching: false,
             startDate: null, 
             tourSeen: false, 
             welcomeComplete: false,
+            holyMomentSeen: false,
             reduceMotion: false,
             todayMood: '',
             name: '', 
@@ -171,25 +186,25 @@ function nouraApp() {
         checkAccessCode() {
             this.loginError = false;
             const codeMap = {
-                'NOURA-MERVE-26': { name: 'Merve', coaching: false, challenges: ['reset-14'] },
-                'NOURA-MASOOMA-26': { name: 'Masooma', coaching: false, challenges: ['reset-14'] },
-                'NOURA-RANA-26': { name: 'Rana', coaching: false, challenges: ['reset-14'] },
-                'NOURA-REBECCA-26': { name: 'Rebecca', coaching: false, challenges: ['reset-14'] },
-                'NOURA-EBRU-26': { name: 'Ebru', coaching: false, challenges: ['reset-14'] },
-                'NOURA-MUKADDES-26': { name: 'Mukaddes', coaching: true, challenges: ['reset-14'] },
-                'NOURA-MAMA-07-26': { name: 'Mama', coaching: false, challenges: ['reset-14'] },
-                'NOURA-MAMA-08-26': { name: 'Mama', coaching: false, challenges: ['reset-14'] },
-                'NOURA-MAMA-09-26': { name: 'Mama', coaching: false, challenges: ['reset-14'] },
-                'NOURA-MAMA-10-26': { name: 'Mama', coaching: false, challenges: ['reset-14'] }
+                'NOURA-MERVE-26': { name: 'Merve', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-MASOOMA-26': { name: 'Masooma', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-RANA-26': { name: 'Rana', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-REBECCA-26': { name: 'Rebecca', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-EBRU-26': { name: 'Ebru', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-MUKADDES-26': { name: 'Mukaddes', coaching: true, challenges: ['reset-14'], admin: true },
+                'NOURA-MAMA-07-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-MAMA-08-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-MAMA-09-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-MAMA-10-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false }
             };
             const enteredCode = this.accessCode.toUpperCase().trim();
             if (codeMap[enteredCode]) {
                 const user = codeMap[enteredCode];
                 this.state.name = user.name;
                 this.state.isCoaching = user.coaching;
+                this.state.isAdmin = user.admin;
                 this.state.unlockedChallenges = user.challenges || [];
                 this.state.hasAccess = true;
-                this.state.welcomeComplete = true;
                 if (!this.state.startDate) this.state.startDate = new Date().toISOString();
             } else {
                 this.loginError = true;
@@ -198,7 +213,10 @@ function nouraApp() {
         },
         completeWelcome() {
             this.state.welcomeComplete = true;
-            if (!this.state.startDate) this.state.startDate = new Date().toISOString();
+            this.state.holyMomentSeen = false; // Reset Holy Moment for the first time
+        },
+        completeHolyMoment() {
+            this.state.holyMomentSeen = true;
         },
         get currentDayIndex() {
             if (!this.state.startDate) return 0;

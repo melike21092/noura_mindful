@@ -41,8 +41,30 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     text-transform: none !important;
 }
 
-.h1-serif { font-family: 'Playfair Display', serif; font-size: 3rem; line-height: 1.1; font-weight: 400; letter-spacing: -0.02em; }
-.h2-serif { font-family: 'Playfair Display', serif; font-size: 1.5rem; line-height: 1.3; font-weight: 400; }
+.h1-serif { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 2.5rem; 
+    line-height: 1.1; 
+    font-weight: 400; 
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem; /* Viel Raum zur Subline */
+}
+@media (min-width: 768px) {
+    .h1-serif { font-size: 4rem; }
+}
+
+.h2-serif { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.75rem; 
+    line-height: 1.2; 
+    font-weight: 400; 
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+}
+@media (min-width: 768px) {
+    .h2-serif { font-size: 2.5rem; }
+}
+
 .label-caps { 
     font-size: 0.625rem; 
     text-transform: uppercase; 
@@ -50,6 +72,7 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     font-weight: 800; 
     color: var(--terracotta);
     display: block;
+    margin-bottom: 0.25rem !important; /* Ganz nah an die Headline */
 }
 
 .noura-card {
@@ -311,22 +334,25 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     font-weight: 800;
 }
 
-@media (max-width: 640px) {
-    .noura-nav {
-        bottom: 1rem;
-        width: calc(100% - 2.5rem);
-        min-width: auto;
-        padding: 0.3rem;
+/* Aktions-Zone für Daumen-Ergonomie */
+.action-area {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem 2rem calc(2rem + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(to top, var(--sand) 80%, transparent);
+    z-index: 50;
+}
+@media (min-width: 768px) {
+    .action-area {
+        position: relative;
+        background: transparent;
+        padding: 4rem 0 0 0;
     }
-    .noura-nav-item {
-        min-width: 0;
-        padding: 0.5rem 0;
-    }
-    .noura-card { 
-        padding: 1.5rem !important; 
-        border-radius: 2rem !important; 
-    }
-    .h1-serif { font-size: 2.25rem !important; }
 }
 
 /* Range Slider Custom Styling */
@@ -407,8 +433,9 @@ input[type=range]::-webkit-slider-runnable-track {
     line-height: 1.2;
 }
 @keyframes noura-breathe {
-    0%, 100% { transform: scale(0.6); opacity: 0.3; }
-    40% { transform: scale(1.1); opacity: 1; } /* Einatmen fertig nach 4s */
+    0% { transform: scale(0.7); opacity: 0.4; }
+    40% { transform: scale(1.1); opacity: 1; } /* Einatmen fertig nach 4s (40%) */
+    100% { transform: scale(0.7); opacity: 0.4; } /* Ausatmen fertig nach weiteren 6s (60%) */
 }
 .breath-orb-container {
     width: 220px;
