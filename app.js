@@ -95,6 +95,7 @@ function nouraApp() {
                 this.state.name = user.name; this.state.isCoaching = user.coaching; this.state.isAdmin = user.admin;
                 this.state.unlockedChallenges = user.challenges || []; this.state.hasAccess = true;
                 if (!this.state.startDate) this.state.startDate = new Date().toISOString();
+                this.welcomeStep = 4; // Zum Namen springen
             } else { this.loginError = true; this.accessCode = ''; }
         },
         completeWelcome() { this.state.welcomeComplete = true; this.state.holyMomentSeen = false; },
@@ -138,11 +139,27 @@ function nouraApp() {
         init() {
             if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed', err)); }); }
             window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); this.deferredPrompt = e; this.showInstallBtn = true; });
-            if (this.isStandalone && !this.state.welcomeComplete) { this.welcomeStep = 3; }
+            
+            // HARTER FIX: Beim App-Start immer direkt zum Code (Schritt 3)
+            if (this.isStandalone && !this.state.hasAccess) { this.welcomeStep = 3; }
+            else if (this.isStandalone && !this.state.welcomeComplete) { this.welcomeStep = 4; }
+
             if (window.location.search.includes('reset=true')) { localStorage.removeItem('noura_storage'); window.location.href = window.location.pathname; }
             this.$nextTick(() => lucide.createIcons());
             this.$watch('state', () => { this.saved = true; setTimeout(() => this.saved = false, 2000); this.$nextTick(() => lucide.createIcons()); });
-            setInterval(() => { if (this.isBeforeStart === false) {} }, 60000);
+            
+            setInterval(() => {
+                const now = new Date(); const start = new Date('2026-04-27T09:00:00');
+                if (now >= start && this.isBeforeStart === false && !this.state.welcomeComplete) { window.location.reload(); }
+            }, 60000);
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    const lastDate = localStorage.getItem('last_date'); const today = new Date().toDateString();
+                    if (lastDate && lastDate !== today) { window.location.reload(); }
+                    localStorage.setItem('last_date', today);
+                }
+            });
         },
         async installApp() {
             if (!this.deferredPrompt) return;
@@ -151,18 +168,9 @@ function nouraApp() {
             if (outcome === 'accepted') { this.showInstallBtn = false; this.welcomeStep = 2; }
             this.deferredPrompt = null;
         },
-        addProteinTag(tag) {
-            const emptyIndex = this.state.nourish.findIndex(v => v === '');
-            if (emptyIndex !== -1) { this.state.nourish[emptyIndex] = tag; } else { this.state.nourish[2] = tag; }
-        },
-        addFlowTag(tag) {
-            if (!this.state.pivot) this.state.pivot = tag;
-            else if (!this.state.pivot.includes(tag)) this.state.pivot += ', ' + tag;
-        },
-        addSafetyTag(tag) {
-            if (!this.state.safety) this.state.safety = tag;
-            else if (!this.state.safety.includes(tag)) this.state.safety += ', ' + tag;
-        },
+        addProteinTag(tag) { const emptyIndex = this.state.nourish.findIndex(v => v === ''); if (emptyIndex !== -1) { this.state.nourish[emptyIndex] = tag; } else { this.state.nourish[2] = tag; } },
+        addFlowTag(tag) { if (!this.state.pivot) this.state.pivot = tag; else if (!this.state.pivot.includes(tag)) this.state.pivot += ', ' + tag; },
+        addSafetyTag(tag) { if (!this.state.safety) this.state.safety = tag; else if (!this.state.safety.includes(tag)) this.state.safety += ', ' + tag; },
         toggleDay(index) { 
             this.state.checklist[index].done = !this.state.checklist[index].done; 
             if (this.state.checklist[index].done) {
