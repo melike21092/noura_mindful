@@ -5,6 +5,7 @@ function nouraApp() {
         tourStep: 1, 
         welcomeStep: 1,
         selectedDay: null,
+        selectedDay: null,
         sparklingDays: [],
         saved: false,
         accessCode: '',
@@ -71,7 +72,7 @@ function nouraApp() {
             this.state.tourSeen = true; 
         },
         get greeting() {
-            const h = new Date().getHours();
+            const h = this.state.testHour !== null ? this.state.testHour : new Date().getHours();
             let timeStr = 'Guten Tag';
             if (h < 11) timeStr = 'Guten Morgen';
             else if (h < 15) timeStr = 'Guten Mittag';
@@ -81,11 +82,26 @@ function nouraApp() {
             
             return `${timeStr}, ${this.state.name}`;
         },
-        get soulfulQuote() {
-            return this.days[this.currentDayIndex].quote || "Vertraue deinem Weg.";
+        get personalNote() {
+            const h = this.state.testHour !== null ? this.state.testHour : new Date().getHours();
+            
+            // Ab 22:00 Uhr Priorität auf Schlaf
+            if (h >= 22 || h < 5) {
+                return 'Dein Körper braucht Erholung. Zeit für Schlaf. Vertraue dem Morgen.';
+            }
+
+            const notes = {
+                'Ebru': 'Dieser Moment gehört nur dir. Der Rest darf kurz warten.',
+                'Rana': 'Genieße die Struktur. Ein Schritt nach dem anderen.',
+                'Rebecca': 'Du darfst wachsen. Fehler sind Teil deines Weges.',
+                'Merve': 'Fang einfach an. Die Motivation folgt deinem Tun.',
+                'Masooma': 'Nähre dich gut. Dein Körper leistet Großartiges.',
+                'Mukaddes': 'Deine Vision wird lebendig. Vertraue dir.'
+            };
+            return notes[this.state.name] || 'Schön, dass du dir diesen Raum für dich nimmst.';
         },
         get sleepReminder() {
-            const h = new Date().getHours();
+            const h = this.state.testHour !== null ? this.state.testHour : new Date().getHours();
             if (h >= 21 && h < 22) return 'Zeit zum Runterfahren. Dimme das Licht.';
             if (h >= 22 || h < 5) return 'Dein Körper braucht Erholung. Zeit für Schlaf.';
             return null;
@@ -105,6 +121,8 @@ function nouraApp() {
             isCoaching: false,
             isLocked: false,
             lastActivity: null,
+            testHour: null,
+            testDayOffset: 0,
             startDate: null, 
             tourSeen: false, 
             welcomeComplete: false,
@@ -216,7 +234,26 @@ function nouraApp() {
             { title: 'Dein Schutzschild', label: 'SCHUTZSCHILD', mission: "Bereite heute Abend deinen Rettungsanker für morgen vor. In <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> zeige ich dir, wie mein Schutzschild aussieht.", prompt: "Was ist dein persönlicher 'Rettungsanker' für stressige Momente?", quote: "Sorge gut für dich vor, damit du in deiner Kraft bleiben kannst." },
             { title: 'Dein Licht', label: 'DEIN LICHT', mission: "Tag 14! Du hast dir vertraut. Schau in <a href='https://t.me/+ZaOT7m-1ZykwYjAy' target='_blank' class='text-sage underline'>Telegram</a> für das große Finale. Vergiss nicht, dein Reisebuch als PDF zu sichern!", prompt: "Was ist die wichtigste Erkenntnis, die du aus den letzten 14 Tagen mitnimmst?", quote: "Dein Licht leuchtet von innen. Vertraue deinem Weg." }
         ],
+        deferredPrompt: null,
+        showInstallBtn: false,
+        get isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        },
+        get isAndroid() {
+            return /Android/.test(navigator.userAgent);
+        },
         init() {
+            // PWA Install Logic
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                this.deferredPrompt = e;
+                this.showInstallBtn = true;
+            });
+            window.addEventListener('appinstalled', () => {
+                this.showInstallBtn = false;
+                this.deferredPrompt = null;
+            });
+
             if (window.location.search.includes('reset=true')) {
                 localStorage.removeItem('noura_storage');
                 window.location.href = window.location.pathname;
@@ -230,6 +267,15 @@ function nouraApp() {
                 setTimeout(() => this.saved = false, 2000); 
                 this.$nextTick(() => lucide.createIcons()); 
             });
+        },
+        async installApp() {
+            if (!this.deferredPrompt) return;
+            this.deferredPrompt.prompt();
+            const { outcome } = await this.deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                this.showInstallBtn = false;
+            }
+            this.deferredPrompt = null;
         },
         completeTour() { this.state.tourSeen = true; },
         addProteinTag(tag) {
