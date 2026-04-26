@@ -18,6 +18,7 @@
     
     <!-- Alpine.js Plugins -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <!-- Alpine.js Core -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -46,40 +47,30 @@
 </head>
 <body x-data="nouraApp()" 
       x-init="if(state.hasAccess && !state.isCoaching) window.location.href='index.html'; initProtocol()"
-      @scroll.window="scroll = window.pageYOffset" :class="{'reduce-motion': state.reduceMotion}">
+      @scroll.window="scroll = window.pageYOffset" class="bg-sand text-charcoal overflow-x-hidden">
 
     <!-- Global Background Glow -->
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sage/5 w-[1000px] h-[1000px] rounded-full blur-[120px]"></div>
-        <div class="zen-orb w-[600px] h-[600px] bg-sage/5 top-1/4 left-1/4"></div>
     </div>
 
-    <!-- Header Navigation (Exakt wie Anamnese) -->
-    <nav class="fixed top-0 left-0 w-full z-[90] transition-all duration-500 bg-white/80 backdrop-blur-xl py-4 border-b border-sage/5 text-charcoal no-print">
-        <div class="max-w-6xl mx-auto flex justify-between items-center px-6">
-            <div class="flex items-center gap-4">
-                <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain -ml-2">
-                <div class="border-l-2 border-sage/20 transition-colors duration-500 pl-4 text-left">
-                    <p class="text-base md:text-xl font-serif leading-none">nourish your mind. trust your body.</p>
-                    <p class="text-[8px] uppercase tracking-[0.2em] opacity-60 mt-1 font-bold">by Mukaddes Mandirali</p>
-                </div>
-            </div>
-            <div></div>
-        </div>
-    </nav>
-
-    <main class="max-w-4xl mx-auto px-6 pt-40 pb-40 relative z-10 text-charcoal">
-        
-        <header class="text-center mb-20">
-            <span class="label-caps mb-4">Dein täglicher Anker</span>
-            <h1 class="h1-serif !text-4xl md:text-6xl italic mb-8 text-charcoal">Nähren</h1>
-            <p class="text-xl font-serif text-charcoal/60 italic leading-relaxed max-w-2xl mx-auto">
-                "Höre auf die Stimme deines Körpers. <br>
-                <span class="text-base block mt-4 opacity-50 font-sans tracking-wide uppercase">Was nährt dich heute wirklich?</span>
+    <!-- Header -->
+    <header class="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 flex justify-between items-start no-print">
+        <div class="text-left">
+            <p class="label-caps mb-4">PROTOKOLL</p>
+            <h1 class="h1-serif italic text-charcoal !mb-2">Nähren</h1>
+            <p class="text-[10px] uppercase tracking-[0.15em] font-bold text-sage/60">
+                Was nährt dich heute wirklich?
             </p>
-        </header>
+        </div>
+        <a href="index.html">
+            <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-12 md:w-16 opacity-60">
+        </a>
+    </header>
 
-        <div class="space-y-12">
+    <main class="relative z-10 max-w-4xl mx-auto px-6 mt-12 pb-40">
+        
+        <div class="space-y-8">
             
             <!-- Mahlzeiten Loop -->
             <template x-for="meal in [
@@ -88,43 +79,43 @@
                 { id: 'dinner', label: 'Abendessen', icon: 'moon' },
                 { id: 'snacks', label: 'Snacks & Extras', icon: 'apple' }
             ]" :key="meal.id">
-                <section class="noura-card noura-glow bg-white/70 border-sage/5">
-                    <div class="flex items-center gap-6 mb-10">
-                        <div class="w-16 h-16 bg-sage/10 rounded-[2rem] flex items-center justify-center text-sage">
-                            <i :data-lucide="meal.icon" class="w-8 h-8"></i>
+                <section class="noura-card noura-glow bg-white/60 border-sage/5 !p-8">
+                    <div class="flex items-center gap-6 mb-8">
+                        <div class="w-12 h-12 bg-sage/5 rounded-2xl flex items-center justify-center text-sage/40">
+                            <i :data-lucide="meal.icon" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <span class="label-caps mb-1" x-text="meal.label"></span>
-                            <h2 class="h2-serif text-3xl italic">Dein Genuss</h2>
+                            <span class="label-caps !mb-0" x-text="meal.label"></span>
+                            <h2 class="h2-serif !text-xl !mb-0 italic">Deine Wahl</h2>
                         </div>
                     </div>
                     
-                    <div class="space-y-10">
+                    <div class="space-y-8">
                         <div class="group">
-                            <label class="label-caps mb-4 opacity-60 group-focus-within:opacity-100 transition-opacity">Was gab es zu essen?</label>
+                            <label class="label-caps mb-2 opacity-40">Was gab es zu essen?</label>
                             <textarea x-model="todayProtocol[meal.id].food" 
                                       x-init="resizeJournal($el)" @input="resizeJournal($el)"
-                                      class="journal-textarea !text-2xl" placeholder="Zutaten, Menge, Gefühl..."></textarea>
+                                      class="journal-textarea !text-lg !mt-0 !line-height-[1.6rem]" placeholder="Nenne deine Proteinquelle..."></textarea>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-sage/5">
                             <div>
                                 <div class="flex justify-between items-end mb-4">
-                                    <label class="label-caps opacity-50">Sättigung</label>
-                                    <span class="text-xs font-bold text-sage" x-text="todayProtocol[meal.id].satiety + '/10'"></span>
+                                    <label class="label-caps !text-[8px] opacity-40">Sättigung</label>
+                                    <span class="text-[10px] font-bold text-sage/60" x-text="todayProtocol[meal.id].satiety + '/10'"></span>
                                 </div>
-                                <input type="range" min="1" max="10" x-model="todayProtocol[meal.id].satiety" class="w-full accent-sage">
-                                <div class="flex justify-between mt-3 text-[9px] uppercase tracking-widest opacity-30 font-bold">
+                                <input type="range" min="1" max="10" x-model="todayProtocol[meal.id].satiety" class="w-full accent-sage opacity-60">
+                                <div class="flex justify-between mt-2 text-[7px] uppercase tracking-widest opacity-30 font-bold">
                                     <span>Hungrig</span>
                                     <span>Zufrieden</span>
                                     <span>Voll</span>
                                 </div>
                             </div>
                             <div class="group">
-                                <label class="label-caps mb-3 opacity-60 group-focus-within:opacity-100 transition-opacity">Gefühl danach</label>
+                                <label class="label-caps mb-2 opacity-40">Gefühl danach</label>
                                 <input type="text" x-model="todayProtocol[meal.id].mood" 
-                                       class="w-full bg-transparent border-b border-sage/20 focus:border-sage py-2 text-xl font-serif italic outline-none" 
-                                       placeholder="Wie fühlst du dich?">
+                                       class="w-full bg-transparent border-b border-sage/10 focus:border-sage py-2 text-base font-serif italic text-charcoal/70 outline-none" 
+                                       placeholder="Zufrieden, Müde, Energie?">
                             </div>
                         </div>
                     </div>
@@ -132,24 +123,22 @@
             </template>
 
             <!-- Tages-Reflexion -->
-            <section class="noura-card noura-glow bg-sage/5 border-sage/20 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-sage/5 blur-[80px] rounded-full -mr-32 -mt-32"></div>
-                
-                <div class="flex items-center gap-6 mb-10">
-                    <div class="w-16 h-16 bg-sage/10 rounded-[2rem] flex items-center justify-center text-sage">
-                        <i data-lucide="sparkles" class="w-8 h-8"></i>
+            <section class="noura-card noura-glow bg-sage/5 border-sage/20 relative overflow-hidden !p-8">
+                <div class="flex items-center gap-6 mb-8">
+                    <div class="w-12 h-12 bg-sage/10 rounded-2xl flex items-center justify-center text-sage">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <span class="label-caps !text-sage mb-1">Lichtblick</span>
-                        <h2 class="h2-serif text-3xl italic">Deine Tages-Reflexion</h2>
+                        <span class="label-caps !text-sage !mb-0">Lichtblick</span>
+                        <h2 class="h2-serif !text-xl !mb-0 italic">Tages-Reflexion</h2>
                     </div>
                 </div>
                 
                 <div>
-                    <label class="label-caps mb-4">Was war heute dein wichtigster Genuss-Moment?</label>
+                    <label class="label-caps mb-2 opacity-40">Dein wichtigster Genuss-Moment?</label>
                     <textarea x-model="todayProtocol.reflection" 
                               x-init="resizeJournal($el)" @input="resizeJournal($el)"
-                              class="journal-textarea !text-3xl italic !leading-[3rem]" placeholder="Mein Moment heute war..."></textarea>
+                              class="journal-textarea !text-lg !mt-0 !line-height-[1.6rem]" placeholder="Was hast du heute wirklich geschmeckt?"></textarea>
                 </div>
             </section>
 
@@ -161,18 +150,16 @@
     <nav class="noura-nav no-print">
         <a href="index.html" class="noura-nav-item">
             <i data-lucide="layout-grid"></i>
-            <span class="noura-nav-label">Home</span>
+            <span class="noura-nav-label">Übersicht</span>
         </a>
         <a href="naehren.html" class="noura-nav-item active">
             <i data-lucide="utensils"></i>
             <span class="noura-nav-label">Nähren</span>
         </a>
-        <template x-if="visibleChallenges.length > 0">
-            <a :href="visibleChallenges[0].url" class="noura-nav-item">
-                <i data-lucide="milestone"></i>
-                <span class="noura-nav-label">Journey</span>
-            </a>
-        </template>
+        <a href="reset.html" class="noura-nav-item">
+            <i data-lucide="milestone"></i>
+            <span class="noura-nav-label">Wegweiser</span>
+        </a>
     </nav>
 
     <!-- Global Save Toast -->
@@ -180,12 +167,17 @@
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-4"
          x-transition:enter-end="opacity-100 translate-y-0"
-         class="fixed bottom-8 left-8 z-[150] bg-charcoal text-white text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-lg flex items-center gap-2"
+         class="fixed bottom-24 right-8 z-[150] bg-charcoal text-white text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-lg flex items-center gap-2"
          x-cloak>
         <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
         <span>Gesichert</span>
     </div>
 
     <script src="app.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            $nextTick(() => lucide.createIcons());
+        });
+    </script>
 </body>
 </html>

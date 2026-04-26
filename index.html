@@ -18,6 +18,7 @@
     
     <!-- Alpine.js Plugins -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <!-- Alpine.js Core -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -52,129 +53,136 @@
     </div>
 
     <!-- AUTH WALL -->
-    <template x-if="!state.hasAccess">
-        <div class="fixed inset-0 z-[200] bg-sand flex flex-col items-center justify-center p-8 pb-32">
-            <div class="w-full max-w-sm flex flex-col items-center text-center">
-                <!-- Header-Bereich -->
-                <div class="h-32 flex flex-col items-center justify-center mb-8">
-                    <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-40">
-                </div>
-
-                <div class="w-full max-w-[280px] relative">
-                    <span class="label-caps block text-center">Privater Zugang</span>
-                    <input :type="showPassword ? 'text' : 'password'" x-model="accessCode" @keydown.enter="checkAccessCode()" 
-                           class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-lg font-serif text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40 px-8" 
-                           placeholder="Dein Code">
-                    <button @click="showPassword = !showPassword" class="absolute bottom-4 right-0 flex items-center text-sage/40 hover:text-sage">
-                        <i x-show="!showPassword" data-lucide="eye" class="w-5 h-5"></i>
-                        <i x-show="showPassword" data-lucide="eye-off" class="w-5 h-5"></i>
-                    </button>
-                    <!-- Fehlermeldung -->
-                    <p x-show="loginError" x-transition class="absolute top-full left-0 w-full text-center text-[10px] text-terracotta font-bold uppercase tracking-widest mt-2">
-                        Code unbekannt.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Aktions-Zone (Daumen-Bereich) -->
-            <div class="action-area">
-                <button @click="checkAccessCode()" class="btn-primary w-full max-w-xs">Eintreten</button>
-            </div>
-        </div>
-    </template>
-
-    <!-- ONBOARDING FLOW (Name abfragen) -->
-    <template x-if="state.hasAccess && !state.welcomeComplete">
-        <div class="fixed inset-0 z-[180] bg-sand flex flex-col items-center justify-center p-8 pb-32">
-            <div class="zen-orb w-[600px] h-[600px] bg-sage/10 opacity-50"></div>
-            <div class="max-w-xl w-full flex flex-col items-center text-center relative z-10">
-                <div class="w-full max-w-sm flex flex-col items-center">
-                    <!-- Header-Bereich -->
-                    <div class="h-32 flex flex-col items-center justify-center mb-8">
-                        <p class="label-caps">Willkommen bei Noura</p>
-                        <h2 class="h1-serif italic text-charcoal !mb-0">Schön, dass du da bist.</h2>
-                    </div>
-
-                    <div class="w-full max-w-[280px] relative">
-                        <p class="text-charcoal/60 text-sm mb-4">Wie darf ich dich nennen?</p>
-                        <input type="text" x-model="state.name" @keydown.enter="if(state.name.length > 1) completeWelcome()" 
-                               class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-lg font-serif text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40" 
-                               placeholder="Dein Vorname...">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Aktions-Zone (Daumen-Bereich) -->
-            <div class="action-area">
-                <div class="h-12 flex items-center justify-center w-full">
-                    <button x-show="state.name.length > 1" @click="completeWelcome()" x-transition
-                            class="btn-primary w-full max-w-xs">Dashboard öffnen</button>
-                </div>
-            </div>
-        </div>
-    </template>
-
-    <!-- HEILIGER MOMENT (Atem-Ritual) -->
-    <template x-if="state.hasAccess && state.welcomeComplete && !state.holyMomentSeen">
-        <div class="fixed inset-0 z-[190] bg-sand flex flex-col items-center justify-between p-8 pt-[20vh] pb-24 text-center"
-             x-init="setTimeout(() => completeHolyMoment(), 10000)"
-             x-transition:enter="transition ease-out duration-1000"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-1000"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0">
-            
-            <!-- Header-Bereich (Synchronisiert mit Login/Onboarding) -->
-            <div class="h-32 flex flex-col items-center justify-center">
-                <p class="label-caps !text-terracotta">Ein Moment für dich</p>
-                <h2 class="h1-serif italic text-charcoal">Bismillah.</h2>
-            </div>
-
-            <!-- Hero-Bereich (Optische Mitte) -->
-            <div class="flex-grow flex flex-col items-center justify-center">
-                <div class="breath-orb-container !m-0">
-                    <div class="breath-guide"></div>
-                    <div class="breath-orb">
-                        <div class="breath-text" x-data="{ text: 'Einatmen...' }" 
-                             x-init="setTimeout(() => text = 'Ausatmen...', 4000)">
-                            <span x-text="text"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Caption-Bereich (Unterschrift) -->
-            <div class="max-w-[280px]">
-                <p class="text-charcoal/40 text-[11px] uppercase tracking-widest font-medium leading-relaxed">
-                    Atme tief ein und komme ganz bei dir an.
-                </p>
-            </div>
-        </div>
-    </template>
-
-    <div x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen" x-cloak
-         x-transition:enter="transition ease-out duration-1000 delay-500"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100">
+    <div class="fixed inset-0 z-[200] bg-sand flex flex-col items-center justify-center p-8"
+         x-show="!state.hasAccess"
+         x-transition:leave="transition ease-in duration-1000"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95">
         
-        <!-- Hero Background (Subtle) -->
+        <div class="w-full max-w-sm text-center -mt-20 relative z-10">
+            <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-40 mx-auto mb-12 opacity-80">
+            <div class="w-full max-w-[280px] mx-auto relative">
+                <span class="label-caps block text-center mb-2">Privater Zugang</span>
+                <input :type="showPassword ? 'text' : 'password'" x-model="accessCode" @keydown.enter="checkAccessCode()" 
+                       class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-lg font-serif text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40 px-8" 
+                       placeholder="Dein Code">
+                <button @click="showPassword = !showPassword" class="absolute bottom-4 right-0 flex items-center text-sage/40 hover:text-sage">
+                    <i x-show="!showPassword" data-lucide="eye" class="w-5 h-5"></i>
+                    <i x-show="showPassword" data-lucide="eye-off" class="w-5 h-5"></i>
+                </button>
+                <p x-show="loginError" x-transition class="absolute top-full left-0 w-full text-center text-[10px] text-terracotta font-bold uppercase tracking-widest mt-4">Code unbekannt.</p>
+            </div>
+        </div>
+
+        <div class="action-area">
+            <button @click="checkAccessCode()" class="btn-primary w-full max-w-xs">Eintreten</button>
+        </div>
+    </div>
+
+    <!-- ONBOARDING FLOW -->
+    <div class="fixed inset-0 z-[180] bg-sand flex items-center justify-center p-8"
+         x-show="state.hasAccess && !state.welcomeComplete" x-cloak
+         x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-[1500ms] delay-300"
+         x-transition:enter-start="opacity-0 translate-y-12"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-1000"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95">
+        
+        <div class="zen-orb w-[600px] h-[600px] bg-sage/10 opacity-50"></div>
+
+        <div class="max-w-xl w-full text-center relative z-10 -mt-20">
+            <p class="label-caps mb-4">Willkommen bei Noura</p>
+            <h2 class="h1-serif italic text-charcoal mb-12">Schön, dass du da bist.</h2>
+
+            <div class="w-full max-w-[280px] mx-auto relative">
+                <p class="text-charcoal/60 text-sm mb-4">Wie darf ich dich nennen?</p>
+                <input type="text" x-model="state.name" @keydown.enter="if(state.name.length > 1) completeWelcome()" 
+                       class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-lg font-serif text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40" 
+                       placeholder="Dein Vorname...">
+            </div>
+        </div>
+
+        <div class="action-area">
+            <div class="h-16 flex items-center justify-center w-full max-w-xs">
+                <button x-show="state.name.length > 1" @click="completeWelcome()" x-transition class="btn-primary w-full">Dashboard öffnen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEILIGER MOMENT -->
+    <div class="fixed inset-0 z-[190] bg-sand flex flex-col items-center justify-center p-8 text-center"
+         x-data="{ showText: false, cycle: 'Einatmen...' }"
+         x-show="state.hasAccess && state.welcomeComplete && !state.holyMomentSeen" x-cloak
+         x-init="$watch('state.welcomeComplete', value => {
+                    if(value && !state.holyMomentSeen) {
+                        setTimeout(() => { showText = true; }, 3000); 
+                        const interval = setInterval(() => { 
+                            if(!state.holyMomentSeen) cycle = (cycle === 'Einatmen...' ? 'Ausatmen...' : 'Einatmen...');
+                            else clearInterval(interval);
+                        }, 4000);
+                        setTimeout(() => { state.holyMomentSeen = true; }, 12000);
+                    }
+                 });
+                 if(state.hasAccess && state.welcomeComplete && !state.holyMomentSeen) {
+                    setTimeout(() => { showText = true; }, 3000); 
+                    const interval = setInterval(() => { 
+                        if(!state.holyMomentSeen) cycle = (cycle === 'Einatmen...' ? 'Ausatmen...' : 'Einatmen...');
+                        else clearInterval(interval);
+                    }, 4000);
+                    setTimeout(() => { state.holyMomentSeen = true; }, 12000);
+                 }"
+         x-transition:enter="transition cubic-bezier(0.4, 0, 0.2, 1) duration-[2500ms]"
+         x-transition:enter-start="opacity-0 scale-110"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-1000"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-105">
+        
+        <div class="mb-12">
+            <p class="label-caps !text-terracotta mb-2">Ein Moment für dich</p>
+            <h2 class="h1-serif italic text-charcoal">Bismillah.</h2>
+        </div>
+
+        <div class="breath-orb-container !m-0">
+            <div class="breath-guide"></div>
+            <div class="breath-orb">
+                <div class="breath-text" 
+                     x-show="showText"
+                     x-transition:enter="transition ease-out duration-[2000ms]"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100">
+                    <span x-text="cycle"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-[280px] mt-12">
+            <p class="text-charcoal/40 text-[11px] uppercase tracking-widest font-medium leading-relaxed">Atme tief ein und komme ganz bei dir an.</p>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen" x-cloak
+         x-init="$watch('state.holyMomentSeen', v => { if(v) $nextTick(() => lucide.createIcons()) }); if(state.holyMomentSeen) $nextTick(() => lucide.createIcons());"
+         x-transition:enter="transition ease-out duration-[1500ms] delay-500"
+         x-transition:enter-start="opacity-0 translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0">
+        
         <div class="absolute top-0 left-0 w-full h-[35vh] overflow-hidden no-print z-0 opacity-20 pointer-events-none">
             <img src="images/pexels-toni-seyfert-785961629-35324414.jpg" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-b from-transparent to-sand"></div>
         </div>
 
-        <!-- Dashboard Header -->
         <header class="relative z-10 max-w-4xl mx-auto px-6 pt-20 md:pt-32 flex justify-between items-start">
             <div class="text-left">
-                <p class="label-caps mb-4">TAG <span x-text="String(currentDayIndex + 1).padStart(2, '0')"></span> — DER AUFBRUCH</p>
+                <p class="label-caps mb-4">TAG <span x-text="String(currentDayIndex + 1).padStart(2, '0')"></span> — <span x-text="days[currentDayIndex].label"></span></p>
                 <h1 class="h1-serif italic text-charcoal mb-6" x-text="greeting"></h1>
                 <p class="text-lg md:text-xl font-serif italic text-charcoal/70 leading-relaxed max-w-sm md:max-w-2xl" x-text="soulfulQuote"></p>
             </div>
             <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-12 md:w-16 opacity-60">
         </header>
 
-        <!-- Progress-Dots (Rhythmus-Pfad) -->
         <div class="relative z-10 max-w-4xl mx-auto px-6 mt-8 flex gap-3 overflow-x-auto no-scrollbar pb-4">
             <template x-for="(day, index) in state.checklist" :key="index">
                 <div class="w-2.5 h-2.5 rounded-full transition-all duration-700 shrink-0"
@@ -188,88 +196,90 @@
             </template>
         </div>
 
-        <!-- Focus Card (The Heart) -->
-        <section id="focus-area" class="relative z-10 max-w-4xl mx-auto px-6 mt-6 mb-16">
+        <section id="focus-area" class="relative z-10 max-w-4xl mx-auto px-6 mt-6 mb-0">
             <div x-show="state.unlockedChallenges.includes('reset-14')" x-transition>
                 <div class="noura-card noura-glow transition-all duration-700 !p-8 md:!p-12 relative overflow-hidden"
                      :class="state.checklist[currentDayIndex].done ? 'bg-sage/10 border-sage/30' : 'bg-white/60 border-sage/10'">
-                    
                     <div class="relative z-10">
                         <div class="flex justify-between items-start mb-8">
                             <div>
                                 <span class="label-caps !text-terracotta">Dein heutiger Impuls</span>
-                                <h2 class="h2-serif italic" x-text="days[currentDayIndex].title"></h2>
+                                <h2 class="h2-serif italic !mb-2" x-text="days[currentDayIndex].title"></h2>
                             </div>
                             <template x-if="state.checklist[currentDayIndex].done">
-                                <div class="w-10 h-10 rounded-full bg-sage text-white flex items-center justify-center shadow-lg animate-bounce">
+                                <div class="w-10 h-10 rounded-full bg-sage text-white flex items-center justify-center shadow-lg">
                                     <i data-lucide="check" class="w-6 h-6"></i>
                                 </div>
                             </template>
                         </div>
-                        
                         <div class="prose prose-sm text-charcoal/80 mb-8 leading-relaxed" x-html="days[currentDayIndex].mission"></div>
-                        
-                        <!-- Journaling-Integration -->
                         <div class="space-y-6 mt-6 pt-6 border-t border-sage/5">
                             <div>
                                 <p class="label-caps !text-sage" x-text="days[currentDayIndex].prompt || 'Dein kleiner Sieg'"></p>
-                                <textarea x-model="state.checklist[currentDayIndex].journal" 
-                                          class="journal-textarea h-24" 
-                                          placeholder="Schreibe deine Gedanken nieder..."></textarea>
+                                <textarea x-model="state.checklist[currentDayIndex].journal" @input="state.checklist[currentDayIndex].done = false" class="journal-textarea h-24" placeholder="Schreibe deine Gedanken nieder..."></textarea>
                             </div>
                         </div>
-
                         <div class="mt-12 flex flex-col md:flex-row gap-6 items-center">
-                            <button @click="toggleDay(currentDayIndex)" 
-                                    class="btn-primary w-full md:w-auto"
-                                    :class="state.checklist[currentDayIndex].done ? '!bg-charcoal !shadow-none' : ''">
+                            <button @click="toggleDay(currentDayIndex)" class="btn-primary w-full md:w-auto transition-all duration-500" :disabled="(!state.checklist[currentDayIndex].journal || state.checklist[currentDayIndex].journal.length < 3) || state.checklist[currentDayIndex].done" :class="{'!bg-charcoal !shadow-none cursor-default': state.checklist[currentDayIndex].done, 'opacity-30 pointer-events-none grayscale': !state.checklist[currentDayIndex].journal || state.checklist[currentDayIndex].journal.length < 3}">
                                 <span x-text="state.checklist[currentDayIndex].done ? 'Eintrag gespeichert' : 'Impuls einchecken'"></span>
                                 <i :data-lucide="state.checklist[currentDayIndex].done ? 'bookmark-check' : 'arrow-right-circle'" class="w-4 h-4 ml-2"></i>
                             </button>
-                            
-                            <a href="reset.html" class="text-[10px] uppercase tracking-widest font-bold text-charcoal/40 hover:text-sage transition-colors">
-                                Zum Wegweiser <i data-lucide="chevron-right" class="w-3 h-3 inline ml-1"></i>
-                            </a>
+                            <a href="reset.html" class="text-[10px] uppercase tracking-widest font-bold text-charcoal/40 hover:text-sage transition-colors">Zum Wegweiser <i data-lucide="chevron-right" class="w-3 h-3 inline ml-1"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Quick Actions -->
-        <section class="relative z-10 max-w-4xl mx-auto px-6 mb-24 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <a href="https://t.me/+ZaOT7m-1ZykwYjAy" target="_blank" class="btn-secondary !py-4 shadow-sm">
-                <i data-lucide="send" class="w-4 h-4 mr-3 text-sage"></i> Telegram Gruppe
-            </a>
-            <a href="https://t.me/nouramindful" target="_blank" class="btn-secondary !py-4 shadow-sm">
-                <i data-lucide="message-circle" class="w-4 h-4 mr-3 text-sage"></i> Support (Direktnachricht)
-            </a>
-        </section>
+        <!-- Deep Footer Area -->
+        <footer class="max-w-4xl mx-auto px-6 pt-6 pb-32 border-t border-sage/5 text-center">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mb-12 mt-4">
+                <!-- Begleitung -->
+                <div class="flex flex-col items-center">
+                    <p class="label-caps !text-sage !text-[8px] mb-8">Begleitung</p>
+                    <div class="space-y-3">
+                        <a href="https://t.me/+ZaOT7m-1ZykwYjAy" target="_blank" class="flex items-center justify-center gap-2 text-charcoal/40 hover:text-sage transition-colors text-[10px] font-bold uppercase tracking-widest">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i> Telegram
+                        </a>
+                        <a href="https://t.me/nouramindful" target="_blank" class="flex items-center justify-center gap-2 text-charcoal/40 hover:text-sage transition-colors text-[10px] font-bold uppercase tracking-widest">
+                            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Support
+                        </a>
+                    </div>
+                </div>
+
+                <!-- App -->
+                <div x-data="{ open: false }" class="flex flex-col items-center">
+                    <p class="label-caps !text-terracotta !text-[8px] mb-8">Deine App</p>
+                    <button @click="open = !open" class="flex items-center justify-center gap-2 text-charcoal/40 hover:text-sage transition-colors text-[10px] font-bold uppercase tracking-widest">
+                        <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Installieren
+                    </button>
+                    
+                    <div x-show="open" x-collapse x-cloak class="mt-6 text-[10px] text-charcoal/50 leading-relaxed border-t border-terracotta/10 pt-4 text-left max-w-[180px]">
+                        <p class="font-bold text-terracotta/60 mb-2 uppercase tracking-tighter">iOS / iPhone</p>
+                        In <span class="text-charcoal/70">Safari</span> auf das <span class="font-bold text-charcoal/70">Teilen-Symbol</span> (Quadrat mit Pfeil) tippen & <span class="font-bold text-charcoal/70">"Zum Home-Bildschirm"</span> wählen.
+                        
+                        <p class="font-bold text-terracotta/60 mt-4 mb-2 uppercase tracking-tighter">Android</p>
+                        In <span class="text-charcoal/70">Chrome</span> oben rechts auf die <span class="font-bold text-charcoal/70">3 Punkte</span> tippen & <span class="font-bold text-charcoal/70">"App installieren"</span> wählen.
+                    </div>
+                </div>
+
+                <!-- Vision (Desktop only) -->
+                <div class="opacity-20 hidden md:block">
+                    <p class="label-caps !text-charcoal !text-[8px] mb-4">Noura v1.0</p>
+                    <p class="font-serif italic text-xs leading-tight">nourish your mind.<br>trust your body.</p>
+                </div>
+            </div>
+
+            <p class="text-[8px] uppercase tracking-[0.2em] font-bold text-charcoal/20 text-center">© 2026 NOURA | BY MUKADDES MANDIRALI</p>
+        </footer>
 
         <!-- Floating Navigation -->
-        <nav class="noura-nav no-print" x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen"
-             x-transition:enter="transition ease-out duration-500"
-             x-transition:enter-start="opacity-0 translate-y-10"
-             x-transition:enter-end="opacity-100 translate-y-0">
-            <a href="index.html" class="noura-nav-item active">
-                <i data-lucide="layout-grid"></i>
-                <span class="noura-nav-label">Übersicht</span>
-            </a>
-            <template x-if="state.isCoaching">
-                <a href="naehren.html" class="noura-nav-item">
-                    <i data-lucide="utensils"></i>
-                    <span class="noura-nav-label">Nähren</span>
-                </a>
-            </template>
-            <a href="reset.html" class="noura-nav-item">
-                <i data-lucide="milestone"></i>
-                <span class="noura-nav-label">Wegweiser</span>
-            </a>
+        <nav class="noura-nav no-print" x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0">
+            <a href="index.html" class="noura-nav-item active"><i data-lucide="layout-grid"></i><span class="noura-nav-label">Übersicht</span></a>
+            <template x-if="state.isCoaching"><a href="naehren.html" class="noura-nav-item"><i data-lucide="utensils"></i><span class="noura-nav-label">Nähren</span></a></template>
+            <a href="reset.html" class="noura-nav-item"><i data-lucide="milestone"></i><span class="noura-nav-label">Wegweiser</span></a>
         </nav>
-
-        <footer class="max-w-4xl mx-auto px-6 pb-40 text-left opacity-30">
-            <p class="text-[10px] uppercase tracking-widest font-bold">Noura v1.0 | Made with focus.</p>
-        </footer>
+    </div>
     </div>
 
     <script src="app.js"></script>

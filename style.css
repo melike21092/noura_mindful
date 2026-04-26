@@ -47,7 +47,7 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     line-height: 1.1; 
     font-weight: 400; 
     letter-spacing: -0.02em;
-    margin-bottom: 2rem; /* Viel Raum zur Subline */
+    margin-bottom: 2rem; 
 }
 @media (min-width: 768px) {
     .h1-serif { font-size: 4rem; }
@@ -72,7 +72,7 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     font-weight: 800; 
     color: var(--terracotta);
     display: block;
-    margin-bottom: 0.25rem !important; /* Ganz nah an die Headline */
+    margin-bottom: 0.25rem;
 }
 
 .noura-card {
@@ -96,70 +96,57 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     width: 22px; height: 22px; border: 1.5px solid var(--sage); border-radius: 7px;
     display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;
 }
-.checkbox-custom.checked { background-color: var(--sage); }
+.checkbox-custom:active { transform: scale(0.9); }
 
-.zen-orb {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    border-radius: 50%; filter: blur(70px); z-index: 0; opacity: 0.5;
-    transition: all 2s ease; animation: orb-pulse 8s infinite ease-in-out;
+/* Buttons with Haptic Feedback */
+.btn-base, .btn-primary, .btn-secondary {
+    padding: 1.1rem 2.8rem;
+    border-radius: 9999px !important;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    user-select: none;
 }
-@keyframes orb-pulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.6; }
-}
-
-/* Breathing Guide Animations */
-@keyframes breathe-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.3; }
-    50% { transform: scale(3.5); opacity: 0.7; }
-}
-@keyframes breathe-text-fade {
-    0%, 100% { opacity: 0; transform: translateY(5px); }
-    10%, 40% { opacity: 1; transform: translateY(0); }
-    50%, 90% { opacity: 0; transform: translateY(-5px); }
-}
-@keyframes breathe-text-fade-alt {
-    0%, 40% { opacity: 0; transform: translateY(5px); }
-    50%, 60% { opacity: 0; transform: translateY(5px); }
-    60%, 90% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-5px); }
+.btn-base:active, .btn-primary:active, .btn-secondary:active {
+    transform: scale(0.97);
 }
 
-/* Task Completion Sparkles */
-@keyframes sparkle-1 {
-    0% { transform: scale(0) translate(0, 0) rotate(0deg); opacity: 0; }
-    30% { opacity: 1; }
-    100% { transform: scale(1) translate(-25px, -45px) rotate(45deg); opacity: 0; }
-}
-@keyframes sparkle-2 {
-    0% { transform: scale(0) translate(0, 0) rotate(0deg); opacity: 0; }
-    30% { opacity: 1; }
-    100% { transform: scale(0.8) translate(25px, -55px) rotate(-30deg); opacity: 0; }
-}
-@keyframes sparkle-3 {
-    0% { transform: scale(0) translate(0, 0) rotate(0deg); opacity: 0; }
-    30% { opacity: 1; }
-    100% { transform: scale(1.2) translate(5px, -65px) rotate(15deg); opacity: 0; }
-}
-.sparkle { position: absolute; width: 4px; height: 4px; border-radius: 50%; pointer-events: none; z-index: 50; }
-.s-1 { background: var(--sage); animation: sparkle-1 0.8s ease-out forwards; }
-.s-2 { background: var(--terracotta); animation: sparkle-2 0.9s ease-out forwards; }
-.s-3 { background: var(--sage); animation: sparkle-3 1s ease-out forwards; opacity: 0.6; }
-
-.checkbox-custom.checked { 
-    background-color: var(--sage); 
-    animation: check-pulse 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-@keyframes check-pulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 168, 142, 0.6); }
-    50% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(139, 168, 142, 0); }
-    100% { transform: scale(1); }
+.btn-primary {
+    background-color: var(--sage) !important;
+    color: white !important;
+    box-shadow: 0 10px 20px -5px rgba(139, 168, 142, 0.25);
 }
 
-.breathing-orb { animation: breathe-pulse 10s infinite ease-in-out; }
-.breathing-text-1 { animation: breathe-text-fade 10s infinite; }
-.breathing-text-2 { animation: breathe-text-fade-alt 10s infinite; }
+@media (hover: hover) {
+    .btn-primary:hover {
+        background-color: #79987c !important;
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px -5px rgba(139, 168, 142, 0.35);
+    }
+}
 
+.btn-secondary {
+    background-color: white !important;
+    color: var(--charcoal) !important;
+    border: 1px solid #CDD6E2 !important;
+}
+
+@media (hover: hover) {
+    .btn-secondary:hover {
+        border-color: var(--sage) !important;
+        color: var(--sage) !important;
+        transform: translateY(-1px);
+    }
+}
+
+/* Journal Area */
 .journal-textarea {
     width: 100%; background: transparent; 
     border: none;
@@ -172,7 +159,6 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     color: var(--charcoal); 
     outline: none; 
     resize: none; 
-    overflow: hidden;
     transition: all 0.4s ease;
     background-image: linear-gradient(rgba(139, 168, 142, 0.08) 1px, transparent 1px);
     background-size: 100% 2rem;
@@ -180,110 +166,9 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
 .journal-textarea:focus { 
     border-left: 2px solid var(--sage); 
     background-color: rgba(139, 168, 142, 0.03);
-    padding-left: 1.5rem;
-}
-.journal-textarea::placeholder {
-    font-family: 'Inter', sans-serif !important;
-    font-style: italic !important;
-    opacity: 0.4;
 }
 
-/* Die "schönen Buttons mit Rundungen" - Fixed CSS */
-.btn-base {
-    padding: 1.1rem 2.8rem;
-    border-radius: 9999px !important;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 1px solid transparent;
-}
-
-.btn-primary {
-    background-color: var(--sage) !important;
-    color: white !important;
-    box-shadow: 0 10px 20px -5px rgba(139, 168, 142, 0.25);
-    padding: 1.1rem 2.8rem;
-    border-radius: 9999px !important;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 1px solid transparent;
-}
-.btn-primary:hover {
-    background-color: #79987c !important;
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px -5px rgba(139, 168, 142, 0.35);
-}
-
-.btn-secondary {
-    background-color: white !important;
-    color: var(--charcoal) !important;
-    border: 1px solid #CDD6E2 !important;
-    padding: 1.1rem 2.8rem;
-    border-radius: 9999px !important;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-.btn-secondary:hover {
-    border-color: var(--sage) !important;
-    color: var(--sage) !important;
-    transform: translateY(-1px);
-}
-
-.mood-btn {
-    width: 60px; height: 60px; border-radius: 1.25rem; display: flex; align-items: center; justify-content: center;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: white; border: 1.5px solid rgba(139, 168, 142, 0.1); cursor: pointer; font-size: 1.5rem;
-}
-.mood-btn.active { 
-    border-color: var(--sage); 
-    box-shadow: 0 0 0 2px var(--sage), 0 10px 20px -5px rgba(139, 168, 142, 0.2);
-    transform: scale(1.1);
-    opacity: 1 !important; 
-}
-
-.progress-ring {
-    position: relative; width: 64px; height: 64px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: center;
-}
-.progress-ring svg { transform: rotate(-90deg); width: 64px; height: 64px; }
-.progress-ring circle {
-    fill: none; stroke-width: 3; stroke-linecap: round;
-    transition: stroke-dashoffset 1s ease-out;
-}
-
-@media print {
-    .no-print, .mood-btn, button, nav, .zen-orb { display: none !important; }
-    body { background: white !important; color: black !important; font-size: 12pt; }
-    main { padding-top: 0 !important; }
-    .noura-card { border: none !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; margin-bottom: 2rem; page-break-inside: avoid; }
-    .h1-serif, .h2-serif { color: black !important; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; margin-bottom: 1rem; }
-    .label-caps { color: #888 !important; border: none !important; padding: 0 !important; }
-    .journal-textarea { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; margin-top: 0.5rem; display: block; width: 100%; min-height: auto; }
-    .print-day-entry { border-bottom: 1px solid #f0f0f0; padding: 2rem 0; page-break-inside: avoid; }
-    .print-only { display: block !important; }
-}
-.print-only { display: none; }
-
-/* Floating Navigation Dock */
+/* Floating Navigation */
 .noura-nav {
     position: fixed;
     bottom: 1.5rem;
@@ -311,27 +196,42 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     gap: 0.25rem;
     color: var(--charcoal);
     opacity: 0.3;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
     padding: 0.5rem 0.25rem;
     flex: 1;
     min-width: 60px;
     border-radius: 1.5rem;
 }
+.noura-nav-item:active { transform: scale(0.92); }
 .noura-nav-item.active {
     opacity: 1;
     color: var(--sage);
     background: rgba(139, 168, 142, 0.04);
 }
-.noura-nav-item i {
-    width: 18px;
-    height: 18px;
-    stroke-width: 1.75px;
+.noura-nav-item i { width: 18px; height: 18px; stroke-width: 1.75px; }
+.noura-nav-label { font-size: 7.5px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800; }
+
+/* Breathing & Zen Elements */
+.breath-orb-container {
+    width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; margin: 3rem auto; position: relative;
 }
-.noura-nav-label {
-    font-size: 7.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-weight: 800;
+.breath-orb {
+    width: 160px; height: 160px; background: var(--sage); border-radius: 50%;
+    animation: noura-breathe 10s infinite ease-in-out;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 30px -5px rgba(139, 168, 142, 0.3);
+}
+@keyframes noura-breathe {
+    0%, 100% { transform: scale(0.7); opacity: 0.4; }
+    40% { transform: scale(1.1); opacity: 1; }
+}
+
+.zen-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* Aktions-Zone für Daumen-Ergonomie */
@@ -355,130 +255,19 @@ input, textarea, select, button { font-family: 'Inter', sans-serif; }
     }
 }
 
-/* Range Slider Custom Styling */
-input[type=range] {
-    -webkit-appearance: none;
-    width: 100%;
-    background: transparent;
-}
-input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 18px;
-    width: 18px;
-    border-radius: 50%;
-    background: #8ba88e; /* var(--sage) */
-    cursor: pointer;
-    margin-top: -8px; 
-    border: 2px solid white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-input[type=range]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 2px;
-    cursor: pointer;
-    background: rgba(139, 168, 142, 0.2);
-    border-radius: 10px;
-}
-/* Impulse Bar (Stories) */
-.impulse-container {
-    display: flex;
-    gap: 1.25rem;
-    overflow-x: auto;
-    padding: 0.5rem 0.5rem 1.5rem 0.5rem;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-.impulse-container::-webkit-scrollbar { display: none; }
-
-.impulse-item {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    width: 72px;
-}
-.impulse-circle {
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    padding: 3px;
-    background: white;
-    border: 1.5px solid rgba(139, 168, 142, 0.2);
-    position: relative;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.impulse-item.new .impulse-circle {
-    border-color: var(--sage);
-    box-shadow: 0 0 15px rgba(139, 168, 142, 0.2);
-}
-.impulse-circle img, .impulse-circle .impulse-icon {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-cover;
-    background: var(--sand);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--sage);
-}
-.impulse-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-    opacity: 0.6;
-    text-align: center;
-    line-height: 1.2;
-}
-@keyframes noura-breathe {
-    0% { transform: scale(0.7); opacity: 0.4; }
-    40% { transform: scale(1.1); opacity: 1; } /* Einatmen fertig nach 4s (40%) */
-    100% { transform: scale(0.7); opacity: 0.4; } /* Ausatmen fertig nach weiteren 6s (60%) */
-}
-.breath-orb-container {
-    width: 220px;
-    height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 3rem auto;
-    position: relative;
-}
-/* Der statische äußere Ring zur Orientierung */
-.breath-guide {
-    position: absolute;
-    width: 180px;
-    height: 180px;
-    border: 1px solid rgba(139, 168, 142, 0.2);
-    border-radius: 50%;
-}
-/* Der animierte innere Kreis */
-.breath-orb {
-    width: 160px;
-    height: 160px;
-    background: var(--sage);
-    border-radius: 50%;
-    animation: noura-breathe 10s infinite ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 30px -5px rgba(139, 168, 142, 0.3);
-}
 .breath-text {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-weight: 800;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-style: italic;
     color: white;
     z-index: 10;
     pointer-events: none;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
-@keyframes breath-label-fade {
-    0%, 100% { content: 'Ausatmen...'; opacity: 0.4; }
-    40% { content: 'Einatmen...'; opacity: 1; }
+
+@media print {
+    .no-print, nav, button { display: none !important; }
+    body { background: white !important; color: black !important; }
+    .print-only { display: block !important; }
 }
+.print-only { display: none; }

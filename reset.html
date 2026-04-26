@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOURA | 14-Tage-Reset-Wegweiser</title>
+    <title>NOURA | Deine 14-Tage-Reise</title>
 
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="mobile-web-app-capable" content="yes">
-
-    <link rel="apple-touch-icon" href="images/n-logo.svg">
     <link rel="icon" href="images/n-logo.svg" type="image/svg+xml">
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
+    <!-- Alpine.js Plugins -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine.js Core -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <link rel="stylesheet" href="style.css">
@@ -46,269 +45,207 @@
         });
     </script>
 </head>
-<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" :class="{'overflow-hidden': !state.hasAccess || (state.welcomeComplete && !state.tourSeen), 'reduce-motion': state.reduceMotion}">
+<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" class="bg-sand text-charcoal overflow-x-hidden">
 
-    <div class="fixed inset-0 z-0 pointer-events-none no-print overflow-hidden">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out" 
-             :style="'width: 1200px; height: 1200px; border-radius: 50%; filter: blur(120px); background: radial-gradient(circle, ' + 
-                    (state.todayMood === 'zentriert' ? 'rgba(139, 168, 142, 0.5)' : 
-                     state.todayMood === 'gestresst' ? 'rgba(166, 139, 124, 0.5)' : 
-                     state.todayMood === 'müde' ? 'rgba(45, 55, 72, 0.35)' : 
-                     'rgba(139, 168, 142, 0.15)') + ' 0%, transparent 70%);'"></div>
+    <!-- Global Background Glow -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sage/5 w-[1000px] h-[1000px] rounded-full blur-[120px]"></div>
     </div>
 
-    <!-- WELCOME TOUR -->
-    <template x-if="state.hasAccess && state.welcomeComplete && !state.tourSeen">
-        <div class="fixed inset-0 z-[120] bg-sand flex flex-col items-center justify-start pt-[15vh] p-8 no-print">
-            <div class="zen-orb w-[800px] h-[800px] bg-sage/5 opacity-50"></div>
-            <div class="max-w-xl w-full text-center relative z-10">
-                <div class="flex gap-2 mb-12 justify-center">
-                    <template x-for="i in 4"><div class="h-1.5 w-10 rounded-full transition-all duration-700" :class="tourStep >= i ? 'bg-sage' : 'bg-sage/10'"></div></template>
-                </div>
-                <div class="h-[450px] relative w-full overflow-hidden">
-                    <div x-show="tourStep === 1" class="flex flex-col items-center pt-8">
-                        <div class="w-20 h-20 bg-sage/10 rounded-[2.5rem] flex items-center justify-center mb-10 text-sage shrink-0"><i data-lucide="activity" class="w-10 h-10"></i></div>
-                        <span class="label-caps mb-4">Dein Fokus</span>
-                        <h3 class="h1-serif !text-3xl md:text-4xl italic mb-4">Der Check-in</h3>
-                        <p class="text-lg font-serif text-charcoal/60 italic leading-relaxed max-w-sm mx-auto mt-6">Wähle jeden Morgen deinen Intent. Ein Klick, um dein Nervensystem zu regulieren oder deinen Fokus zu steuern.</p>
-                    </div>
-                    <div x-show="tourStep === 2" class="flex flex-col items-center pt-8">
-                        <div class="w-20 h-20 bg-terracotta/10 rounded-[2.5rem] flex items-center justify-center mb-10 text-terracotta shrink-0"><i data-lucide="heart" class="w-10 h-10"></i></div>
-                        <span class="label-caps mb-4">Selbstfürsorge</span>
-                        <h3 class="h1-serif !text-3xl md:text-4xl italic mb-4">Dein Versprechen</h3>
-                        <p class="text-lg font-serif text-charcoal/60 italic leading-relaxed max-w-sm mx-auto mt-6">Verankere deine tägliche Entscheidung schriftlich. Ein Versprechen an dich selbst, damit dein Körper dir wieder vertraut.</p>
-                    </div>
-                    <div x-show="tourStep === 3" class="flex flex-col items-center pt-8">
-                        <div class="w-20 h-20 bg-sage/10 rounded-[2.5rem] flex items-center justify-center mb-10 text-sage shrink-0"><i data-lucide="shield-check" class="w-10 h-10"></i></div>
-                        <span class="label-caps mb-4">Drei Säulen</span>
-                        <h3 class="h1-serif !text-3xl md:text-4xl italic mb-4">Das System</h3>
-                        <div class="w-full max-w-sm space-y-4 mt-8 text-left">
-                            <div class="flex items-center gap-6 bg-white/40 p-4 rounded-2xl border border-white"><span class="label-caps !text-sage w-16">Nourish</span><p class="text-[11px] text-charcoal/60 font-medium">Dein Protein-Fundament.</p></div>
-                            <div class="flex items-center gap-6 bg-white/40 p-4 rounded-2xl border border-white"><span class="label-caps !text-terracotta w-16">Flow</span><p class="text-[11px] text-charcoal/60 font-medium">Plan B für den Alltag.</p></div>
-                            <div class="flex items-center gap-6 bg-white/40 p-4 rounded-2xl border border-white"><span class="label-caps !text-charcoal w-16">Safety</span><p class="text-[11px] text-charcoal/60 font-medium">Dein 5-Min-Anker.</p></div>
-                        </div>
-                    </div>
-                    <div x-show="tourStep === 4" class="flex flex-col items-center pt-8">
-                        <div class="w-20 h-20 bg-charcoal/5 rounded-[2.5rem] flex items-center justify-center mb-10 text-charcoal shrink-0"><i data-lucide="map" class="w-10 h-10"></i></div>
-                        <span class="label-caps mb-4">14 Tage</span>
-                        <h3 class="h1-serif !text-3xl md:text-4xl italic mb-4">Dein Wegweiser</h3>
-                        <p class="text-lg font-serif text-charcoal/60 italic leading-relaxed max-w-sm mx-auto mt-6">Impulse kommen über Telegram, das Handeln passiert hier. Gemeinsam durch diese 14 Tage.</p>
-                    </div>
-                </div>
-                <button @click="tourStep < 4 ? tourStep++ : completeTour()" :class="tourStep < 4 ? 'btn-secondary' : 'btn-primary'" class="mt-12 w-full max-w-xs mx-auto"><span x-text="tourStep < 4 ? 'Weiter' : 'Starten'"></span></button>
-            </div>
+    <!-- Header -->
+    <header class="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 flex justify-between items-start no-print">
+        <div class="text-left">
+            <p class="label-caps mb-4">REISEBUCH</p>
+            <h1 class="h1-serif italic text-charcoal !mb-2">Deine 14-Tage Reise, <span x-text="state.name"></span>.</h1>
+            <p class="text-[10px] uppercase tracking-[0.15em] font-bold text-sage/60">
+                Du hast bereits <span x-text="state.checklist.filter(d => d.done).length"></span> von 14 Stationen deiner Reise besiegelt.
+            </p>
         </div>
-    </template>
+        <a href="index.html">
+            <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-12 md:w-16 opacity-60">
+        </a>
+    </header>
 
-    <div x-show="state.hasAccess && state.welcomeComplete && state.tourSeen" x-cloak>
-        <nav class="fixed top-0 left-0 w-full z-[90] bg-white/80 backdrop-blur-xl py-4 border-b border-sage/5 text-charcoal no-print">
-            <div class="max-w-6xl mx-auto flex justify-between items-center px-6">
-                <div class="flex items-center gap-4">
-                    <img src="images/n-logo.svg" alt="N" class="h-10 w-10 object-contain -ml-2">
-                    <div class="border-l-2 border-sage/20 pl-4 text-left">
-                        <p class="text-base md:text-xl font-serif leading-none">nourish your mind. trust your body.</p>
-                        <p class="text-[8px] uppercase tracking-[0.2em] opacity-60 mt-1 font-bold">by Mukaddes Mandirali</p>
+    <main class="relative z-10 max-w-4xl mx-auto px-6 mt-12 pb-40">
+        
+        <!-- DAS FUNDAMENT (Einklappbar) -->
+        <section class="mb-16 no-print" x-data="{ open: false }">
+            <button @click="open = !open" 
+                    class="w-full flex justify-between items-center p-6 bg-white/40 border border-sage/10 rounded-[2rem] hover:bg-white/60 transition-all duration-500 group">
+                <div class="flex items-center gap-4 text-left">
+                    <div class="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center text-sage">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="label-caps !mb-0 !text-sage">Dein Fundament</span>
+                        <p class="text-[10px] text-charcoal/40 font-bold uppercase tracking-widest mt-1">Nourish, Flow & Safety</p>
                     </div>
                 </div>
-                <div></div>
-            </div>
-        </nav>
+                <i data-lucide="chevron-down" class="w-5 h-5 text-charcoal/20 transition-transform duration-500" :class="open ? 'rotate-180' : ''"></i>
+            </button>
 
-        <main class="max-w-6xl mx-auto px-6 pb-40 pt-32 text-charcoal">
-            <!-- SANCTUARY: Check-In & Heute Mission -->
-            <section class="relative no-print py-10 overflow-visible">
-                <div class="noura-card !p-12 md:!p-20 noura-glow border-white/50 relative z-10 w-full max-w-xl text-center mx-auto transition-all duration-1000 ease-in-out"
-                     :class="state.todayMood === 'zentriert' ? '!bg-sage/5' : state.todayMood === 'gestresst' ? '!bg-terracotta/5' : state.todayMood === 'müde' ? '!bg-charcoal/5' : '!bg-white/70'">
-
-                    <div class="mb-10">
-                        <span class="label-caps mb-2 text-center block">Täglicher Check-In</span>
-                        <h2 class="h2-serif italic text-charcoal mb-10 text-center !text-2xl">Wie möchtest du heute durch den Tag gehen?</h2>
-                        <div class="flex gap-6 md:gap-10 justify-center items-start">
-                            <template x-for="intent in [{icon:'waves', label:'Regulieren', val:'Nervensystem regulieren', color:'text-sage', feedback: 'Nervensystem beruhigen. Atme tief.'}, {icon:'compass', label:'Steuern', val:'Fokus aktiv steuern', color:'text-terracotta', feedback: 'Deine Aufmerksamkeit gehört jetzt dir.'}, {icon:'battery-medium', label:'Schützen', val:'Ressourcen schützen', color:'text-charcoal', feedback: 'Deine Energie ist kostbar.'}]">
-                                <div class="flex flex-col items-center gap-3">
-                                    <button @click="state.todayMood = intent.val; state.activeFeedback = intent.feedback" class="mood-btn !w-16 !h-16 shadow-none border-sage/10 hover:border-sage/30 transition-all duration-500" :class="state.todayMood === intent.val ? 'active !bg-sage/5' : 'opacity-60 hover:opacity-100'"><i :data-lucide="intent.icon" :class="intent.color" class="w-6 h-6"></i></button>
-                                    <span class="label-caps tracking-[0.2em]" :class="state.todayMood === intent.val ? '!opacity-100 !text-charcoal font-black' : 'opacity-40'" x-text="intent.label"></span>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <div class="h-8 mb-12">
-                        <p x-show="state.todayMood" x-transition.opacity class="text-[11px] uppercase tracking-[0.3em] text-sage font-black"><span x-text="state.activeFeedback"></span></p>
-                    </div>
-
-                    <div class="pt-12 border-t border-sage/10 -mx-6 md:-mx-12 px-6 md:px-12 bg-sage/[0.02] rounded-b-[3.5rem] pb-12">
-                        <div class="flex flex-col items-center gap-2 mb-6">
-                            <span class="label-caps !text-sage">Deine heutige Mission</span>
-                            <h3 class="h2-serif italic text-charcoal !text-2xl" x-text="days[currentDayIndex].title"></h3>
-                        </div>
-                        <div class="max-w-md mx-auto mb-10 text-center">
-                            <p class="text-base md:text-lg text-charcoal/70 leading-relaxed font-sans font-light text-balance" x-html="days[currentDayIndex].mission"></p>
-                        </div>
-                        <div class="flex flex-col md:flex-row justify-center gap-4">
-                            <button @click="toggleDay(currentDayIndex)" class="btn-primary !py-3 !px-8 !text-[9px]" :class="state.checklist[currentDayIndex].done ? '!bg-charcoal/10 !text-charcoal' : ''"><span x-text="state.checklist[currentDayIndex].done ? 'Erledigt' : 'Als erledigt markieren'"></span></button>
-                            <button @click="scrollTo('checklist')" class="btn-secondary !py-3 !px-8 !text-[9px]">Zum Journal <i data-lucide="chevron-down" class="ml-2 w-3.5 h-3.5 inline"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- DAS SYSTEM -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 no-print text-charcoal">
+            <div x-show="open" x-collapse x-cloak class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- 1. NOURISH -->
-                <div class="noura-card noura-glow flex flex-col h-full border-t-4 border-t-sage shadow-[0_20px_40px_-15px_rgba(139,168,142,0.1)] relative" :class="state.nourish.every(v => v) ? 'bg-sage/[0.02]' : ''">
-                    <button @click="state.nourish = ['', '', '']" class="absolute top-8 right-8 text-sage/20 hover:text-sage p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
-                    <div class="p-2 bg-sage/5 rounded-xl text-sage w-fit mb-8 ml-0"><i data-lucide="sprout" class="w-5 h-5"></i></div>
-                    <h3 class="h2-serif text-2xl mb-2 italic">1. Nourish</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed">Deine 3 Proteinquellen, die du immer im Haus hast. Dein biologisches Fundament.</p>
-                    <div class="space-y-4 mb-8 flex-grow">
-                        <template x-for="(item, index) in state.nourish"><input type="text" x-model="state.nourish[index]" class="w-full bg-transparent py-2 input-focus text-sm font-light placeholder-sage/20" :placeholder="'Quelle ' + (index + 1)"></template>
+                <div class="noura-card !p-8 bg-white/60 flex flex-col">
+                    <h3 class="label-caps !text-sage mb-2">Nourish</h3>
+                    <p class="text-[10px] text-charcoal/50 leading-relaxed mb-6">Deine 3 Anker im Kühlschrank. Damit du bei Hunger nicht entscheiden musst, sondern direkt nähren kannst.</p>
+                    <div class="space-y-3 mb-6">
+                        <template x-for="(item, index) in state.nourish">
+                            <input type="text" x-model="state.nourish[index]" 
+                                   class="w-full bg-transparent border-b border-sage/10 py-2 text-xs font-medium placeholder-charcoal/20 outline-none focus:border-sage transition-colors" 
+                                   :placeholder="'Proteinquelle ' + (index + 1)">
+                        </template>
                     </div>
-                    <div class="flex flex-wrap gap-2 pt-4 border-t border-sage/5">
+                    <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-sage/5">
                         <template x-for="tag in ['Eier', 'Quark', 'Tofu', 'Hähnchen', 'Linsen', 'Fisch']">
-                            <button @click="addProteinTag(tag)" class="text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-sage/10 text-sage/60 hover:bg-sage hover:text-white transition-all" x-text="tag"></button>
+                            <button @click="addProteinTag(tag)" class="text-[8px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-sage/10 text-sage/60 hover:bg-sage hover:text-white transition-all" x-text="tag"></button>
                         </template>
                     </div>
                 </div>
-
                 <!-- 2. FLOW -->
-                <div class="noura-card noura-glow flex flex-col h-full border-t-4 border-t-terracotta shadow-[0_20px_40px_-15px_rgba(166,139,124,0.1)] relative" :class="state.pivot ? 'bg-terracotta/[0.02]' : ''">
-                    <button @click="state.pivot = ''" class="absolute top-8 right-8 text-terracotta/20 hover:text-terracotta p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
-                    <div class="p-2 bg-terracotta/5 rounded-xl text-terracotta w-fit mb-8 ml-0"><i data-lucide="shuffle" class="w-5 h-5"></i></div>
-                    <h3 class="h2-serif text-2xl mb-2 italic">2. Flow</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed">Dein Plan B für das Familienessen. Flexibel bleiben, ohne extra zu kochen.</p>
-                    <textarea x-model="state.pivot" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed" placeholder="z.B. Nudelsauce mit Quark strecken..."></textarea>
-                    <div class="flex flex-wrap gap-2 pt-4 border-t border-terracotta/5">
+                <div class="noura-card !p-8 bg-white/60 flex flex-col">
+                    <h3 class="label-caps !text-terracotta mb-2">Flow</h3>
+                    <p class="text-[10px] text-charcoal/50 leading-relaxed mb-6">Dein Plan B für den Familientisch. Wie bleibst du dir treu, wenn es Nudeln für alle gibt?</p>
+                    <textarea x-model="state.pivot" 
+                              class="w-full bg-transparent border-b border-terracotta/10 py-2 text-xs font-medium placeholder-charcoal/20 outline-none focus:border-terracotta transition-colors h-20 resize-none mb-6" 
+                              placeholder="z.B. Nudelsauce mit Quark strecken..."></textarea>
+                    <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-terracotta/5">
                         <template x-for="tag in ['Extra Quark', 'Eier dazu', 'Nur Belag', 'Gemüse-Basis']">
-                            <button @click="addFlowTag(tag)" class="text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-terracotta/10 text-terracotta/60 hover:bg-terracotta hover:text-white transition-all" x-text="tag"></button>
+                            <button @click="addFlowTag(tag)" class="text-[8px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-terracotta/10 text-terracotta/60 hover:bg-terracotta hover:text-white transition-all" x-text="tag"></button>
                         </template>
                     </div>
                 </div>
-
                 <!-- 3. SAFETY -->
-                <div class="noura-card noura-glow flex flex-col h-full border-t-4 border-t-charcoal shadow-[0_20px_40px_-15px_rgba(45,55,72,0.1)] relative" :class="state.safety ? 'bg-charcoal/[0.02]' : ''">
-                    <button @click="state.safety = ''" class="absolute top-8 right-8 text-charcoal/20 hover:text-charcoal p-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
-                    <div class="p-2 bg-charcoal/5 rounded-xl text-charcoal w-fit mb-8 ml-0"><i data-lucide="anchor" class="w-5 h-5"></i></div>
-                    <h3 class="h2-serif text-2xl mb-2 italic">3. Safety</h3>
-                    <p class="text-sm text-charcoal/70 mb-8 leading-relaxed">Dein 5-Minuten-Anker bei Stress. Was tust du, statt zur Schokolade zu greifen?</p>
-                    <textarea x-model="state.safety" class="w-full bg-transparent py-3 input-focus text-sm min-h-[100px] resize-none leading-relaxed" placeholder="z.B. 1 Glas Wasser & 5 tiefe Atemzüge..."></textarea>
-                    <div class="flex flex-wrap gap-2 pt-4 border-t border-charcoal/5">
+                <div class="noura-card !p-8 bg-white/60 flex flex-col">
+                    <h3 class="label-caps !text-charcoal mb-2">Safety</h3>
+                    <p class="text-[10px] text-charcoal/50 leading-relaxed mb-6">Dein 5-Minuten-Anker. Was tust du für dein Nervensystem, statt zur Schokolade zu greifen?</p>
+                    <textarea x-model="state.safety" 
+                              class="w-full bg-transparent border-b border-charcoal/10 py-2 text-xs font-medium placeholder-charcoal/20 outline-none focus:border-charcoal transition-colors h-20 resize-none mb-6" 
+                              placeholder="z.B. Fenster auf, 3x tief atmen..."></textarea>
+                    <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-charcoal/5">
                         <template x-for="tag in ['Glas Wasser', '3x Atmen', '5 Min Gehen', 'Handy weg']">
-                            <button @click="addSafetyTag(tag)" class="text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-charcoal/10 text-charcoal/60 hover:bg-charcoal hover:text-white transition-all" x-text="tag"></button>
+                            <button @click="addSafetyTag(tag)" class="text-[8px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-charcoal/10 text-charcoal/60 hover:bg-charcoal hover:text-white transition-all" x-text="tag"></button>
                         </template>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- WEGWEISER: Grid & Journal -->
-            <section id="checklist" class="noura-card noura-glow bg-white/40 border-white relative overflow-hidden p-8 md:p-16 text-charcoal">
-                <template x-if="state.checklist.every(v => v.done)">
-                    <div class="absolute inset-0 z-20 bg-sage/95 backdrop-blur-xl flex flex-col items-center justify-center text-center p-12 text-white">
-                        <i data-lucide="sparkles" class="w-12 h-12 mb-6"></i>
-                        <h3 class="h2-serif !text-5xl mb-6 text-white text-center">Dein Licht leuchtet.</h3>
-                        <p class="text-xl mb-12 italic opacity-90 max-w-sm mx-auto text-center">Du hast dir 14 Tage lang bewiesen, dass du dir selbst vertrauen kannst.</p>
-                        <a href="https://t.me/+ZaOT7m-1ZykwYjAy" target="_blank" class="bg-white text-sage px-12 py-5 rounded-full font-bold">Erkenntnisse teilen</a>
+        <!-- DIE REISE (Timeline) -->
+        <section class="space-y-12 no-print relative">
+            <!-- Verbindungs-Linie (Dashed) -->
+            <div class="absolute left-6 top-8 bottom-8 w-px border-l border-dashed border-sage/20 z-0"></div>
+
+            <template x-for="(day, index) in days" :key="index">
+                <div class="relative pl-16 group transition-all duration-700"
+                     :class="index > currentDayIndex ? 'opacity-30' : ''">
+                    
+                    <!-- Punkt auf der Timeline -->
+                    <div class="absolute left-4 top-1.5 w-4 h-4 rounded-full border-2 transition-all duration-700 z-10"
+                         :class="{
+                             'bg-sage border-sage shadow-[0_0_15px_rgba(139,168,142,0.4)] scale-125': index === currentDayIndex,
+                             'bg-white border-sage': index < currentDayIndex && state.checklist[index].done,
+                             'bg-transparent border-sage/20': index < currentDayIndex && !state.checklist[index].done,
+                             'bg-transparent border-charcoal/10': index > currentDayIndex
+                         }">
                     </div>
-                </template>
-                
-                <h3 class="h2-serif text-left mb-12 text-3xl text-charcoal italic no-print">Dein 14-Tage-Wegweiser</h3>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4 mb-12 no-print">
-                    <template x-for="(day, index) in days">
-                        <div @click="if(index <= currentDayIndex) selectedDay = index" class="noura-card !p-4 !rounded-3xl flex flex-col items-center text-center cursor-pointer border-sage/5 transition-all duration-500 min-h-[100px] justify-center" :class="[state.checklist[index].done ? '!bg-sage !text-white' : 'bg-white/60 hover:border-sage/30', (selectedDay === index || (selectedDay === null && index === currentDayIndex)) ? 'ring-2 ring-sage ring-offset-4 scale-[1.02]' : '', index > currentDayIndex ? 'opacity-20 grayscale cursor-not-allowed' : '']">
-                            <span class="label-caps !text-[7px] mb-1" :class="state.checklist[index].done ? '!text-white/60' : '!text-terracotta'" x-text="'Tag ' + (index + 1)"></span>
-                            <h4 class="font-serif text-[11px] md:text-xs italic" x-text="day.title"></h4>
-                            <div class="flex items-center gap-2 mt-2">
-                                <template x-if="state.checklist[index].done"><i data-lucide="check" class="w-4 h-4 text-white"></i></template>
-                                <template x-if="state.checklist[index].journal"><i data-lucide="pen-tool" class="w-3 h-3" :class="state.checklist[index].done ? 'text-white/60' : 'text-sage/40'"></i></template>
+
+                    <div class="text-left">
+                        <span class="label-caps !text-[9px] mb-1" x-text="'TAG ' + String(index + 1).padStart(2, '0')"></span>
+                        <h3 class="h2-serif italic text-xl md:text-2xl mb-4" x-text="day.title"></h3>
+                        
+                        <!-- Anzeige der Erkenntnis (Wenn Tag <= heute) -->
+                        <template x-if="index <= currentDayIndex">
+                            <div class="space-y-4">
+                                <p class="text-[11px] text-charcoal/40 leading-relaxed italic max-w-lg" x-text="day.quote"></p>
+                                
+                                <div class="mt-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <p class="label-caps !text-sage !text-[8px] !mb-0">Deine Erkenntnis</p>
+                                            <template x-if="state.checklist[index].journal.length > 5">
+                                                <i data-lucide="check-circle" class="w-2.5 h-2.5 text-sage"></i>
+                                            </template>
+                                        </div>
+                                        <template x-if="index < currentDayIndex && state.checklist[index].journal.length < 5">
+                                            <span class="text-[7px] uppercase font-bold text-terracotta tracking-widest animate-pulse">Offene Station</span>
+                                        </template>
+                                    </div>
+                                    <textarea x-model="state.checklist[index].journal" 
+                                              @input="state.checklist[index].done = $el.value.length > 5"
+                                              class="journal-textarea !text-lg !line-height-[1.8rem] !mt-0 w-full h-20 bg-transparent border-none p-0 italic text-charcoal/80 focus:ring-0" 
+                                              placeholder="Was durftest du heute erfahren?"></textarea>
+                                </div>
                             </div>
-                        </div>
-                    </template>
-                </div>
+                        </template>
 
-                <div class="max-w-2xl mx-auto pt-10 border-t border-sage/10 min-h-[300px] no-print" x-data="{ get activeIdx() { return selectedDay !== null ? selectedDay : currentDayIndex } }">
-                    <div class="relative group flex flex-col items-center">
-                        <span class="label-caps mb-8 block text-center" x-text="'Meine Erkenntnis für Tag ' + (activeIdx + 1)"></span>
-                        <textarea x-model="state.checklist[activeIdx].journal" x-init="$nextTick(() => resizeJournal($el))" @input="resizeJournal($el)" class="journal-textarea !border-none !text-center !p-0 !bg-size-[100%_2.5rem] !line-height-[2.5rem] !text-xl md:!text-2xl italic" placeholder="Bismillah, was ich heute gelernt habe..." rows="2"></textarea>
-                        <button @click="toggleDay(activeIdx); selectedDay = null; scrollTo('checklist')" class="mt-12 btn-primary !py-3 !px-12 !text-[9px] shadow-lg" x-show="state.checklist[activeIdx].journal.length > 5 && !state.checklist[activeIdx].done">Erkenntnis besiegeln</button>
-                        <p x-show="state.checklist[activeIdx].done" class="mt-8 label-caps !text-sage !opacity-60 text-center">Dieser Tag wurde bereits besiegelt.</p>
-                    </div>
-                </div>
-
-                <div class="mt-20 pt-10 border-t border-sage/10 text-center no-print">
-                    <button @click="printWegweiser()" class="btn-secondary !py-4 !px-10 !text-[10px] hover:!bg-charcoal hover:!text-white transition-all flex items-center gap-3 mx-auto"><i data-lucide="book-open" class="w-4 h-4"></i>Mein Reisebuch als PDF speichern</button>
-                </div>
-
-                <!-- EXKLUSIVES DRUCKTEMPLATE -->
-                <div class="print-only">
-                    <h1 class="h1-serif text-center">Mein NOURA Reisebuch</h1>
-                    <p class="text-center italic mb-12">Eine 14-tägige Reise der Achtsamkeit von <span x-text="state.name"></span></p>
-                    <template x-for="(day, index) in days">
-                        <div class="print-day-entry mb-8">
-                            <h2 class="h2-serif" x-text="'Tag ' + (index + 1) + ': ' + day.title"></h2>
-                            <p class="italic text-sm mb-4" x-html="day.mission"></p>
-                            <div class="mt-4 p-4 border-l-2 border-sage/20 bg-sand/10">
-                                <p class="label-caps !text-[8px] mb-2">Meine Erkenntnis:</p>
-                                <p class="font-serif italic" x-text="state.checklist[index].journal || 'Kein Eintrag verfasst.'"></p>
+                        <!-- Zukünftige Tage (Vorschau ohne Eingabe) -->
+                        <template x-if="index > currentDayIndex">
+                            <div class="opacity-40">
+                                <p class="text-[9px] uppercase tracking-widest font-bold text-charcoal/20">Noch nicht erreicht</p>
                             </div>
-                        </div>
-                    </template>
-                </div>
-            </section>
-        </main>
-
-        <!-- Floating Navigation -->
-        <nav class="noura-nav no-print">
-            <a href="index.html" class="noura-nav-item">
-                <i data-lucide="layout-grid"></i>
-                <span class="noura-nav-label">Home</span>
-            </a>
-            
-            <!-- Nähren (Nur für Coaching) -->
-            <template x-if="state.isCoaching">
-                <a href="naehren.html" class="noura-nav-item">
-                    <i data-lucide="utensils"></i>
-                    <span class="noura-nav-label">Nähren</span>
-                </a>
-            </template>
-
-            <!-- Journey (Nur wenn Challenge aktiv) -->
-            <template x-if="visibleChallenges.length > 0">
-                <a :href="visibleChallenges[0].url" class="noura-nav-item active">
-                    <i data-lucide="milestone"></i>
-                    <span class="noura-nav-label">Journey</span>
-                </a>
-            </template>
-        </nav>
-
-        <!-- Footer -->
-        <footer id="kontakt" class="max-w-5xl mx-auto px-6 pb-40 text-center text-charcoal">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left mb-20 text-charcoal no-print">
-                <div class="bg-white/40 p-8 rounded-[2rem] border border-white text-charcoal shadow-sm">
-                    <h4 class="h2-serif !text-xl mb-4 flex items-center gap-2 italic text-charcoal">Immer griffbereit</h4>
-                    <div class="space-y-4 text-sm text-charcoal/60 leading-relaxed">
-                        <p><strong class="text-sage font-bold">iPhone:</strong> In Safari das Teilen-Symbol <i data-lucide="share" class="inline w-3.5 h-3.5 -mt-1"></i> antippen<br>&rarr; "Zum Home-Bildschirm".</p>
-                        <p><strong class="text-sage font-bold">Android:</strong> In Chrome die drei Punkte <i data-lucide="more-vertical" class="inline w-3.5 h-3.5 -mt-1"></i> antippen<br>&rarr; "App installieren".</p>
+                        </template>
                     </div>
                 </div>
-                <div class="bg-sage/5 p-8 rounded-[2rem] border border-sage/10 text-charcoal shadow-sm">
-                    <h4 class="h2-serif !text-xl mb-3 flex items-center gap-2 italic text-sage md:text-left">Etwas hakt?</h4>
-                    <p class="text-sm text-charcoal/50 mb-8 md:text-left leading-relaxed">Fragen zum System oder deinem Weg? Schreib mir einfach.</p>
-                    <div class="flex justify-center md:justify-start">
-                        <a href="https://t.me/+ZaOT7m-1ZykwYjAy" target="_blank" class="inline-flex items-center gap-3 text-sm font-black uppercase tracking-[0.2em] text-sage hover:text-terracotta transition-colors">Schreib mir direkt <i data-lucide="arrow-right" class="w-5 h-5"></i></a>
+            </template>
+        </section>
+
+        <!-- PDF EXPORT -->
+        <section class="mt-24 pt-24 border-t border-sage/10 text-center no-print">
+            <button @click="window.print()" 
+                    class="btn-secondary !py-5 !px-12 flex items-center gap-3 mx-auto group">
+                <i data-lucide="book-open" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                Mein Reisebuch als PDF sichern
+            </button>
+            <p class="text-[9px] uppercase tracking-[0.2em] font-bold text-charcoal/30 mt-8">
+                Alle deine Erkenntnisse werden in deinem persönlichen Dokument verankert.
+            </p>
+        </section>
+
+        <!-- PRINT TEMPLATE (Hidden) -->
+        <div class="print-only">
+            <div class="text-center mb-20">
+                <h1 class="h1-serif !text-5xl mb-4">Mein NOURA Reisebuch</h1>
+                <p class="label-caps !text-xs italic">Für <span x-text="state.name"></span></p>
+            </div>
+            <template x-for="(day, index) in days" :key="index">
+                <div class="mb-12 pb-12 border-b border-sage/10 page-break-inside-avoid">
+                    <span class="label-caps">Tag <span x-text="index + 1"></span></span>
+                    <h2 class="h2-serif italic mb-4" x-text="day.title"></h2>
+                    <p class="text-xs italic text-charcoal/60 mb-6" x-text="day.quote"></p>
+                    <div class="bg-sand/30 p-8 rounded-[2rem]">
+                        <p class="label-caps !text-[8px] mb-4">Meine Erkenntnis:</p>
+                        <p class="font-serif italic text-lg leading-relaxed" x-text="state.checklist[index].journal || 'Kein Eintrag verfasst.'"></p>
                     </div>
                 </div>
-            </div>
-            <div class="text-center mb-12 no-print">
-                <button @click="state.reduceMotion = !state.reduceMotion" class="text-charcoal/40 hover:text-charcoal transition-colors text-xs font-bold uppercase tracking-widest">
-                    <span x-text="state.reduceMotion ? 'Animationen: aus' : 'Animationen: an'"></span>
-                </button>
-            </div>
-            <p class="h2-serif !text-lg italic opacity-40 text-center text-charcoal">In Liebe für dich selbst, deine Mukaddes Mandirali.</p>
-        </footer>
+            </template>
         </div>
+    </main>
 
-    <div x-show="saved" class="fixed bottom-8 left-8 z-[150] bg-charcoal text-white text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-lg flex items-center gap-2" x-cloak><i data-lucide="check-circle" class="w-3.5 h-3.5"></i><span>Gesichert</span></div>
+    <!-- Floating Navigation -->
+    <nav class="noura-nav no-print">
+        <a href="index.html" class="noura-nav-item">
+            <i data-lucide="layout-grid"></i>
+            <span class="noura-nav-label">Übersicht</span>
+        </a>
+        <template x-if="state.isCoaching">
+            <a href="naehren.html" class="noura-nav-item">
+                <i data-lucide="utensils"></i>
+                <span class="noura-nav-label">Nähren</span>
+            </a>
+        </template>
+        <a href="reset.html" class="noura-nav-item active">
+            <i data-lucide="milestone"></i>
+            <span class="noura-nav-label">Wegweiser</span>
+        </a>
+    </nav>
+
     <script src="app.js"></script>
+    <script>
+        // Lucide Icons Initialisierung
+        document.addEventListener('alpine:init', () => {
+            $nextTick(() => lucide.createIcons());
+        });
+    </script>
 </body>
 </html>
