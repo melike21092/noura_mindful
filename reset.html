@@ -143,9 +143,9 @@
                     <!-- Punkt auf der Timeline -->
                     <div class="absolute left-4 top-1.5 w-4 h-4 rounded-full border-2 transition-all duration-700 z-10"
                          :class="{
-                             'bg-sage border-sage shadow-[0_0_15px_rgba(139,168,142,0.4)] scale-125': index === currentDayIndex,
-                             'bg-white border-sage': index < currentDayIndex && state.checklist[index].done,
-                             'bg-transparent border-sage/20': index < currentDayIndex && !state.checklist[index].done,
+                             'bg-sage border-sage scale-125 animate-pulse shadow-[0_0_20px_rgba(139,168,142,0.6)]': index === currentDayIndex,
+                             'bg-sage border-sage': state.checklist[index].done && index !== currentDayIndex,
+                             'bg-transparent border-sage/30': !state.checklist[index].done && index < currentDayIndex,
                              'bg-transparent border-charcoal/10': index > currentDayIndex
                          }">
                     </div>
