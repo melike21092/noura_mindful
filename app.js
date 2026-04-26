@@ -5,72 +5,25 @@ function nouraApp() {
         tourStep: 1, 
         welcomeStep: 1,
         selectedDay: null,
-        selectedDay: null,
         sparklingDays: [],
         saved: false,
         accessCode: '',
         showPassword: false,
         loginError: false,
-        activeImpulse: null, // Welcher Impuls ist gerade offen?
+        activeImpulse: null, 
         impulseContent: {
-            soul: {
-                title: 'Daily Soul',
-                text: 'Vertraue dem Prozess. Dein Körper braucht Zeit, um zu heilen. Sei heute besonders gütig zu dir selbst.',
-                icon: 'mic',
-                color: 'sage'
-            },
-            insight: {
-                title: 'Noura Insight',
-                text: 'Protein am Morgen stabilisiert deinen Blutzucker für den gesamten Tag und senkt Heißhunger am Abend.',
-                icon: 'lightbulb',
-                color: 'terracotta'
-            },
-            ritual: {
-                title: 'Dein Ritual',
-                text: 'Halte kurz inne. Atme 4 Sekunden ein, halte 4 Sekunden, atme 4 Sekunden aus. Spüre die Ruhe.',
-                icon: 'waves',
-                color: 'charcoal'
-            },
-            community: {
-                title: 'Noura Community',
-                text: 'Du bist nicht allein. Aktuell gehen 142 andere Frauen diesen Weg der Achtsamkeit mit dir.',
-                icon: 'users',
-                color: 'sage'
-            }
+            soul: { title: 'Daily Soul', text: 'Vertraue dem Prozess. Dein Körper braucht Zeit, um zu heilen. Sei heute besonders gütig zu dir selbst.', icon: 'mic', color: 'sage' },
+            insight: { title: 'Noura Insight', text: 'Protein am Morgen stabilisiert deinen Blutzucker für den gesamten Tag und senkt Heißhunger am Abend.', icon: 'lightbulb', color: 'terracotta' },
+            ritual: { title: 'Dein Ritual', text: 'Halte kurz inne. Atme 4 Sekunden ein, halte 4 Sekunden, atme 4 Sekunden aus. Spüre die Ruhe.', icon: 'waves', color: 'charcoal' },
+            community: { title: 'Noura Community', text: 'Du bist nicht allein. Aktuell gehen 142 andere Frauen diesen Weg der Achtsamkeit mit dir.', icon: 'users', color: 'sage' }
         },
-        openImpulse(id) {
-            this.activeImpulse = this.impulseContent[id];
-            document.body.style.overflow = 'hidden';
-        },
-        closeImpulse() {
-            this.activeImpulse = null;
-            document.body.style.overflow = 'auto';
-        },
-        // Zentrales Verzeichnis aller Challenges
+        openImpulse(id) { this.activeImpulse = this.impulseContent[id]; document.body.style.overflow = 'hidden'; },
+        closeImpulse() { this.activeImpulse = null; document.body.style.overflow = 'auto'; },
         challenges: [
-            {
-                id: 'reset-14',
-                title: '14-Tage-Reset Wegweiser',
-                label: 'Aktuelle Challenge',
-                description: 'Dein täglicher Begleiter für mehr Achtsamkeit, regulierte Blutzuckerwerte und ein entspanntes Nervensystem.',
-                icon: 'milestone',
-                url: 'reset.html',
-                color: 'sage',
-                active: true // Globaler Schalter: Wenn false, sieht es niemand
-            }
+            { id: 'reset-14', title: '14-Tage-Reset Wegweiser', label: 'Aktuelle Challenge', description: 'Dein täglicher Begleiter für mehr Achtsamkeit, regulierte Blutzuckerwerte und ein entspanntes Nervensystem.', icon: 'milestone', url: 'reset.html', color: 'sage', active: true }
         ],
-        // Getter für Challenges im Grid (Nur Zusatz-Module, nicht die Haupt-Challenge)
-        get visibleChallenges() {
-            return this.challenges.filter(c => {
-                // Die Haupt-Challenge (reset-14) wird oben in der Focus-Card gezeigt, 
-                // daher filtern wir sie hier aus dem Grid heraus.
-                return this.state.unlockedChallenges.includes(c.id) && c.id !== 'reset-14';
-            });
-        },
-        // tourSeen wird nicht mehr benötigt, wir lassen es im State für Kompatibilität, nutzen es aber nicht mehr.
-        startTour() { 
-            this.state.tourSeen = true; 
-        },
+        get visibleChallenges() { return this.challenges.filter(c => this.state.unlockedChallenges.includes(c.id) && c.id !== 'reset-14'); },
+        startTour() { this.state.tourSeen = true; },
         get greeting() {
             const h = this.state.testHour !== null ? this.state.testHour : new Date().getHours();
             let timeStr = 'Guten Tag';
@@ -79,17 +32,11 @@ function nouraApp() {
             else if (h < 18) timeStr = 'Guten Nachmittag';
             else if (h < 22) timeStr = 'Guten Abend';
             else timeStr = 'Gute Nacht';
-            
             return `${timeStr}, ${this.state.name}`;
         },
         get personalNote() {
             const h = this.state.testHour !== null ? this.state.testHour : new Date().getHours();
-            
-            // Ab 22:00 Uhr Priorität auf Schlaf
-            if (h >= 22 || h < 5) {
-                return 'Dein Körper braucht Erholung. Zeit für Schlaf. Vertraue dem Morgen.';
-            }
-
+            if (h >= 22 || h < 5) return 'Dein Körper braucht Erholung. Zeit für Schlaf. Vertraue dem Morgen.';
             const notes = {
                 'Ebru': 'Dieser Moment gehört nur dir. Der Rest darf kurz warten.',
                 'Rana': 'Genieße die Struktur. Ein Schritt nach dem anderen.',
@@ -117,66 +64,20 @@ function nouraApp() {
             return Math.min(Math.round((pts / 100) * 100), 100);
         },
         state: Alpine.$persist({
-            hasAccess: false,
-            isAdmin: false,
-            isCoaching: false,
-            isLocked: false,
-            lastActivity: null,
-            testHour: null,
-            testDayOffset: 0,
-            startDate: null, 
-            tourSeen: false, 
-            welcomeComplete: false,
-            holyMomentSeen: false,
-            reduceMotion: false,
-            todayMood: '',
-            name: '', 
-            why: '', 
-            unlockedChallenges: [], // Liste der IDs freigeschalteter Challenges
-            nourish: ['', '', ''], 
-            pivot: '', 
-            safety: '', 
-            anamnese: {
-                schlaf: '',
-                energie: '',
-                zyklus: '',
-                stress: '',
-                verdauung: '',
-                ziele: ''
-            },
-            protocol: {}, // {'2024-04-23': { breakfast: { food: '', satiety: 5, mood: '' }, ... }}
-            checklist: Array.from({length: 14}, () => ({ done: false, journal: '' }))
+            hasAccess: false, isAdmin: false, isCoaching: false, isLocked: false, lastActivity: null,
+            testHour: null, testDayOffset: 0, startDate: null, tourSeen: false, welcomeComplete: false,
+            holyMomentSeen: false, reduceMotion: false, todayMood: '', name: '', why: '', 
+            unlockedChallenges: [], nourish: ['', '', ''], pivot: '', safety: '',
+            anamnese: { schlaf: '', energie: '', zyklus: '', stress: '', verdauung: '', ziele: '' },
+            protocol: {}, checklist: Array.from({length: 14}, () => ({ done: false, journal: '' }))
         }).as('noura_storage'),
         checkInactivity() {
             if (!this.state.hasAccess || this.state.isLocked) return;
-            // Admins werden im Echtbetrieb nie gesperrt, außer sie simulieren es
-            if (!this.state.lastActivity) {
-                this.state.lastActivity = Date.now();
-                return;
-            }
+            if (!this.state.lastActivity) { this.state.lastActivity = Date.now(); return; }
             const diffDays = (Date.now() - this.state.lastActivity) / (1000 * 60 * 60 * 24);
             if (diffDays > 3) this.state.isLocked = true;
         },
-        updateActivity() {
-            this.state.lastActivity = Date.now();
-        },
-        initProtocol() {
-            this.checkInactivity();
-            const date = new Date().toISOString().split('T')[0];
-            if (!this.state.protocol[date]) {
-                this.state.protocol[date] = {
-                    breakfast: { food: '', satiety: 5, mood: '' },
-                    lunch: { food: '', satiety: 5, mood: '' },
-                    dinner: { food: '', satiety: 5, mood: '' },
-                    snacks: { food: '', satiety: 5, mood: '' },
-                    reflection: ''
-                };
-            }
-        },
-        get todayProtocol() {
-            const date = new Date().toISOString().split('T')[0];
-            return this.state.protocol[date] || {};
-        },
+        updateActivity() { this.state.lastActivity = Date.now(); },
         checkAccessCode() {
             this.loginError = false;
             const codeMap = {
@@ -186,45 +87,28 @@ function nouraApp() {
                 'NOURA-REBECCA-26': { name: 'Rebecca', coaching: false, challenges: ['reset-14'], admin: false },
                 'NOURA-EBRU-26': { name: 'Ebru', coaching: false, challenges: ['reset-14'], admin: false },
                 'NOURA-MUKADDES-26': { name: 'Mukaddes', coaching: true, challenges: ['reset-14'], admin: true },
-                'NOURA-MAMA-07-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-MAMA-08-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-MAMA-09-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-MAMA-10-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
                 'NOURA-CEM-26': { name: 'Cem', coaching: false, challenges: ['reset-14'], admin: false }
             };
             const enteredCode = this.accessCode.toUpperCase().trim();
             if (codeMap[enteredCode]) {
                 const user = codeMap[enteredCode];
-                this.state.name = user.name;
-                this.state.isCoaching = user.coaching;
-                this.state.isAdmin = user.admin;
-                this.state.unlockedChallenges = user.challenges || [];
-                this.state.hasAccess = true;
+                this.state.name = user.name; this.state.isCoaching = user.coaching; this.state.isAdmin = user.admin;
+                this.state.unlockedChallenges = user.challenges || []; this.state.hasAccess = true;
                 if (!this.state.startDate) this.state.startDate = new Date().toISOString();
-            } else {
-                this.loginError = true;
-                this.accessCode = '';
-            }
+            } else { this.loginError = true; this.accessCode = ''; }
         },
-        completeWelcome() {
-            this.state.welcomeComplete = true;
-            this.state.holyMomentSeen = false; // Reset Holy Moment for the first time
-        },
-        completeHolyMoment() {
-            this.state.holyMomentSeen = true;
-        },
+        completeWelcome() { this.state.welcomeComplete = true; this.state.holyMomentSeen = false; },
+        completeHolyMoment() { this.state.holyMomentSeen = true; },
         get isBeforeStart() {
-            if (this.state.isAdmin) return false; // Admin darf immer rein
+            if (this.state.isAdmin) return false;
             const start = new Date('2026-04-27T09:00:00');
             return new Date() < start;
         },
         get currentDayIndex() {
             if (this.state.isAdmin && this.state.testDayOffset !== 0) return parseInt(this.state.testDayOffset);
-            
             const start = new Date('2026-04-27T09:00:00');
             const now = new Date();
-            if (now < start) return 0; // Falls jemand vorab reinkommt
-
+            if (now < start) return 0;
             const diff = Math.floor((now - start) / 86400000);
             return Math.max(0, Math.min(13, diff));
         },
@@ -246,62 +130,30 @@ function nouraApp() {
         ],
         deferredPrompt: null,
         showInstallBtn: false,
-        get isIOS() {
-            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        },
-        get isAndroid() {
-            return /Android/.test(navigator.userAgent);
+        get isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; },
+        get isAndroid() { return /Android/.test(navigator.userAgent); },
+        get isStandalone() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || window.location.search.includes('pwa=true');
         },
         init() {
-            // PWA Install Logic
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                this.deferredPrompt = e;
-                this.showInstallBtn = true;
-            });
-            window.addEventListener('appinstalled', () => {
-                this.showInstallBtn = false;
-                this.deferredPrompt = null;
-            });
-
-            if (window.location.search.includes('reset=true')) {
-                localStorage.removeItem('noura_storage');
-                window.location.href = window.location.pathname;
-            }
-            if (Array.isArray(this.state.checklist) && typeof this.state.checklist[0] === 'boolean') {
-                this.state.checklist = this.state.checklist.map(done => ({ done: done, journal: '' }));
-            }
+            if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed', err)); }); }
+            window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); this.deferredPrompt = e; this.showInstallBtn = true; });
+            if (this.isStandalone && !this.state.welcomeComplete) { this.welcomeStep = 3; }
+            if (window.location.search.includes('reset=true')) { localStorage.removeItem('noura_storage'); window.location.href = window.location.pathname; }
             this.$nextTick(() => lucide.createIcons());
-            this.$watch('state', () => { 
-                this.saved = true; 
-                setTimeout(() => this.saved = false, 2000); 
-                this.$nextTick(() => lucide.createIcons()); 
-            });
-
-            // Auto-Opener: Prüft jede Minute, ob die Challenge starten darf
-            setInterval(() => {
-                if (this.isBeforeStart === false) {
-                    // Alpine.js merkt die Änderung automatisch durch den Getter
-                }
-            }, 60000);
+            this.$watch('state', () => { this.saved = true; setTimeout(() => this.saved = false, 2000); this.$nextTick(() => lucide.createIcons()); });
+            setInterval(() => { if (this.isBeforeStart === false) {} }, 60000);
         },
         async installApp() {
             if (!this.deferredPrompt) return;
             this.deferredPrompt.prompt();
             const { outcome } = await this.deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                this.showInstallBtn = false;
-            }
+            if (outcome === 'accepted') { this.showInstallBtn = false; this.welcomeStep = 2; }
             this.deferredPrompt = null;
         },
-        completeTour() { this.state.tourSeen = true; },
         addProteinTag(tag) {
             const emptyIndex = this.state.nourish.findIndex(v => v === '');
-            if (emptyIndex !== -1) {
-                this.state.nourish[emptyIndex] = tag;
-            } else {
-                this.state.nourish[2] = tag;
-            }
+            if (emptyIndex !== -1) { this.state.nourish[emptyIndex] = tag; } else { this.state.nourish[2] = tag; }
         },
         addFlowTag(tag) {
             if (!this.state.pivot) this.state.pivot = tag;
@@ -315,32 +167,12 @@ function nouraApp() {
             this.state.checklist[index].done = !this.state.checklist[index].done; 
             if (this.state.checklist[index].done) {
                 this.sparklingDays.push(index);
-                setTimeout(() => {
-                    this.sparklingDays = this.sparklingDays.filter(i => i !== index);
-                }, 1000);
+                setTimeout(() => { this.sparklingDays = this.sparklingDays.filter(i => i !== index); }, 1000);
             }
         },
-        resetWegweiser() {
-            if(confirm('Möchtest du den Wegweiser wirklich zurücksetzen?')) {
-                this.state.checklist = Array.from({length: 14}, () => ({ done: false, journal: '' }));
-            }
-        },
+        resetWegweiser() { if(confirm('Möchtest du den Wegweiser wirklich zurücksetzen?')) { this.state.checklist = Array.from({length: 14}, () => ({ done: false, journal: '' })); } },
         printWegweiser() { window.print(); },
-        resizeJournal(el) {
-            if (!el) return;
-            el.style.height = 'auto';
-            el.style.height = el.scrollHeight + 'px';
-        },
-        scrollTo(id) {
-            const el = document.getElementById(id);
-            if (el) {
-                const offset = 100;
-                const bodyRect = document.body.getBoundingClientRect().top;
-                const elementRect = el.getBoundingClientRect().top;
-                const elementPosition = elementRect - bodyRect;
-                const offsetPosition = elementPosition - offset;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-            }
-        }
+        resizeJournal(el) { if (!el) return; el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; },
+        scrollTo(id) { const el = document.getElementById(id); if (el) { const offset = 100; const bodyRect = document.body.getBoundingClientRect().top; const elementRect = el.getBoundingClientRect().top; const elementPosition = elementRect - bodyRect; const offsetPosition = elementPosition - offset; window.scrollTo({ top: offsetPosition, behavior: 'smooth' }); } }
     }
 }
