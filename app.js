@@ -277,6 +277,13 @@ function nouraApp() {
                 setTimeout(() => this.saved = false, 2000); 
                 this.$nextTick(() => lucide.createIcons()); 
             });
+
+            // Auto-Opener: Prüft jede Minute, ob die Challenge starten darf
+            setInterval(() => {
+                if (this.isBeforeStart === false) {
+                    // Alpine.js merkt die Änderung automatisch durch den Getter
+                }
+            }, 60000);
         },
         async installApp() {
             if (!this.deferredPrompt) return;
