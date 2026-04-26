@@ -121,24 +121,20 @@
                  x-transition:leave-end="opacity-0 scale-95">
                 <p class="label-caps mb-4">Willkommen bei Noura</p>
                 <h2 class="h1-serif italic text-charcoal mb-6 leading-tight">Nimm mich mit auf deinen Startbildschirm.</h2>
-                
-                <!-- Smart Button for Android -->
                 <div x-show="showInstallBtn" class="w-full mb-8">
                     <button @click="installApp().then(() => welcomeStep = 2)" class="btn-primary w-full !py-6 shadow-2xl flex flex-col items-center gap-1">
                         <span class="text-[12px]">App jetzt einziehen lassen</span>
                         <span class="text-[8px] opacity-60 normal-case tracking-normal">Ein Klick zur Installation</span>
                     </button>
                 </div>
-
-                <!-- Personalized Manual Instructions -->
-                <div x-show="!showInstallBtn" class="w-full space-y-6 text-left bg-white/60 p-8 rounded-[2.5rem] border border-sage/10 mb-4 shadow-sm">
+                <div x-show="!showInstallBtn" class="w-full space-y-6 text-left bg-white/60 p-8 rounded-[2.5rem] border border-sage/10 mb-8 mx-4 shadow-sm">
                     <div x-show="isIOS || (!isIOS && !isAndroid)">
                         <p class="label-caps !text-sage !text-[7px] mb-1">iPhone (Safari)</p>
-                        <p class="text-[10px] text-charcoal/70 leading-snug">Das <span class="font-bold">Teilen-Symbol</span> tippen & <span class="font-bold underline text-charcoal/90">'Zum Home-Bildschirm'</span> wählen.</p>
+                        <p class="text-[10px] text-charcoal/70 leading-snug">Teilen-Symbol tippen & <strong>'Zum Home-Bildschirm'</strong>.</p>
                     </div>
                     <div x-show="isAndroid || (!isIOS && !isAndroid)" :class="isIOS ? '' : 'pt-4 border-t border-sage/5'">
                         <p class="label-caps !text-terracotta !text-[7px] mb-1">Android (Chrome)</p>
-                        <p class="text-[10px] text-charcoal/70 leading-snug">Oben rechts auf die <span class="font-bold text-terracotta">3 Punkte</span> tippen & <span class="font-bold underline text-charcoal/90">'App installieren'</span> wählen.</p>
+                        <p class="text-[10px] text-charcoal/70 leading-snug">Drei Punkte tippen & <strong>'App installieren'</strong>.</p>
                     </div>
                 </div>
             </div>
@@ -154,7 +150,6 @@
                  x-transition:leave-end="opacity-0 scale-105">
                 <p class="label-caps mb-4">Willkommen bei Noura</p>
                 <h1 class="h1-serif italic text-charcoal mb-10">Schön, dass du da bist.</h1>
-                
                 <div class="w-full max-w-[280px] mx-auto relative">
                     <p class="text-charcoal/60 text-sm mb-4">Wie darf ich dich nennen?</p>
                     <input type="text" x-model="state.name" @keydown.enter="if(state.name.length > 1) completeWelcome()" 
@@ -217,8 +212,23 @@
         <div class="max-w-[280px] mt-12"><p class="text-charcoal/40 text-[11px] uppercase tracking-widest font-medium leading-relaxed">Atme tief ein und komme ganz bei dir an.</p></div>
     </div>
 
+    <!-- WAITING ROOM (Before Official Start) -->
+    <template x-if="state.hasAccess && state.welcomeComplete && state.holyMomentSeen && isBeforeStart">
+        <div class="fixed inset-0 z-[150] bg-sand flex flex-col items-center justify-center p-8 text-center">
+            <div class="zen-orb w-[600px] h-[600px] bg-sage/5 opacity-30"></div>
+            <div class="max-w-sm w-full relative z-10 -mt-20">
+                <p class="label-caps !text-sage mb-6">Coming Soon</p>
+                <h2 class="h1-serif italic text-charcoal mb-8">Schön, dass du schon da bist, <span x-text="state.name"></span>.</h2>
+                <p class="text-charcoal/60 text-sm leading-relaxed mb-12">
+                    Deine 14-Tage-Reise beginnt offiziell <strong>morgen früh um 09:00 Uhr</strong>. <br><br>Atme tief durch, nimm dir den Moment für dich und freue dich auf deinen ersten Impuls.
+                </p>
+                <div class="opacity-30"><p class="h2-serif !text-base italic">Bis morgen.</p></div>
+            </div>
+        </div>
+    </template>
+
     <!-- DASHBOARD -->
-    <div x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen" x-cloak
+    <div x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen && !isBeforeStart" x-cloak
          x-init="$watch('state.holyMomentSeen', v => { if(v) $nextTick(() => lucide.createIcons()) }); if(state.holyMomentSeen) $nextTick(() => lucide.createIcons());"
          x-transition:enter="transition ease-out duration-[1500ms] delay-500"
          x-transition:enter-start="opacity-0 translate-y-4"
@@ -233,37 +243,16 @@
                     <div class="mb-8 p-4 bg-charcoal text-white rounded-2xl text-[10px] uppercase tracking-widest font-bold">
                         <p class="mb-4 text-sage border-b border-white/5 pb-2">Admin Simulator</p>
                         <div class="flex flex-wrap gap-4 items-center">
-                            <div class="flex items-center gap-2">
-                                <span class="opacity-40">Tag:</span>
-                                <input type="range" min="0" max="13" 
-                                       x-model="state.testDayOffset" 
-                                       @input="state.startDate = new Date(Date.now() - (state.testDayOffset * 86400000)).toISOString()"
-                                       class="accent-sage w-24">
-                                <span x-text="parseInt(state.testDayOffset) + 1"></span>
-                            </div>
-                            <div class="flex items-center gap-2 border-l border-white/10 pl-4">
-                                <span class="opacity-40">Zeit:</span>
-                                <input type="range" min="0" max="23" 
-                                       x-model="state.testHour" 
-                                       class="accent-sage w-24">
-                                <span x-text="state.testHour !== null ? state.testHour + ':00' : 'Auto'"></span>
-                                <button x-show="state.testHour !== null" @click="state.testHour = null" class="text-[8px] text-terracotta ml-1">Reset</button>
-                            </div>
-                            <button @click="state.lastActivity = Date.now() - (4 * 86400000); checkInactivity()" 
-                                    class="border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 transition-all">Sperre</button>
-                            <button @click="state.isLocked = false; state.lastActivity = Date.now(); location.reload()" 
-                                    class="border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 transition-all">Reset All</button>
+                            <div class="flex items-center gap-2"><span>Tag:</span><input type="range" min="0" max="13" x-model="state.testDayOffset" @input="state.startDate = new Date(Date.now() - (state.testDayOffset * 86400000)).toISOString()" class="accent-sage w-24"><span x-text="parseInt(state.testDayOffset) + 1"></span></div>
+                            <div class="flex items-center gap-2 border-l border-white/10 pl-4"><span>Zeit:</span><input type="range" min="0" max="23" x-model="state.testHour" class="accent-sage w-24"><span x-text="state.testHour !== null ? state.testHour + ':00' : 'Auto'"></span><button x-show="state.testHour !== null" @click="state.testHour = null" class="text-[8px] text-terracotta ml-1">Reset</button></div>
+                            <button @click="state.lastActivity = Date.now() - (4 * 86400000); checkInactivity()" class="border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 transition-all">Sperre</button>
+                            <button @click="state.isLocked = false; state.lastActivity = Date.now(); location.reload()" class="border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 transition-all">Reset All</button>
                         </div>
                     </div>
                 </template>
                 <p class="label-caps mb-4">TAG <span x-text="String(currentDayIndex + 1).padStart(2, '0')"></span> — <span x-text="days[currentDayIndex].label"></span></p>
                 <h1 class="h1-serif italic text-charcoal mb-4" x-text="greeting"></h1>
-                <p class="text-lg md:text-xl font-serif italic text-charcoal/60 leading-relaxed max-w-sm md:max-w-2xl" 
-                   x-show="state.hasAccess"
-                   x-transition:enter="transition ease-out duration-1000 delay-500"
-                   x-transition:enter-start="opacity-0 translate-y-2"
-                   x-transition:enter-end="opacity-100 translate-y-0"
-                   x-text="personalNote"></p>
+                <p class="text-lg md:text-xl font-serif italic text-charcoal/60 leading-relaxed max-w-sm md:max-w-2xl" x-text="personalNote"></p>
             </div>
             <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-12 md:w-16 opacity-60">
         </header>
@@ -276,13 +265,8 @@
                     <div class="relative z-10">
                         <div class="flex justify-between items-start mb-8">
                             <div><span class="label-caps !text-terracotta">Dein heutiger Impuls</span><h2 class="h2-serif italic !mb-2" x-text="days[currentDayIndex].title"></h2></div>
-                            <template x-if="state.checklist[currentDayIndex].done">
-                                <div class="w-10 h-10 rounded-full bg-sage text-white flex items-center justify-center shadow-lg">
-                                    <i data-lucide="check" class="w-6 h-6"></i>
-                                </div>
-                            </template>
+                            <template x-if="state.checklist[currentDayIndex].done"><div class="w-10 h-10 rounded-full bg-sage text-white flex items-center justify-center shadow-lg"><i data-lucide="check" class="w-6 h-6"></i></div></template>
                         </div>
-
                         <div class="prose prose-sm text-charcoal/80 mb-8 leading-relaxed" x-html="days[currentDayIndex].mission"></div>
                         <div class="space-y-6 mt-6 pt-6 border-t border-sage/5">
                             <div><p class="label-caps !text-sage" x-text="days[currentDayIndex].prompt || 'Dein kleiner Sieg'"></p><textarea x-model="state.checklist[currentDayIndex].journal" @input="state.checklist[currentDayIndex].done = false" class="journal-textarea h-24" placeholder="Schreibe deine Gedanken nieder..."></textarea></div>
@@ -312,7 +296,7 @@
             </div>
             <p class="text-[8px] uppercase tracking-[0.2em] font-bold text-charcoal/20 text-center">© 2026 NOURA | BY MUKADDES MANDIRALI</p>
         </footer>
-        <nav class="noura-nav no-print" x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0">
+        <nav class="noura-nav no-print" x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen && !state.isLocked" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0">
             <a href="index.html" class="noura-nav-item active"><i data-lucide="layout-grid"></i><span class="noura-nav-label">Übersicht</span></a>
             <template x-if="state.isCoaching"><a href="naehren.html" class="noura-nav-item"><i data-lucide="utensils"></i><span class="noura-nav-label">Nähren</span></a></template>
             <a href="reset.html" class="noura-nav-item"><i data-lucide="milestone"></i><span class="noura-nav-label">Wegweiser</span></a>

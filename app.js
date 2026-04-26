@@ -96,6 +96,7 @@ function nouraApp() {
                 'Rebecca': 'Du darfst wachsen. Fehler sind Teil deines Weges.',
                 'Merve': 'Fang einfach an. Die Motivation folgt deinem Tun.',
                 'Masooma': 'Nähre dich gut. Dein Körper leistet Großartiges.',
+                'Cem': 'Cem, danke für deine Kraft. Auch du darfst hier ankommen.',
                 'Mukaddes': 'Deine Vision wird lebendig. Vertraue dir.'
             };
             return notes[this.state.name] || 'Schön, dass du dir diesen Raum für dich nimmst.';
@@ -188,7 +189,8 @@ function nouraApp() {
                 'NOURA-MAMA-07-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
                 'NOURA-MAMA-08-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
                 'NOURA-MAMA-09-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-MAMA-10-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false }
+                'NOURA-MAMA-10-26': { name: 'Mama', coaching: false, challenges: ['reset-14'], admin: false },
+                'NOURA-CEM-26': { name: 'Cem', coaching: false, challenges: ['reset-14'], admin: false }
             };
             const enteredCode = this.accessCode.toUpperCase().trim();
             if (codeMap[enteredCode]) {
@@ -211,11 +213,19 @@ function nouraApp() {
         completeHolyMoment() {
             this.state.holyMomentSeen = true;
         },
+        get isBeforeStart() {
+            if (this.state.isAdmin) return false; // Admin darf immer rein
+            const start = new Date('2026-04-27T09:00:00');
+            return new Date() < start;
+        },
         get currentDayIndex() {
-            if (!this.state.startDate) return 0;
-            const s = new Date(this.state.startDate); s.setHours(0,0,0,0);
-            const n = new Date(); n.setHours(0,0,0,0);
-            const diff = Math.floor((n - s) / 86400000);
+            if (this.state.isAdmin && this.state.testDayOffset !== 0) return parseInt(this.state.testDayOffset);
+            
+            const start = new Date('2026-04-27T09:00:00');
+            const now = new Date();
+            if (now < start) return 0; // Falls jemand vorab reinkommt
+
+            const diff = Math.floor((now - start) / 86400000);
             return Math.max(0, Math.min(13, diff));
         },
         days: [
