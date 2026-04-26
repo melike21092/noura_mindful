@@ -103,6 +103,8 @@ function nouraApp() {
             hasAccess: false,
             isAdmin: false,
             isCoaching: false,
+            isLocked: false,
+            lastActivity: null,
             startDate: null, 
             tourSeen: false, 
             welcomeComplete: false,
@@ -126,7 +128,21 @@ function nouraApp() {
             protocol: {}, // {'2024-04-23': { breakfast: { food: '', satiety: 5, mood: '' }, ... }}
             checklist: Array.from({length: 14}, () => ({ done: false, journal: '' }))
         }).as('noura_storage'),
+        checkInactivity() {
+            if (!this.state.hasAccess || this.state.isLocked) return;
+            // Admins werden im Echtbetrieb nie gesperrt, außer sie simulieren es
+            if (!this.state.lastActivity) {
+                this.state.lastActivity = Date.now();
+                return;
+            }
+            const diffDays = (Date.now() - this.state.lastActivity) / (1000 * 60 * 60 * 24);
+            if (diffDays > 3) this.state.isLocked = true;
+        },
+        updateActivity() {
+            this.state.lastActivity = Date.now();
+        },
         initProtocol() {
+            this.checkInactivity();
             const date = new Date().toISOString().split('T')[0];
             if (!this.state.protocol[date]) {
                 this.state.protocol[date] = {
