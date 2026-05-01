@@ -141,6 +141,28 @@
         </div>
     </div>
 
+    <!-- LOCK SCREEN -->
+    <div class="fixed inset-0 z-[200] bg-sand/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
+         x-show="state.isLocked" x-cloak
+         x-transition:enter="transition ease-out duration-500"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100">
+        <div class="w-full max-w-sm">
+            <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-32 mx-auto mb-12 opacity-80">
+            <h2 class="h2-serif italic text-charcoal mb-4">Zeit für einen Check-In.</h2>
+            <p class="text-charcoal/60 text-sm mb-8">Deine App war kurz im Ruhemodus. Gib deinen Code ein, um dort weiterzumachen, wo du aufgehört hast.</p>
+            
+            <div class="w-full max-w-[280px] mx-auto relative mb-12">
+                <input :type="showPassword ? 'text' : 'password'" x-model="accessCode" @keydown.enter="checkAccessCode()" 
+                       class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-lg font-serif text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40" 
+                       placeholder="Dein Code">
+                <p x-show="loginError" x-transition class="absolute top-full left-0 w-full text-center text-[10px] text-terracotta font-bold uppercase tracking-widest mt-4">Code unbekannt.</p>
+            </div>
+            
+            <button @click="checkAccessCode()" class="btn-primary w-full shadow-xl !py-5">Entsperren</button>
+        </div>
+    </div>
+
     <!-- HEILIGER MOMENT -->
     <div class="fixed inset-0 z-[190] bg-sand flex flex-col items-center justify-center p-8 text-center"
          x-data="{ showRitual: false }"
@@ -189,7 +211,8 @@
                         <div class="flex flex-wrap gap-4 items-center">
                             <div class="flex items-center gap-2"><span>Tag:</span><input type="range" min="0" max="13" x-model="state.testDayOffset" @input="state.startDate = new Date(Date.now() - (state.testDayOffset * 86400000)).toISOString()" class="accent-sage w-24 mx-auto"><span x-text="parseInt(state.testDayOffset) + 1"></span></div>
                             <div class="flex items-center gap-2 border-l border-white/10 pl-4"><span>Zeit:</span><input type="range" min="0" max="23" x-model="state.testHour" class="accent-sage w-24 mx-auto"><span x-text="state.testHour !== null ? state.testHour + ':00' : 'Auto'"></span><button x-show="state.testHour !== null" @click="state.testHour = null" class="text-[8px] text-terracotta ml-1">Reset</button></div>
-                            <button @click="state.lastActivity = Date.now() - (4 * 86400000); checkInactivity()" class="border border-white/20 px-3 py-1 rounded-full hover:bg-white/10">Sperre</button>
+                            <button @click="state.lastActivity = Date.now() - (4 * 86400000); checkInactivity()" class="border border-white/20 px-3 py-1 rounded-full hover:bg-white/10">Sperre simulieren</button>
+                            <button @click="state.isLocked = true" class="border border-white/20 px-3 py-1 rounded-full hover:bg-white/10 bg-sage/20">Vorschau Sperrbildschirm</button>
                             <button @click="state.isLocked = false; state.lastActivity = Date.now(); location.reload()" class="border border-white/20 px-3 py-1 rounded-full hover:bg-white/10">Reset All</button>
                         </div>
                     </div>
@@ -233,13 +256,17 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mb-12 mt-4 mx-auto">
                 <div class="flex flex-col items-center"><p class="label-caps !text-sage !text-[8px] mb-8">Begleitung</p><div class="space-y-3 text-center w-full"><a href="https://t.me/+ZaOT7m-1ZykwYjAy" target="_blank" class="flex items-center justify-center gap-2 text-charcoal/40 hover:text-sage transition-colors text-[10px] font-bold uppercase tracking-widest"><i data-lucide="send" class="w-3.5 h-3.5"></i> Telegram</a><a href="https://t.me/nouramindful" target="_blank" class="flex items-center justify-center gap-2 text-charcoal/40 hover:text-sage transition-colors text-[10px] font-bold uppercase tracking-widest"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Support</a></div></div>
                 <div x-data="{ open: false }" class="flex flex-col items-center"><p class="label-caps !text-terracotta !text-[8px] mb-8">Deine App</p><button @click="open = !open" class="flex items-center justify-center gap-2 text-charcoal/40 hover:text-sage transition-colors text-[10px] font-bold uppercase tracking-widest mx-auto"><i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Installieren</button><div x-show="open" x-collapse x-cloak class="mt-6 text-[10px] text-charcoal/50 leading-relaxed border-t border-terracotta/10 pt-4 text-left max-w-[180px] mx-auto"><p class="font-bold text-terracotta/60 mb-2 uppercase tracking-tighter">iOS / iPhone</p>Safari > Teilen > Home<p class="font-bold text-terracotta/60 mt-4 mb-2 uppercase tracking-tighter">Android</p>Chrome > 3 Punkte > App install.</div></div>
+                <div class="flex flex-col items-center"><p class="label-caps !text-sage !text-[8px] mb-8">Achtsamkeit</p><button @click="toggleNotifications()" class="flex items-center justify-center gap-2 text-charcoal/40 hover:text-sage transition-colors text-[10px] font-bold uppercase tracking-widest mx-auto"><i :data-lucide="state.notificationsEnabled ? 'bell' : 'bell-off'" class="w-3.5 h-3.5"></i> <span x-text="state.notificationsEnabled ? 'Erinnerung an' : 'Erinnerung aus'"></span></button></div>
             </div>
             <p class="text-[8px] uppercase tracking-[0.2em] font-bold text-charcoal/20 text-center mx-auto">© 2026 NOURA | BY MUKADDES MANDIRALI</p>
         </footer>
         <nav class="noura-nav no-print" x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen && !state.isLocked" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0">
             <a href="index.html" class="noura-nav-item active"><i data-lucide="layout-grid"></i><span class="noura-nav-label">Übersicht</span></a>
-            <template x-if="state.isCoaching"><a href="naehren.html" class="noura-nav-item"><i data-lucide="utensils"></i><span class="noura-nav-label">Nähren</span></a></template>
+            <template x-if="state.isCoaching"><a href="naehren.html" class="noura-nav-item"><i data-lucide="utensils"></i><span class="noura-nav-label">Fokus</span></a></template>
             <a href="reset.html" class="noura-nav-item"><i data-lucide="milestone"></i><span class="noura-nav-label">Wegweiser</span></a>
+            <template x-if="state.isAdmin">
+                <a href="coach.html" class="noura-nav-item"><i data-lucide="shield-check"></i><span class="noura-nav-label">Coach</span></a>
+            </template>
         </nav>
     </div>
     <script src="app.js"></script>

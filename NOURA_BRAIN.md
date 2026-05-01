@@ -40,7 +40,17 @@
 *   **Navigation:** Floating Bottom Dock (Übersicht, Nähren, Wegweiser). Deutsch benannt.
 *   **Daten:** Alle Fortschritte (Checklist, TinyWin, Journal) werden im `noura_storage` Objekt verwaltet.
 
-## 5. Eiserne Kooperations-Regeln (WICHTIG)
+## 5. Coach-Logik (The Detective Brain)
+*   **Prinzip:** "Sjard-Präzision trifft Mama-Alltag". Die App nutzt wissenschaftliche Metriken (Makros, Bio-Feedback), übersetzt sie aber in einfache Fitness-Sprache.
+*   **Detektiv-Kategorien (Anomaly Detection):**
+    *   **Heißhunger-Check:** Protein-Mangel wird als Vorbote für Heißhunger-Attacken gewertet.
+    *   **Stoffwechsel-Alarm:** Fokus auf Bio-Feedback (Frieren, Hunger). Indikator für notwendige Diet Breaks (Erhaltungskalorien).
+    *   **Versteckte Kalorien:** Erkennt Plateaus durch ungenaues Tracking (z.B. Reste-Essen) statt biologischer Stagnation.
+    *   **Stress-Stopp:** Verknüpft Journal-Stress mit stagnierendem Gewicht (Cortisol-Wasser-Effekt). Fokus: Pause vor Defizit.
+*   **Quick-Actions:** Jede Anomalie muss eine direkte Lösung (Action) bieten, die via Telegram an die Klientin kommuniziert werden kann.
+*   **Tonfall:** Professionell, aber verständlich. Weg von medizinischen Fachbegriffen, hin zu klaren Coaching-Anweisungen.
+
+## 6. Eiserne Kooperations-Regeln (WICHTIG)
 *   **Code-Integrität:** Code NIEMALS eigenmächtig kürzen oder Platzhalter verwenden. Immer die vollständigen Dateien/Blöcke liefern.
 *   **Kommunikation:** Bei jeder Änderung (außer minimalen Fixes) IMMER vorher fragen und Ideen validieren.
 *   **Sicherung:** Vor größeren Änderungen oder Umstrukturierungen IMMER nach einem Commit fragen.

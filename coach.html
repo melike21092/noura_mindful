@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NOURA | Coach Dashboard</title>
+
+    <link rel="icon" href="images/n-logo.svg" type="image/svg+xml">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Alpine.js Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine.js Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        window.addEventListener('alpine:init', () => {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            sage: '#8ba88e',
+                            sand: '#fdfaf7',
+                            terracotta: '#a68b7c',
+                            charcoal: '#2d3748'
+                        },
+                        fontFamily: {
+                            serif: ['Playfair Display', 'serif'],
+                            sans: ['Inter', 'sans-serif'],
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</head>
+<body x-data="nouraApp()" 
+      x-init="if(!state.isAdmin) window.location.href='index.html'; $nextTick(() => lucide.createIcons());"
+      class="bg-sand text-charcoal overflow-x-hidden">
+
+    <!-- Global Background Glow -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sage/5 w-[1000px] h-[1000px] rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 flex justify-between items-start no-print">
+        <div class="text-left">
+            <p class="label-caps mb-4 !text-terracotta">COACHING</p>
+            <h1 class="h1-serif italic text-charcoal !mb-2">Dein Space.</h1>
+        </div>
+        <a href="index.html">
+            <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-12 md:w-16 opacity-60">
+        </a>
+    </header>
+
+    <main class="relative z-10 max-w-4xl mx-auto px-6 mt-12 pb-40">
+        
+        <!-- COACHING OVERVIEW METRICS -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="noura-card noura-glow !p-10 bg-white/70 border-sage/10 relative overflow-hidden group">
+                <div class="flex items-center gap-6">
+                    <div class="w-12 h-12 bg-sage/10 rounded-2xl flex items-center justify-center text-sage">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="label-caps !text-sage !mb-0">Aktive Reisen</p>
+                        <h2 class="h2-serif !text-3xl !mb-0 italic">12 Mamas</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="noura-card noura-glow !p-10 bg-white/70 border-sage/10 relative overflow-hidden group">
+                <div class="flex items-center gap-6">
+                    <div class="w-12 h-12 bg-terracotta/10 rounded-2xl flex items-center justify-center text-terracotta">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="label-caps !text-terracotta !mb-0">Offene Calls</p>
+                        <h2 class="h2-serif !text-3xl !mb-0 italic">3 Buchungen</h2>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ANALYTICS POWER-GRID -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            <!-- Engagement Trend -->
+            <div class="lg:col-span-2 noura-card !p-8 bg-white/40 border-sage/5 relative overflow-hidden">
+                <div class="absolute top-4 right-8 flex gap-4 opacity-20 font-mono text-[7px] tracking-widest uppercase">
+                    <span>Scan: Active</span>
+                    <span>Ref: 0x442A</span>
+                </div>
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <p class="label-caps !text-sage !mb-1">Engagement</p>
+                        <h3 class="h2-serif !text-xl italic">Reise-Intensität</h3>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-mono text-[10px] font-black text-sage tracking-tighter">Δ +12.4%</span>
+                        <p class="text-[7px] uppercase font-bold text-charcoal/30 tracking-widest">7-Day-Rolling</p>
+                    </div>
+                </div>
+                <div class="h-64">
+                    <canvas id="engagementChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Macro Distribution -->
+            <div class="noura-card !p-8 bg-white/40 border-sage/5 flex flex-col relative overflow-hidden">
+                <div class="absolute -right-4 top-1/2 -rotate-90 opacity-10 font-mono text-[6px] tracking-[0.5em]">SYSTEM_METRICS_V2.0</div>
+                <div class="mb-8">
+                    <p class="label-caps !text-terracotta !mb-1">Stoffwechsel</p>
+                    <h3 class="h2-serif !text-xl italic">Gruppen-Makros</h3>
+                </div>
+                <div class="h-64 relative flex items-center justify-center">
+                    <canvas id="macroChart"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none translate-y-2">
+                        <span class="text-2xl font-serif italic text-charcoal">Avg.</span>
+                        <span class="font-mono text-[8px] font-bold text-charcoal/40 tracking-widest">30/45/25</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MASTERY & SCIENCE: SJARD-INSPIRED PRECISION -->
+        <section class="mb-16">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <p class="label-caps !text-charcoal mb-1">Mastery & Science</p>
+                    <h2 class="h2-serif !text-2xl italic">Physiologische Kontrolle</h2>
+                </div>
+                <div class="px-3 py-1 bg-charcoal text-white font-mono text-[9px] tracking-[0.3em] uppercase rounded-full">No-Bullshit Data</div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- COMPLIANCE SCORE -->
+                <div class="noura-card !p-6 bg-white/40 border-charcoal/10 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="font-mono text-[9px] font-bold text-charcoal/40 uppercase">Group Compliance</span>
+                            <span class="text-sage font-mono text-[9px] font-black">88.4%</span>
+                        </div>
+                        <h4 class="h2-serif !text-lg !mb-2 italic">Makro-Präzision</h4>
+                        <p class="text-[10px] text-charcoal/60 leading-relaxed">Durchschnittliche Abweichung vom Protein- & Kcal-Ziel der letzten 72h.</p>
+                    </div>
+                    <div class="mt-6 h-1 w-full bg-charcoal/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-sage w-[88%]"></div>
+                    </div>
+                </div>
+
+                <!-- METABOLIC EFFICIENCY -->
+                <div class="noura-card !p-6 bg-white/40 border-charcoal/10 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="font-mono text-[9px] font-bold text-charcoal/40 uppercase">Metabolic Rate</span>
+                            <span class="text-terracotta font-mono text-[9px] font-black">Stable</span>
+                        </div>
+                        <h4 class="h2-serif !text-lg !mb-2 italic">Stoffwechsel-Flow</h4>
+                        <p class="text-[10px] text-charcoal/60 leading-relaxed">Verhältnis von Energie-Input zu Sättigungs-Output (Bio-Feedback).</p>
+                    </div>
+                    <div class="mt-6 flex gap-1">
+                        <div class="h-4 w-full bg-sage/40 rounded-sm"></div>
+                        <div class="h-4 w-full bg-sage/60 rounded-sm"></div>
+                        <div class="h-4 w-full bg-sage rounded-sm"></div>
+                        <div class="h-4 w-full bg-charcoal/10 rounded-sm"></div>
+                    </div>
+                </div>
+
+                <!-- PROTEIN STREAK -->
+                <div class="noura-card !p-6 bg-charcoal text-white flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="font-mono text-[9px] font-bold text-white/40 uppercase">Elite Protocol</span>
+                            <i data-lucide="flame" class="w-3 h-3 text-terracotta"></i>
+                        </div>
+                        <h4 class="h2-serif !text-lg !mb-2 italic text-white">Protein Streaks</h4>
+                        <p class="text-[10px] text-white/60 leading-relaxed">5 Klientinnen halten seit 7+ Tagen das exakte Protein-Ziel.</p>
+                    </div>
+                    <div class="mt-6 flex -space-x-2">
+                        <div class="w-6 h-6 rounded-full bg-sage border border-charcoal flex items-center justify-center text-[8px] font-bold">SM</div>
+                        <div class="w-6 h-6 rounded-full bg-terracotta border border-charcoal flex items-center justify-center text-[8px] font-bold">LW</div>
+                        <div class="w-6 h-6 rounded-full bg-sand border border-charcoal flex items-center justify-center text-[8px] font-bold text-charcoal">JK</div>
+                        <div class="w-6 h-6 rounded-full bg-white/20 border border-charcoal flex items-center justify-center text-[8px] font-bold">+2</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COACH RADAR (TRIAGE FEED STYLE) -->
+        <section class="mb-16">
+            <div class="flex items-center justify-between mb-6 border-b border-charcoal/10 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-1.5 h-1.5 rounded-full bg-charcoal"></div>
+                    <div>
+                        <span class="label-caps !text-charcoal !mb-0 !text-[9px]">Triage Analysis</span>
+                        <p class="font-mono text-[7px] text-charcoal/40 -mt-1 tracking-widest">PRIORITY-BASED MONITORING ACTIVE</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="font-mono text-[10px] font-bold text-terracotta">02 ALARMS</span>
+                    <span class="text-[8px] font-bold text-charcoal/20 uppercase tracking-[0.2em] ml-2">04 Total</span>
+                </div>
+            </div>
+            
+            <div class="divide-y divide-charcoal/5 border-t border-b border-charcoal/5">
+                <!-- PRIORITY 1: ALARM (Critical) -->
+                <div class="py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 group bg-terracotta/[0.03] hover:bg-terracotta/[0.06] transition-all px-4 border-l-2 border-terracotta">
+                    <div class="flex items-center gap-6 flex-1">
+                        <div class="relative">
+                            <div class="w-2.5 h-2.5 rounded-full bg-terracotta animate-ping absolute inset-0 opacity-40"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-terracotta relative"></div>
+                        </div>
+                        <div class="w-24 shrink-0">
+                            <span class="font-mono text-[8px] font-black text-white bg-terracotta px-2 py-1 rounded-sm uppercase tracking-tighter">ALARM</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[12px] text-charcoal font-bold"><strong>Sarah:</strong> Heißhunger-Check</p>
+                            <p class="text-[10px] text-charcoal/60 -mt-0.5">Protein-Lücke Δ -32g. Hohe Rückfallgefahr.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right hidden md:block">
+                            <p class="font-mono text-[7px] text-terracotta font-black uppercase tracking-widest">IMPACT: CRITICAL</p>
+                        </div>
+                        <button @click.stop="openAIAnalysis('Sarah', 'protein')" class="px-5 py-2.5 bg-terracotta text-white text-[9px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-terracotta/20 hover:bg-charcoal transition-all">KI-Analyse</button>
+                    </div>
+                </div>
+
+                <!-- PRIORITY 1: ALARM (Stress) -->
+                <div class="py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 group bg-terracotta/[0.03] hover:bg-terracotta/[0.06] transition-all px-4 border-l-2 border-terracotta">
+                    <div class="flex items-center gap-6 flex-1">
+                        <div class="relative">
+                            <div class="w-2.5 h-2.5 rounded-full bg-terracotta animate-ping absolute inset-0 opacity-40"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-terracotta relative"></div>
+                        </div>
+                        <div class="w-24 shrink-0">
+                            <span class="font-mono text-[8px] font-black text-white bg-terracotta px-2 py-1 rounded-sm uppercase tracking-tighter">ALARM</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[12px] text-charcoal font-bold"><strong>Merve:</strong> Stress-Stopp</p>
+                            <p class="text-[10px] text-charcoal/60 -mt-0.5">Cortisol-Blockade detektiert. Fettverbrennung pausiert.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right hidden md:block">
+                            <p class="font-mono text-[7px] text-terracotta font-black uppercase tracking-widest">IMPACT: BLOCKADE</p>
+                        </div>
+                        <button @click.stop="openAIAnalysis('Merve', 'stress')" class="px-5 py-2.5 bg-terracotta text-white text-[9px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-terracotta/20 hover:bg-charcoal transition-all">KI-Analyse</button>
+                    </div>
+                </div>
+
+                <!-- PRIORITY 2: MONITOR (Warning) -->
+                <div class="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white/40 transition-all px-4 border-l-2 border-sage/40">
+                    <div class="flex items-center gap-6 flex-1">
+                        <div class="w-2 h-2 rounded-full bg-sage"></div>
+                        <div class="w-24 shrink-0">
+                            <span class="font-mono text-[8px] font-black text-sage border border-sage/40 px-2 py-1 rounded-sm uppercase tracking-tighter">MONITOR</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[11px] text-charcoal/80"><strong>Lena:</strong> Stoffwechsel-Alarm</p>
+                            <p class="text-[9px] text-charcoal/40 -mt-0.5">Energie-Flow sinkt. Bio-Feedback beachten.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right hidden md:block">
+                            <p class="font-mono text-[7px] text-sage font-bold uppercase tracking-widest">IMPACT: MED</p>
+                        </div>
+                        <button @click.stop="openAIAnalysis('Lena', 'metabolic')" class="px-5 py-2 bg-charcoal/5 text-charcoal/40 text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-sage hover:text-white transition-all">KI-Analyse</button>
+                    </div>
+                </div>
+
+                <!-- PRIORITY 3: OPTIMIZE (Info) -->
+                <div class="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white/40 transition-all px-4 border-l-2 border-charcoal/10">
+                    <div class="flex items-center gap-6 flex-1">
+                        <div class="w-1.5 h-1.5 rounded-full bg-charcoal/20"></div>
+                        <div class="w-24 shrink-0">
+                            <span class="font-mono text-[8px] font-black text-charcoal/40 border border-charcoal/10 px-2 py-1 rounded-sm uppercase tracking-tighter">OPTIMIZE</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[11px] text-charcoal/80"><strong>Julia:</strong> Versteckte Kalorien</p>
+                            <p class="text-[9px] text-charcoal/40 -mt-0.5">Tracking-Genauigkeit lässt nach.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right hidden md:block">
+                            <p class="font-mono text-[7px] text-charcoal/20 font-bold uppercase tracking-widest">IMPACT: LOW</p>
+                        </div>
+                        <button @click.stop="openAIAnalysis('Julia', 'creep')" class="px-5 py-2 bg-charcoal/5 text-charcoal/40 text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-charcoal hover:text-white transition-all">KI-Analyse</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </section>
+
+    </main>
+
+    <!-- AI Analysis Modal -->
+    <template x-if="activeAIAnalysis">
+        <div class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-charcoal/20 backdrop-blur-md" @click.self="closeAIAnalysis()">
+            <div class="noura-card !p-0 bg-white/95 border-sage/10 w-full max-w-lg overflow-hidden shadow-2xl scale-in">
+                <!-- Modal Header -->
+                <div class="bg-charcoal p-8 text-white relative">
+                    <button @click="closeAIAnalysis()" class="absolute top-6 right-6 text-white/40 hover:text-white transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                    <div class="flex items-center gap-3 mb-2 opacity-60">
+                        <i data-lucide="brain-circuit" class="w-4 h-4"></i>
+                        <span class="label-caps !text-white !text-[8px] !mb-0 tracking-[0.3em]">KI Detektiv-Bericht</span>
+                    </div>
+                    <h3 class="h2-serif !text-3xl italic" x-text="activeAIAnalysis.title"></h3>
+                    <p class="font-mono text-[8px] text-sage tracking-widest mt-2">BEFUND FÜR: <span x-text="activeAIAnalysis.clientName.toUpperCase()"></span></p>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-8 space-y-8">
+                    <div>
+                        <p class="label-caps !text-terracotta !text-[9px] mb-3">Warum passiert das?</p>
+                        <p class="text-[13px] text-charcoal/80 leading-relaxed font-medium" x-text="activeAIAnalysis.why"></p>
+                    </div>
+
+                    <div class="p-6 bg-sand/50 rounded-2xl border border-sage/10">
+                        <p class="label-caps !text-sage !text-[9px] mb-3">Die Biologie dahinter</p>
+                        <p class="text-[11px] text-charcoal/60 leading-relaxed italic" x-text="activeAIAnalysis.science"></p>
+                    </div>
+
+                    <div>
+                        <p class="label-caps !text-charcoal !text-[9px] mb-3">Dein Coaching-Hebel</p>
+                        <p class="text-[13px] text-charcoal/80 leading-relaxed" x-text="activeAIAnalysis.strategy"></p>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-8 bg-sand/30 border-t border-charcoal/5 flex flex-col md:flex-row gap-4">
+                    <button @click="sendQuickAction(activeAIAnalysis.clientName, activeAIAnalysis.type)" 
+                            class="flex-1 px-6 py-4 bg-charcoal text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-terracotta transition-all shadow-lg flex items-center justify-center gap-3">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        Nachricht an Klientin senden
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+        </section>
+
+        <!-- CLIENT FEED -->
+        <section>
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <p class="label-caps !text-terracotta mb-1">Status Quo</p>
+                    <h2 class="h2-serif !text-2xl italic">Deine Klientinnen</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button class="p-2 text-charcoal/40 hover:text-sage transition-colors"><i data-lucide="search" class="w-5 h-5"></i></button>
+                    <button class="p-2 text-charcoal/40 hover:text-sage transition-colors"><i data-lucide="filter" class="w-5 h-5"></i></button>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- CLIENT CARDS -->
+                <template x-for="(client, index) in state.clients" :key="index">
+                    <div class="noura-card noura-glow bg-white/60 border-sage/5 !p-8 transition-all hover:bg-white hover:shadow-xl group">
+                        <div class="flex flex-col md:flex-row justify-between gap-8">
+                            <div class="flex items-center gap-6">
+                                <div class="w-16 h-16 bg-sand rounded-3xl flex items-center justify-center text-charcoal/20 group-hover:text-sage transition-colors border border-sage/10">
+                                    <i data-lucide="user" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <span class="label-caps !text-terracotta !text-[8px]" x-text="'Tag ' + String(client.day).padStart(2, '0') + ' — ' + client.label"></span>
+                                    <h3 class="h2-serif !text-xl !mb-1 italic" x-text="client.name"></h3>
+                                    <div class="flex gap-4 mt-2">
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="flame" class="w-3 h-3 text-terracotta"></i>
+                                            <span class="text-[9px] font-bold text-charcoal/40 uppercase" x-text="client.kcal + ' kcal'"></span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5" :class="client.done ? 'text-sage' : 'text-terracotta'">
+                                            <i :data-lucide="client.done ? 'check-circle' : 'alert-circle'" class="w-3 h-3"></i>
+                                            <span class="text-[9px] font-bold uppercase" x-text="client.done ? 'Impuls erledigt' : 'Journal offen'"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button class="px-6 py-3 bg-sand rounded-2xl text-[9px] font-black uppercase tracking-widest text-charcoal/40 hover:bg-sage hover:text-white transition-all">Details</button>
+                                <a :href="'https://t.me/' + client.telegram" target="_blank" class="w-12 h-12 rounded-2xl bg-sage/10 text-sage flex items-center justify-center hover:bg-sage hover:text-white transition-all shadow-sm">
+                                    <i data-lucide="send" class="w-5 h-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Navigation -->
+    <nav class="noura-nav no-print">
+        <a href="index.html" class="noura-nav-item">
+            <i data-lucide="layout-grid"></i>
+            <span class="noura-nav-label">Übersicht</span>
+        </a>
+        <a href="naehren.html" class="noura-nav-item">
+            <i data-lucide="utensils"></i>
+            <span class="noura-nav-label">Fokus</span>
+        </a>
+        <a href="reset.html" class="noura-nav-item">
+            <i data-lucide="milestone"></i>
+            <span class="noura-nav-label">Wegweiser</span>
+        </a>
+        <template x-if="state.isAdmin">
+            <a href="coach.html" class="noura-nav-item active">
+                <i data-lucide="shield-check"></i>
+                <span class="noura-nav-label">Coach</span>
+            </a>
+        </template>
+    </nav>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            $nextTick(() => {
+                // Engagement Chart (Line)
+                const ctxEngagement = document.getElementById('engagementChart').getContext('2d');
+                new Chart(ctxEngagement, {
+                    type: 'line',
+                    data: {
+                        labels: ['Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5', 'Tag 6', 'Tag 7', 'Tag 8', 'Tag 9', 'Tag 10', 'Tag 11', 'Tag 12', 'Tag 13', 'Tag 14'],
+                        datasets: [{
+                            label: 'Aktive Check-ins',
+                            data: [12, 12, 11, 10, 11, 9, 8, 9, 10, 10, 11, 10, 12, 12],
+                            borderColor: '#8ba88e',
+                            backgroundColor: 'rgba(139, 168, 142, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#8ba88e'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { display: false, min: 0, max: 15 },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: 'rgba(45, 55, 72, 0.3)', font: { size: 9, weight: 'bold' } }
+                            }
+                        }
+                    }
+                });
+
+                // Macro Chart (Doughnut)
+                const ctxMacro = document.getElementById('macroChart').getContext('2d');
+                new Chart(ctxMacro, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Protein', 'Kohlenhydrate', 'Fette'],
+                        datasets: [{
+                            data: [30, 45, 25],
+                            backgroundColor: ['#8ba88e', '#a68b7c', '#2d3748'],
+                            borderWidth: 0,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '80%',
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

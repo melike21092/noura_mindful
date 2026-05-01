@@ -267,13 +267,19 @@
         <template x-if="state.isCoaching">
             <a href="naehren.html" class="noura-nav-item">
                 <i data-lucide="utensils"></i>
-                <span class="noura-nav-label">Nähren</span>
+                <span class="noura-nav-label">Fokus</span>
             </a>
         </template>
         <a href="reset.html" class="noura-nav-item active">
             <i data-lucide="milestone"></i>
             <span class="noura-nav-label">Wegweiser</span>
         </a>
+        <template x-if="state.isAdmin">
+            <a href="coach.html" class="noura-nav-item">
+                <i data-lucide="shield-check"></i>
+                <span class="noura-nav-label">Coach</span>
+            </a>
+        </template>
     </nav>
 
     <script src="app.js"></script>
