@@ -349,9 +349,10 @@ export function calculateOrientation(input) {
 
     if (!DEFICIT_MODES.has(mode)) return result;
 
-    const lossLow = roundTo(maintenanceLow * 0.85, 50);
-    const lossHigh = roundTo(maintenanceHigh * 0.9, 50);
-    const targetCalories = roundTo((lossLow + lossHigh) / 2, 50);
+    const maintenanceMidpoint = (maintenanceLow + maintenanceHigh) / 2;
+    const targetCalories = roundTo(maintenanceMidpoint * 0.85, 50);
+    const lossLow = targetCalories - 50;
+    const lossHigh = targetCalories + 50;
     const heightM = heightCm / 100;
     const calculationWeight = Math.min(weightKg, 30 * heightM * heightM);
     const proteinLow = roundTo(calculationWeight * 1.2, 5);

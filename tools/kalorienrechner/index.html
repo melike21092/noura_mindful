@@ -228,11 +228,19 @@
             </div>
 
             <div id="standard-results">
-                <div class="result-card">
-                    <span class="eyebrow">Dein sanfter Startpunkt</span>
-                    <h3>Moderater Abnahmebereich</h3>
-                    <strong class="metric-value" id="loss-result"></strong>
-                    <p class="metric-note">Starte nicht automatisch am unteren Ende. Die höhere Zahl ist häufig der bessere erste Test.</p>
+                <div class="result-card start-result-card">
+                    <span class="eyebrow">Deine Startorientierung</span>
+                    <h3>Dein moderater Startwert</h3>
+                    <strong class="metric-value" id="start-result"></strong>
+                    <div class="result-highlight">
+                        <span class="result-highlight-icon" aria-hidden="true">≈</span>
+                        <span><small>Flexibler Alltagskorridor</small><strong id="loss-result"></strong></span>
+                    </div>
+                    <div class="result-highlight result-highlight--quiet">
+                        <span class="result-highlight-icon" aria-hidden="true">↗</span>
+                        <p><strong>Beobachten statt täglich treffen.</strong> Einzelne Tage dürfen darüber oder darunter liegen. Entscheidend ist deine Entwicklung über mehrere Wochen.</p>
+                    </div>
+                    <p class="metric-note">Der Startwert liegt 15 % unter der Mitte deiner geschätzten Erhaltung. Er ist eine Orientierung und kein exakt gemessener Bedarf.</p>
                 </div>
 
                 <div class="result-card">
@@ -508,6 +516,7 @@
                     return card;
                 }));
             } else {
+                setText('start-result', `ca. ${formatKcal(result.targetCalories)}`);
                 setText('loss-result', `ca. ${formatRange(result.loss)}`);
                 setText('protein-result', `ca. ${result.protein.low}–${result.protein.high} g`);
                 setText('protein-note', `Ein möglicher Startwert liegt bei etwa ${result.protein.target} g täglich. Regelmäßige Proteinanker sind wichtiger als mathematische Perfektion.`);

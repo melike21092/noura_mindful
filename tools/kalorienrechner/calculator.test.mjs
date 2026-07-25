@@ -52,6 +52,8 @@ const moderateActivityCase = calculateOrientation({
 });
 assert.equal(moderateActivityCase.resting, 1400);
 assert.deepEqual(moderateActivityCase.maintenance, { low: 2100, high: 2250 });
+assert.equal(moderateActivityCase.targetCalories, 1850);
+assert.deepEqual(moderateActivityCase.loss, { low: 1800, high: 1900 });
 
 const protectedCases = [
     {
