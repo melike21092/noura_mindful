@@ -8,7 +8,7 @@
     <link rel="icon" href="../../images/n-logo.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="calculator.css">
 </head>
 <body>
@@ -207,53 +207,61 @@
         </form>
 
         <section id="result" class="results" hidden aria-live="polite">
+            <div class="result-card start-result-card deficit-result">
+                <span class="eyebrow">Deine Startorientierung</span>
+                <h3>Dein moderater Startwert</h3>
+                <div class="primary-metric">
+                    <span class="metric-prefix">ca.</span>
+                    <strong id="start-result-number"></strong>
+                    <span class="metric-unit">kcal pro Tag</span>
+                </div>
+                <p class="calculation-note">Berechnet mit einem moderaten Defizit von 15 %.</p>
+                <div class="orientation-range">
+                    <small>Dein Orientierungsbereich</small>
+                    <strong id="loss-result"></strong>
+                    <p>im Tagesdurchschnitt</p>
+                </div>
+                <p class="result-context">Nicht jeder Tag muss exakt passen. Entscheidend ist deine durchschnittliche Aufnahme und die Entwicklung über mehrere Wochen.</p>
+                <details class="calibration-details">
+                    <summary>Wie überprüfe ich meinen Startwert?</summary>
+                    <div class="calibration-details-content">
+                        <h4>Teste diesen Startwert drei bis vier Wochen.</h4>
+                        <p>Vergleiche Wochendurchschnitte statt einzelner Waagentage. Zyklus, Salz, Verdauung und Stress können dein Gewicht vorübergehend verändern.</p>
+                        <h4>Wie geht es danach weiter?</h4>
+                        <div class="calibration-outcomes">
+                            <p><strong>Gewicht sinkt langsam und du fühlst dich gut?</strong> Beibehalten.</p>
+                            <p><strong>Kein klarer Trend?</strong> Angaben, tatsächlichen Durchschnitt und mögliche Schwankungen prüfen.</p>
+                            <p><strong>Starker Hunger, wenig Energie oder Leistungseinbruch?</strong> Nicht weiter reduzieren.</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <div class="result-card derivation-card energy-result">
+                <span class="eyebrow">So entsteht dein Wert</span>
+                <div class="derivation-row">
+                    <div>
+                        <h3>Ruhebedarf</h3>
+                        <p>Ungefährer Energieverbrauch für grundlegende Körperfunktionen – noch ohne deinen normalen Alltag.</p>
+                    </div>
+                    <strong id="resting-result"></strong>
+                </div>
+                <div class="derivation-row">
+                    <div>
+                        <h3>Gewicht halten</h3>
+                        <p>In diesem Bereich könnte dein Gewicht langfristig ungefähr stabil bleiben.</p>
+                    </div>
+                    <strong id="maintenance-result"></strong>
+                </div>
+            </div>
+
             <div class="card">
                 <span class="eyebrow">Deine Orientierung</span>
                 <h2 id="result-heading">Ein realistischer Rahmen für deinen Alltag.</h2>
                 <p id="result-intro">Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.</p>
             </div>
 
-            <div class="result-card energy-result">
-                <span class="eyebrow">Deine Basis</span>
-                <h3>Geschätzter Ruhebedarf</h3>
-                <strong class="metric-value" id="resting-result"></strong>
-                <p class="metric-note">Ungefährer Energieverbrauch für grundlegende Körperfunktionen – noch ohne deinen normalen Alltag.</p>
-            </div>
-
-            <div class="result-card energy-result">
-                <span class="eyebrow">Dein realistischer Rahmen</span>
-                <h3>Geschätzte Erhaltung</h3>
-                <strong class="metric-value" id="maintenance-result"></strong>
-                <p class="metric-note">In diesem Bereich könnte dein Gewicht langfristig ungefähr stabil bleiben.</p>
-            </div>
-
             <div id="standard-results">
-                <div class="result-card start-result-card">
-                    <span class="eyebrow">Deine Startorientierung</span>
-                    <h3>Dein moderater Startwert</h3>
-                    <strong class="metric-value" id="start-result"></strong>
-                    <p class="calculation-note">Berechnet mit einem moderaten Defizit von 15 %.</p>
-                    <div class="orientation-range">
-                        <small>Dein Orientierungsbereich</small>
-                        <strong id="loss-result"></strong>
-                        <p>im Tagesdurchschnitt</p>
-                    </div>
-                    <p class="result-context">Nicht jeder Tag muss exakt passen. Entscheidend ist deine durchschnittliche Aufnahme und die Entwicklung über mehrere Wochen.</p>
-                    <details class="calibration-details">
-                        <summary>Wie überprüfe ich meinen Startwert?</summary>
-                        <div class="calibration-details-content">
-                            <h4>Teste diesen Startwert drei bis vier Wochen.</h4>
-                            <p>Vergleiche Wochendurchschnitte statt einzelner Waagentage. Zyklus, Salz, Verdauung und Stress können dein Gewicht vorübergehend verändern.</p>
-                            <h4>Wie geht es danach weiter?</h4>
-                            <div class="calibration-outcomes">
-                                <p><strong>Gewicht sinkt langsam und du fühlst dich gut?</strong> Beibehalten.</p>
-                                <p><strong>Kein klarer Trend?</strong> Angaben, tatsächlichen Durchschnitt und mögliche Schwankungen prüfen.</p>
-                                <p><strong>Starker Hunger, wenig Energie oder Leistungseinbruch?</strong> Nicht weiter reduzieren.</p>
-                            </div>
-                        </div>
-                    </details>
-                </div>
-
                 <div class="result-card">
                     <span class="eyebrow">Dein Proteinanker</span>
                     <h3>Orientierung statt Treffpflicht</h3>
@@ -297,10 +305,10 @@
             </div>
 
             <div class="result-card cta">
-                <span class="eyebrow">Persönliche Begleitung</span>
-                <h3>Eine Zahl erklärt noch nicht, warum dein Alltag kippt.</h3>
-                <p>Im NOURA Coaching schauen wir gemeinsam auf die Muster hinter Hunger, Essdrang, Stress, Schlaf, Zyklus und Familienalltag – und finden Strategien, die wirklich zu deinem Leben passen.</p>
-                <a class="secondary" href="https://zeeg.me/nouraxbalance/kennenlernen" target="_blank" rel="noopener noreferrer">Persönlichen Klarheits-Check anfragen</a>
+                <span class="eyebrow" id="cta-eyebrow">Persönliche Begleitung</span>
+                <h3 id="cta-title">Eine Zahl erklärt noch nicht, warum dein Alltag kippt.</h3>
+                <p id="cta-copy">Im NOURA Coaching schauen wir gemeinsam auf die Muster hinter Hunger, Essdrang, Stress, Schlaf, Zyklus und Familienalltag – und finden Strategien, die wirklich zu deinem Leben passen.</p>
+                <a class="secondary" id="cta-button" href="https://zeeg.me/nouraxbalance/kennenlernen" target="_blank" rel="noopener noreferrer">Persönlichen Klarheits-Check anfragen</a>
             </div>
 
             <button class="text-button" type="button" id="restart">Neu berechnen</button>
@@ -477,6 +485,10 @@
             const deficitMode = [RESULT_MODES.STANDARD, RESULT_MODES.POSTPARTUM_LOSS].includes(result.mode);
             const guidanceMode = !deficitMode;
             const showsEnergy = Boolean(result.maintenance);
+            setText('cta-eyebrow', result.cta.eyebrow);
+            setText('cta-title', result.cta.title);
+            setText('cta-copy', result.cta.copy);
+            setText('cta-button', result.cta.button);
             if (result.mode === RESULT_MODES.POSTPARTUM_LOSS) {
                 setText('result-heading', 'Ein vorsichtiger Start nach deiner Erholungsphase.');
                 setText('result-intro', 'Wenn du dich körperlich ausreichend erholt fühlst und medizinisch nichts dagegenspricht, kann ein moderater Startbereich sinnvoller sein als ein großes Defizit. Diese Auswahl ist keine medizinische Freigabe.');
@@ -488,6 +500,7 @@
                 setText('result-intro', 'Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.');
             }
             document.querySelectorAll('.energy-result').forEach(card => { card.hidden = !showsEnergy; });
+            document.querySelectorAll('.deficit-result').forEach(card => { card.hidden = !deficitMode; });
             document.getElementById('standard-results').hidden = !deficitMode;
             document.getElementById('special-result').hidden = !guidanceMode;
             document.getElementById('mission-result').hidden = !deficitMode;
@@ -527,7 +540,7 @@
                     return card;
                 }));
             } else {
-                setText('start-result', `ca. ${formatKcal(result.targetCalories)}`);
+                setText('start-result-number', new Intl.NumberFormat('de-DE').format(result.targetCalories));
                 setText('loss-result', `ca. ${formatRange(result.loss)}`);
                 setText('protein-result', `ca. ${result.protein.low}–${result.protein.high} g`);
                 setText('protein-note', `Ein möglicher Startwert liegt bei etwa ${result.protein.target} g täglich. Regelmäßige Proteinanker sind wichtiger als mathematische Perfektion.`);
@@ -570,6 +583,7 @@
             form.hidden = false;
             document.getElementById('progress').hidden = false;
             document.querySelectorAll('.energy-result').forEach(card => { card.hidden = false; });
+            document.querySelectorAll('.deficit-result').forEach(card => { card.hidden = false; });
             document.getElementById('mission-result').hidden = false;
             document.getElementById('standard-next-step').hidden = false;
             document.querySelector('#special-result .eyebrow').textContent = 'Deine Lebensphase';

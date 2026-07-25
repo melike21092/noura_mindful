@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {
     calculateOrientation,
     determineResultMode,
+    getCtaContent,
     parseGermanNumber,
     RESULT_MODES,
     roundTo
@@ -36,6 +37,8 @@ assert.ok(result.fat.target >= result.targetCalories * 0.25 / 9 - 5);
 assert.ok(result.fat.target <= result.targetCalories * 0.35 / 9 + 5);
 assert.ok(result.carbs.target > 0);
 assert.equal(result.mission.lever, 'Abendlichen Essdrang verstehen');
+assert.match(result.cta.title, /Abend/);
+assert.equal(result.cta.button, 'Meinen persönlichen Start besprechen');
 
 const displayedEnergy =
     (result.protein.target * 4) +
@@ -89,6 +92,7 @@ for (const testCase of protectedCases) {
     assert.equal(protectedResult.protein, undefined, testCase.name);
     assert.equal(protectedResult.mission, undefined, testCase.name);
     assert.ok(protectedResult.guidance, testCase.name);
+    assert.ok(protectedResult.cta?.title, testCase.name);
     if ('guideline' in testCase) assert.equal(protectedResult.trimesterGuideline, testCase.guideline);
 }
 
@@ -103,6 +107,7 @@ assert.equal(exclusivelyBreastfeeding.mode, RESULT_MODES.EXCLUSIVE_BREASTFEEDING
 assert.ok(exclusivelyBreastfeeding.maintenance);
 assert.equal(exclusivelyBreastfeeding.loss, undefined);
 assert.equal(exclusivelyBreastfeeding.targetCalories, undefined);
+assert.match(exclusivelyBreastfeeding.cta.button, /Stillfreundliche/);
 
 const partiallyBreastfeeding = calculateOrientation({
     ...baseInput,
@@ -137,6 +142,7 @@ const postpartumLoss = calculateOrientation({
 });
 assert.equal(postpartumLoss.mode, RESULT_MODES.POSTPARTUM_LOSS);
 assert.ok(postpartumLoss.loss);
+assert.match(postpartumLoss.cta.title, /nach der Geburt/);
 
 for (const warning of [
     { recovered: 'no', complications: 'no', advisedAgainstLoss: 'no' },
@@ -181,6 +187,11 @@ const missingTrimester = calculateOrientation({
 });
 assert.equal(missingTrimester.ok, false);
 assert.ok(missingTrimester.errors.trimester);
+
+assert.match(
+    getCtaContent(RESULT_MODES.STANDARD, 'stress').title,
+    /Stressessen/
+);
 
 const capped = calculateOrientation({ ...baseInput, weightKg: 180 });
 const bmiThirtyWeight = 30 * 1.65 * 1.65;

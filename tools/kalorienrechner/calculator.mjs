@@ -15,6 +15,68 @@ export const RESULT_MODES = Object.freeze({
     SAFETY: 'safety'
 });
 
+const STANDARD_CTA_TITLES = Object.freeze({
+    hunger: 'Dein Plan sollte dich nicht den ganzen Tag hungrig lassen.',
+    cravings: 'Dein Abend beginnt oft mit dem, was tagsüber gefehlt hat.',
+    irregular: 'Eine Kalorienzahl hilft wenig, wenn im Alltag Mahlzeiten ausfallen.',
+    family: 'Dein Plan muss auch am Familientisch funktionieren.',
+    stress: 'Stressessen löst man nicht mit einer strengeren Zahl.',
+    weekend: 'Ein guter Plan darf auch am Wochenende tragen.',
+    consistency: 'Du brauchst keinen härteren Plan, sondern einen wiederholbaren.',
+    unsure: 'Wenn du nicht weißt, wo es kippt, schauen wir gemeinsam auf die Muster.'
+});
+
+const MODE_CTA = Object.freeze({
+    [RESULT_MODES.PREGNANCY]: {
+        eyebrow: 'Ernährungscoaching in der Schwangerschaft',
+        title: 'Gute Versorgung ist jetzt wichtiger als ein Kalorienziel.',
+        copy: 'Gemeinsam entwickeln wir alltagstaugliche Mahlzeiten und passende Ernährungsbausteine. Medizinische Fragen und deine individuelle Versorgung bleiben Teil deiner Betreuung durch Hebamme oder Ärztin.',
+        button: 'Meine Ernährung im Alltag besprechen'
+    },
+    [RESULT_MODES.EARLY_POSTPARTUM]: {
+        eyebrow: 'Begleitung nach der Geburt',
+        title: 'Gerade brauchst du vielleicht keine strengere Zahl, sondern mehr Entlastung.',
+        copy: 'Wir schauen, wie einfache Mahlzeiten, erreichbare Proteinquellen und kleine Versorgungsanker in deinen neuen Alltag passen. Bei Beschwerden oder Komplikationen ersetzt das keine medizinische Rücksprache.',
+        button: 'Meine Alltagssituation besprechen'
+    },
+    [RESULT_MODES.EXCLUSIVE_BREASTFEEDING]: {
+        eyebrow: 'Stillfreundliches Ernährungscoaching',
+        title: 'Eine Rechnerformel kennt deinen Stillalltag nicht.',
+        copy: 'Gemeinsam betrachten wir Hunger, Energie, Mahlzeitenstruktur und die Anforderungen deines Alltags. NOURA ersetzt keine Stillberatung, hilft dir aber dabei, deine Ernährung stillfreundlich und alltagstauglich zu gestalten.',
+        button: 'Stillfreundliche Ernährung besprechen'
+    },
+    [RESULT_MODES.PARTIAL_BREASTFEEDING]: {
+        eyebrow: 'Persönliche Orientierung',
+        title: 'Beim Teilstillen ist eine einzelne Kalorienzahl selten die ganze Antwort.',
+        copy: 'Wir schauen gemeinsam, ob zunächst Stabilität, eine einfachere Mahlzeitenstruktur oder ein vorsichtiger persönlicher Abnahmestart zu deiner Situation passt.',
+        button: 'Meine persönliche Orientierung besprechen'
+    },
+    [RESULT_MODES.POSTPARTUM_LOSS]: {
+        eyebrow: 'Persönlicher Wiedereinstieg',
+        title: 'Abnehmen nach der Geburt braucht keinen schnellen Neustart.',
+        copy: 'Wir entwickeln einen vorsichtigen Start, der zu deiner Erholung, deinem Alltag und deiner aktuellen Belastung passt – ohne Druck oder starre Regeln.',
+        button: 'Meinen passenden Wiedereinstieg besprechen'
+    },
+    [RESULT_MODES.SAFETY]: {
+        eyebrow: 'Der passende nächste Schritt',
+        title: 'Deine Situation verdient eine persönliche und fachlich passende Einordnung.',
+        copy: 'Bitte kläre zunächst, ob und in welcher Form eine Gewichtsabnahme aktuell sinnvoll ist. NOURA ersetzt keine medizinische, psychologische oder ernährungstherapeutische Betreuung.',
+        button: 'Geeigneten nächsten Schritt klären'
+    }
+});
+
+export function getCtaContent(mode, obstacle) {
+    if (mode === RESULT_MODES.STANDARD) {
+        return {
+            eyebrow: 'Persönliche Begleitung',
+            title: STANDARD_CTA_TITLES[obstacle] || STANDARD_CTA_TITLES.unsure,
+            copy: 'Im NOURA Coaching verbinden wir deinen Startwert mit deinem tatsächlichen Alltag. Wir schauen auf Hunger, Essdrang, Mahlzeitenstruktur, Stress und die Situationen, in denen dein Plan bisher nicht funktioniert.',
+            button: 'Meinen persönlichen Start besprechen'
+        };
+    }
+    return MODE_CTA[mode];
+}
+
 export function determineResultMode(input) {
     if (input.medicalFlag) return RESULT_MODES.SAFETY;
     if (input.pregnant === 'yes') return RESULT_MODES.PREGNANCY;
@@ -329,6 +391,7 @@ export function calculateOrientation(input) {
             ok: true,
             mode,
             guidance: SPECIAL_GUIDANCE[mode],
+            cta: getCtaContent(mode, input.obstacle),
             trimesterGuideline: mode === RESULT_MODES.PREGNANCY
                 ? { first: 0, second: 250, third: 500, unsure: null }[input.trimester]
                 : undefined
@@ -344,7 +407,8 @@ export function calculateOrientation(input) {
         mode,
         resting: roundTo(resting, 50),
         maintenance: { low: maintenanceLow, high: maintenanceHigh },
-        guidance: SPECIAL_GUIDANCE[mode]
+        guidance: SPECIAL_GUIDANCE[mode],
+        cta: getCtaContent(mode, input.obstacle)
     };
 
     if (!DEFICIT_MODES.has(mode)) return result;
