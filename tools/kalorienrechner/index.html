@@ -8,10 +8,17 @@
     <link rel="icon" href="../../images/n-logo.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="calculator.css">
 </head>
 <body>
+    <div class="depth-scene" aria-hidden="true">
+        <span class="depth-image" data-depth="-0.018"></span>
+        <span class="depth-orb depth-orb--peach" data-depth="-0.055"></span>
+        <span class="depth-orb depth-orb--sage" data-depth="-0.025"></span>
+        <span class="depth-orb depth-orb--light" data-depth="-0.085"></span>
+        <span class="depth-line" data-depth="-0.04"></span>
+    </div>
     <main class="page-shell">
         <header class="brand">
             <span class="brand-mark">NOURA TOOLS</span>
@@ -366,6 +373,25 @@
             clearErrors();
             showStep(0);
         });
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const depthLayers = [...document.querySelectorAll('[data-depth]')];
+        let depthFrame = null;
+
+        function updateDepth() {
+            depthLayers.forEach(layer => {
+                const offset = window.scrollY * Number(layer.dataset.depth);
+                layer.style.setProperty('--depth-y', `${offset}px`);
+            });
+            depthFrame = null;
+        }
+
+        if (!reduceMotion.matches) {
+            window.addEventListener('scroll', () => {
+                if (!depthFrame) depthFrame = requestAnimationFrame(updateDepth);
+            }, { passive: true });
+            updateDepth();
+        }
     </script>
 </body>
 </html>
