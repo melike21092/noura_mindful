@@ -86,17 +86,16 @@ button { cursor: pointer; }
 }
 
 h1, h2, h3, .metric-value {
-    font-family: "Playfair Display", Georgia, serif;
-    font-weight: 400;
+    font-family: "Inter", Arial, sans-serif;
+    font-weight: 600;
 }
 
 h1, h2 {
     max-width: 620px;
     margin: 0 0 20px;
     font-size: clamp(36px, 8vw, 58px);
-    font-style: italic;
     line-height: 1.06;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.045em;
 }
 
 h3 { margin: 0 0 10px; font-size: 26px; line-height: 1.15; }
@@ -116,7 +115,8 @@ p { margin: 0; color: rgba(45, 55, 72, 0.68); line-height: 1.7; }
     outline: 0;
     background: transparent;
     color: var(--charcoal);
-    font-family: "Playfair Display", Georgia, serif;
+    font-family: "Inter", Arial, sans-serif;
+    font-weight: 500;
     font-size: 24px;
 }
 
@@ -166,7 +166,7 @@ fieldset { min-width: 0; margin: 30px 0 0; padding: 0; border: 0; }
 
 .results { display: grid; gap: 18px; }
 .result-card { padding: 26px 22px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255, 255, 255, 0.68); }
-.metric-value { display: block; margin: 8px 0; color: var(--charcoal); font-size: clamp(34px, 9vw, 50px); font-style: italic; line-height: 1; }
+.metric-value { display: block; margin: 8px 0; color: var(--charcoal); font-size: clamp(34px, 9vw, 50px); font-weight: 700; letter-spacing: -0.045em; line-height: 1; }
 .metric-note { font-size: 12px; }
 
 .macro-grid {
@@ -183,12 +183,12 @@ fieldset { min-width: 0; margin: 30px 0 0; padding: 0; border: 0; }
 }
 
 .macro span { display: block; color: var(--terracotta); font-size: 9px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
-.macro strong { display: block; margin-top: 6px; font-family: "Playfair Display", Georgia, serif; font-size: 24px; font-weight: 400; }
+.macro strong { display: block; margin-top: 6px; font-family: "Inter", Arial, sans-serif; font-size: 24px; font-weight: 700; letter-spacing: -0.035em; }
 
 .mission-list { margin: 20px 0 0; padding: 0; list-style: none; }
 .mission-list li { position: relative; margin-top: 12px; padding-left: 24px; color: rgba(45, 55, 72, 0.76); line-height: 1.55; }
 .mission-list li::before { content: "—"; position: absolute; left: 0; color: var(--sage); }
-.reflection { margin-top: 22px; padding: 18px; border-left: 2px solid var(--sage); font-family: "Playfair Display", Georgia, serif; font-size: 17px; font-style: italic; }
+.reflection { margin-top: 22px; padding: 18px; border-left: 2px solid var(--sage); font-family: "Inter", Arial, sans-serif; font-size: 16px; font-weight: 600; }
 
 .notice { border-color: rgba(166, 139, 124, 0.25); background: rgba(166, 139, 124, 0.07); }
 .cta { padding: 32px 24px; background: var(--charcoal); color: white; }
@@ -207,4 +207,3 @@ fieldset { min-width: 0; margin: 30px 0 0; padding: 0; border: 0; }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }
-
