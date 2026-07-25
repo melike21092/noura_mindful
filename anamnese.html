@@ -45,7 +45,8 @@
     </script>
 </head>
 <body x-data="nouraApp()" 
-      x-init="if(state.hasAccess && !state.isCoaching) window.location.href='index.html'"
+      x-init="initProtectedPage()"
+      x-cloak
       @scroll.window="scroll = window.pageYOffset" :class="{'reduce-motion': state.reduceMotion}">
 
     <!-- Global Background Glow -->
@@ -247,6 +248,8 @@
         <span>Gesichert</span>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

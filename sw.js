@@ -1,8 +1,9 @@
-const CACHE_NAME = 'noura-cache-v1';
+const CACHE_NAME = 'noura-cache-v2-auth';
 const ASSETS = [
     './',
     './index.html',
     './style.css',
+    './config.js',
     './app.js',
     './manifest.json',
     './images/n-logo.svg',

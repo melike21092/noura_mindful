@@ -8,9 +8,14 @@ function nouraApp() {
         sparklingDays: [],
         saved: false,
         syncStatus: 'idle',
+        authReady: false,
+        authBusy: false,
+        authError: '',
+        email: '',
         accessCode: '',
         showPassword: false,
         loginError: false,
+        supabaseClient: null,
         activeImpulse: null, 
         activeAIAnalysis: null,
         aiAnalysisContent: {
@@ -181,27 +186,97 @@ function nouraApp() {
             if (diffDays > 3) this.state.isLocked = true;
         },
         updateActivity() { this.state.lastActivity = Date.now(); },
-        checkAccessCode() {
+        clearAuthState() {
+            this.state.hasAccess = false;
+            this.state.isAdmin = false;
+            this.state.isCoaching = false;
+            this.state.isLocked = false;
+        },
+        async applySession(session) {
+            if (!session?.user) {
+                this.clearAuthState();
+                return false;
+            }
+
+            const { data: profile, error } = await this.supabaseClient
+                .from('profiles')
+                .select('id, role, display_name')
+                .eq('id', session.user.id)
+                .single();
+
+            if (error || !profile) {
+                this.clearAuthState();
+                this.authError = 'Dein NOURA-Profil konnte nicht geladen werden.';
+                return false;
+            }
+
+            this.state.name = profile.display_name || session.user.email?.split('@')[0] || '';
+            this.state.isAdmin = profile.role === 'coach';
+            this.state.isCoaching = profile.role === 'client' || profile.role === 'coach';
+            this.state.hasAccess = true;
+            this.state.unlockedChallenges = ['reset-14'];
+            return true;
+        },
+        async initializeAuth() {
+            try {
+                if (!window.supabase || !window.NOURA_CONFIG) {
+                    throw new Error('Supabase-Konfiguration fehlt.');
+                }
+
+                this.supabaseClient = window.supabase.createClient(
+                    window.NOURA_CONFIG.supabaseUrl,
+                    window.NOURA_CONFIG.supabasePublishableKey
+                );
+
+                const { data, error } = await this.supabaseClient.auth.getSession();
+                if (error) throw error;
+                await this.applySession(data.session);
+
+                this.supabaseClient.auth.onAuthStateChange((_event, session) => {
+                    setTimeout(async () => {
+                        await this.applySession(session);
+                    }, 0);
+                });
+            } catch (error) {
+                console.error('NOURA auth initialization failed', error);
+                this.clearAuthState();
+                this.authError = 'Die sichere Anmeldung ist gerade nicht erreichbar.';
+            } finally {
+                this.authReady = true;
+            }
+        },
+        async checkAccessCode() {
             this.loginError = false;
-            const codeMap = {
-                'NOURA-MERVE-26': { name: 'Merve', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-MASOOMA-26': { name: 'Masooma', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-RANA-26': { name: 'Rana', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-REBECCA-26': { name: 'Rebecca', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-EBRU-26': { name: 'Ebru', coaching: false, challenges: ['reset-14'], admin: false },
-                'NOURA-MUKADDES-26': { name: 'Mukaddes', coaching: true, challenges: ['reset-14'], admin: true },
-                'NOURA-CEM-26': { name: 'Cem', coaching: false, challenges: ['reset-14'], admin: false }
-            };
-            const enteredCode = this.accessCode.toUpperCase().trim();
-            if (codeMap[enteredCode]) {
-                const user = codeMap[enteredCode];
-                this.state.name = user.name; this.state.isCoaching = user.coaching; this.state.isAdmin = user.admin;
-                this.state.unlockedChallenges = user.challenges || []; this.state.hasAccess = true;
-                this.state.isLocked = false;
-                this.updateActivity();
-                if (!this.state.startDate) this.state.startDate = new Date().toISOString();
-                this.welcomeStep = 4; // Zum Namen springen
-            } else { this.loginError = true; this.accessCode = ''; }
+            this.authError = '';
+            if (!this.supabaseClient || !this.email.trim() || !this.accessCode) {
+                this.loginError = true;
+                this.authError = 'Bitte gib E-Mail-Adresse und Passwort ein.';
+                return;
+            }
+
+            this.authBusy = true;
+            const { data, error } = await this.supabaseClient.auth.signInWithPassword({
+                email: this.email.trim(),
+                password: this.accessCode
+            });
+            this.authBusy = false;
+
+            if (error || !(await this.applySession(data.session))) {
+                this.loginError = true;
+                this.authError = 'E-Mail-Adresse oder Passwort ist nicht korrekt.';
+                this.accessCode = '';
+                return;
+            }
+
+            if (!this.state.startDate) this.state.startDate = new Date().toISOString();
+            this.state.isLocked = false;
+            this.updateActivity();
+            this.welcomeStep = 4;
+        },
+        async signOut() {
+            if (this.supabaseClient) await this.supabaseClient.auth.signOut();
+            this.clearAuthState();
+            window.location.href = 'index.html';
         },
         completeWelcome() { this.state.welcomeComplete = true; this.state.holyMomentSeen = false; },
         completeHolyMoment() { this.state.holyMomentSeen = true; },
@@ -241,9 +316,11 @@ function nouraApp() {
         get isStandalone() {
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || window.location.search.includes('pwa=true');
         },
-        init() {
+        async init() {
             if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed', err)); }); }
             window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); this.deferredPrompt = e; this.showInstallBtn = true; });
+
+            await this.initializeAuth();
             
             // HARTER FIX: Beim App-Start immer direkt zum Code (Schritt 3)
             if (this.isStandalone && !this.state.hasAccess) { this.welcomeStep = 3; }
@@ -251,7 +328,8 @@ function nouraApp() {
 
             if (window.location.search.includes('reset=true')) { localStorage.removeItem('noura_storage'); window.location.href = window.location.pathname; }
             
-            this.updateActivity(); // Aktivität bei jedem Start aktualisieren
+            this.checkInactivity();
+            if (!this.state.isLocked) this.updateActivity();
             
             this.$nextTick(() => lucide.createIcons());
             this.$watch('state', () => { this.saved = true; setTimeout(() => this.saved = false, 2000); this.$nextTick(() => lucide.createIcons()); });
@@ -269,6 +347,11 @@ function nouraApp() {
                     this.updateActivity(); // Auch bei Sichtbarkeit aktualisieren
                 }
             });
+        },
+        async initProtectedPage(requiredRole = 'client') {
+            await this.init();
+            const allowed = this.state.hasAccess && (requiredRole !== 'coach' || this.state.isAdmin);
+            if (!allowed) window.location.replace('index.html');
         },
         async installApp() {
             if (!this.deferredPrompt) return;

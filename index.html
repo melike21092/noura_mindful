@@ -35,12 +35,17 @@
     </script>
 </head>
 <body x-data="nouraApp()" 
-      x-init="init(); checkInactivity();"
-      :class="{'overflow-hidden h-screen': !state.hasAccess || !state.welcomeComplete || state.isLocked}">
+      x-init="init()"
+      :class="{'overflow-hidden h-screen': !authReady || !state.hasAccess || !state.welcomeComplete || state.isLocked}">
+
+    <div class="fixed inset-0 z-[250] bg-sand flex items-center justify-center"
+         x-show="!authReady" x-cloak>
+        <p class="label-caps !text-sage">NOURA wird sicher geöffnet …</p>
+    </div>
 
     <!-- ONBOARDING FLOW -->
     <div class="fixed inset-0 z-[180] bg-sand flex flex-col overflow-hidden"
-         x-show="!state.welcomeComplete" x-cloak
+         x-show="authReady && !state.welcomeComplete" x-cloak
          x-transition:leave="transition ease-in duration-1000">
         
         <div class="flex-grow w-full max-w-sm mx-auto relative z-10">
@@ -92,14 +97,18 @@
                     <img src="images/logo noura dwhite bg.svg" alt="NOURA" class="w-40 mx-auto mb-12 opacity-80">
                     <div class="w-full max-w-[280px] mx-auto relative">
                         <span class="label-caps block text-center mb-2">Privater Zugang</span>
+                        <input type="email" x-model="email" autocomplete="email"
+                               class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-sm text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40"
+                               placeholder="Deine E-Mail-Adresse">
                         <input :type="showPassword ? 'text' : 'password'" x-model="accessCode" @keydown.enter="checkAccessCode()" 
+                               autocomplete="current-password"
                                class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-lg font-serif text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40" 
-                               placeholder="Dein Code">
+                               placeholder="Dein Passwort">
                         <button @click="showPassword = !showPassword" class="absolute bottom-4 right-0 text-sage/40 hover:text-sage">
                             <i x-show="!showPassword" data-lucide="eye" class="w-5 h-5"></i>
                             <i x-show="showPassword" data-lucide="eye-off" class="w-5 h-5"></i>
                         </button>
-                        <p x-show="loginError" x-transition class="absolute top-full left-0 w-full text-center text-[10px] text-terracotta font-bold uppercase tracking-widest mt-4">Code unbekannt.</p>
+                        <p x-show="loginError" x-text="authError" x-transition class="absolute top-full left-0 w-full text-center text-[10px] text-terracotta font-bold uppercase tracking-widest mt-4"></p>
                     </div>
                 </div>
             </div>
@@ -133,7 +142,7 @@
                 <button @click="welcomeStep = 3" class="text-[9px] uppercase tracking-[0.2em] font-bold text-charcoal/20 underline mx-auto">Trotzdem im Browser weiter</button>
             </template>
             <template x-if="(welcomeStep === 3 || isStandalone) && !state.hasAccess">
-                <button @click="checkAccessCode()" class="btn-primary w-full max-w-xs shadow-xl mx-auto !py-5">Code bestätigen</button>
+                <button @click="checkAccessCode()" :disabled="authBusy" class="btn-primary w-full max-w-xs shadow-xl mx-auto !py-5" x-text="authBusy ? 'Wird geprüft …' : 'Sicher anmelden'"></button>
             </template>
             <template x-if="(welcomeStep === 4 || (isStandalone && state.hasAccess)) && !state.welcomeComplete">
                 <button x-show="state.name.length > 1" @click="completeWelcome()" x-transition class="btn-primary w-full max-w-xs shadow-xl mx-auto !py-5">Dashboard öffnen</button>
@@ -143,7 +152,7 @@
 
     <!-- LOCK SCREEN -->
     <div class="fixed inset-0 z-[200] bg-sand/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
-         x-show="state.isLocked" x-cloak
+         x-show="authReady && state.isLocked" x-cloak
          x-transition:enter="transition ease-out duration-500"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100">
@@ -153,10 +162,14 @@
             <p class="text-charcoal/60 text-sm mb-8">Deine App war kurz im Ruhemodus. Gib deinen Code ein, um dort weiterzumachen, wo du aufgehört hast.</p>
             
             <div class="w-full max-w-[280px] mx-auto relative mb-12">
+                <input type="email" x-model="email" autocomplete="email"
+                       class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-sm text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40"
+                       placeholder="Deine E-Mail-Adresse">
                 <input :type="showPassword ? 'text' : 'password'" x-model="accessCode" @keydown.enter="checkAccessCode()" 
+                       autocomplete="current-password"
                        class="w-full bg-transparent border-b border-sage/30 focus:border-sage py-4 text-center text-lg font-serif text-charcoal outline-none placeholder:text-center placeholder:text-sm placeholder-charcoal/40" 
-                       placeholder="Dein Code">
-                <p x-show="loginError" x-transition class="absolute top-full left-0 w-full text-center text-[10px] text-terracotta font-bold uppercase tracking-widest mt-4">Code unbekannt.</p>
+                       placeholder="Dein Passwort">
+                <p x-show="loginError" x-text="authError" x-transition class="absolute top-full left-0 w-full text-center text-[10px] text-terracotta font-bold uppercase tracking-widest mt-4"></p>
             </div>
             
             <button @click="checkAccessCode()" class="btn-primary w-full shadow-xl !py-5">Entsperren</button>
@@ -166,7 +179,7 @@
     <!-- HEILIGER MOMENT -->
     <div class="fixed inset-0 z-[190] bg-sand flex flex-col items-center justify-center p-8 text-center"
          x-data="{ showRitual: false }"
-         x-show="state.welcomeComplete && !state.holyMomentSeen" x-cloak
+         x-show="authReady && state.welcomeComplete && !state.holyMomentSeen" x-cloak
          :class="{ 'start-breathing': showRitual }"
          x-init="$watch('state.welcomeComplete', value => { if(value) { setTimeout(() => { showRitual = true; }, 500); setTimeout(() => { state.holyMomentSeen = true; }, 14000); } });">
         <div class="mb-12 flex flex-col items-center w-full text-center">
@@ -185,7 +198,7 @@
     </div>
 
     <!-- WAITING ROOM -->
-    <template x-if="state.hasAccess && state.welcomeComplete && state.holyMomentSeen && isBeforeStart">
+    <template x-if="authReady && state.hasAccess && state.welcomeComplete && state.holyMomentSeen && isBeforeStart">
         <div class="fixed inset-0 z-[150] bg-sand flex flex-col items-center justify-center p-8 text-center px-4 overflow-hidden">
             <div class="max-w-sm w-full relative z-10 -mt-20 mx-auto flex flex-col items-center">
                 <p class="label-caps !text-sage mb-6 text-center">Coming Soon</p>
@@ -197,7 +210,7 @@
     </template>
 
     <!-- DASHBOARD -->
-    <div x-show="state.hasAccess && state.welcomeComplete && state.holyMomentSeen && !isBeforeStart" x-cloak
+    <div x-show="authReady && state.hasAccess && state.welcomeComplete && state.holyMomentSeen && !isBeforeStart" x-cloak
          x-init="$watch('state.holyMomentSeen', v => { if(v) $nextTick(() => lucide.createIcons()) });">
         <div class="absolute top-0 left-0 w-full h-[35vh] overflow-hidden no-print z-0 opacity-20 pointer-events-none">
             <img src="images/pexels-toni-seyfert-785961629-35324414.jpg" class="w-full h-full object-cover">
@@ -269,6 +282,8 @@
             </template>
         </nav>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

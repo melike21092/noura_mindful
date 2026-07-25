@@ -45,7 +45,7 @@
         });
     </script>
 </head>
-<body x-data="nouraApp()" @scroll.window="scroll = window.pageYOffset" class="bg-sand text-charcoal overflow-x-hidden">
+<body x-data="nouraApp()" x-init="initProtectedPage()" x-cloak @scroll.window="scroll = window.pageYOffset" class="bg-sand text-charcoal overflow-x-hidden">
 
     <!-- Global Background Glow -->
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
@@ -282,6 +282,8 @@
         </template>
     </nav>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script src="app.js"></script>
     <script>
         // Lucide Icons Initialisierung
