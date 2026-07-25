@@ -5,6 +5,39 @@ export const ACTIVITY_RANGES = Object.freeze({
     high: { min: 1.75, max: 1.9 }
 });
 
+export const RESULT_MODES = Object.freeze({
+    STANDARD: 'standard',
+    PREGNANCY: 'pregnancy',
+    EARLY_POSTPARTUM: 'early_postpartum',
+    EXCLUSIVE_BREASTFEEDING: 'exclusive_breastfeeding',
+    PARTIAL_BREASTFEEDING: 'partial_breastfeeding',
+    POSTPARTUM_LOSS: 'postpartum_loss',
+    SAFETY: 'safety'
+});
+
+export function determineResultMode(input) {
+    if (input.medicalFlag) return RESULT_MODES.SAFETY;
+    if (input.pregnant === 'yes') return RESULT_MODES.PREGNANCY;
+
+    const recentBirth = input.birthWithin12Months === 'yes';
+    const weeksPostpartum = parseGermanNumber(input.weeksPostpartum);
+    if (recentBirth && Number.isFinite(weeksPostpartum) && weeksPostpartum <= 6) {
+        return RESULT_MODES.EARLY_POSTPARTUM;
+    }
+    if (input.breastfeeding === 'exclusive') return RESULT_MODES.EXCLUSIVE_BREASTFEEDING;
+    if (input.breastfeeding === 'partial') return RESULT_MODES.PARTIAL_BREASTFEEDING;
+
+    if (recentBirth) {
+        const warning =
+            input.recovered !== 'yes' ||
+            input.complications !== 'no' ||
+            input.advisedAgainstLoss !== 'no';
+        return warning ? RESULT_MODES.SAFETY : RESULT_MODES.POSTPARTUM_LOSS;
+    }
+
+    return RESULT_MODES.STANDARD;
+}
+
 export const MISSIONS = Object.freeze({
     hunger: {
         lever: 'Sättigung über den Tag',
@@ -104,7 +137,120 @@ export const MISSIONS = Object.freeze({
     }
 });
 
-const SPECIAL_PHASES = new Set(['pregnant', 'breastfeeding', 'postpartum', 'unsure']);
+export const SPECIAL_GUIDANCE = Object.freeze({
+    [RESULT_MODES.PREGNANCY]: {
+        eyebrow: 'Deine Schwangerschafts-Orientierung',
+        title: 'Für zwei denken heißt nicht doppelt essen.',
+        copy: 'Dein Körper versorgt gerade nicht nur dich. Deshalb berechnet NOURA während der Schwangerschaft bewusst kein Kaloriendefizit. Du bekommst stattdessen hilfreiche Ernährungsbausteine und eine vorsichtige Versorgungsorientierung.',
+        insights: [
+            {
+                title: 'Nährstoffdichte ist jetzt wichtiger als größere Portionen.',
+                copy: 'Ergänze das, was du gut verträgst, möglichst häufig um eine Proteinquelle und nährstoffreiche pflanzliche Lebensmittel.'
+            },
+            {
+                title: 'Mehr Supplemente sind nicht automatisch besser.',
+                copy: 'Folsäure und Jod brauchen besondere Aufmerksamkeit. Eisen und weitere Präparate gehören passend zu deinen Befunden und deiner Situation abgeklärt.'
+            },
+            {
+                title: 'Sicher essen heißt nicht, pauschal alles zu verbieten.',
+                copy: 'Achte besonders auf gut durcherhitzte tierische Lebensmittel, pasteurisierte Produkte, saubere Zubereitung und eine sichere Lagerung.'
+            }
+        ],
+        reflection: 'Was ist gerade schwieriger: Verträglichkeit, regelmäßige Versorgung oder Unsicherheit bei der Lebensmittelauswahl?'
+    },
+    [RESULT_MODES.EXCLUSIVE_BREASTFEEDING]: {
+        eyebrow: 'Deine stillfreundliche Orientierung',
+        title: 'Gute Versorgung braucht keine Stilldiät.',
+        copy: 'Wie viel Energie du brauchst, hängt unter anderem von Stillintensität, Regeneration, Schlaf und Hunger ab. NOURA legt deshalb kein automatisches Kaloriendefizit fest.',
+        insights: [
+            {
+                title: 'Die DGE nennt ungefähr +500 kcal – als Richtwert, nicht als Garantie.',
+                copy: 'Dieser Richtwert bezieht sich auf ausschließliches Stillen während der ersten vier bis sechs Monate. Dein persönlicher Mehrbedarf kann davon abweichen.'
+            },
+            {
+                title: 'Du musst nicht vorsorglich auf blähende Lebensmittel verzichten.',
+                copy: 'Kohl, Hülsenfrüchte oder säurehaltige Lebensmittel müssen nicht pauschal verschwinden. Beobachte individuell, was dir und deinem Baby bekommt.'
+            },
+            {
+                title: 'Mehr trinken macht nicht automatisch mehr Milch.',
+                copy: 'Trinke regelmäßig nach deinem Durst. Ein Getränk am Stillplatz kann helfen – große Mengen über deinen Bedarf hinaus sind nicht notwendig.'
+            },
+            {
+                title: 'Stilltee ist keine Garantie für mehr Milch.',
+                copy: 'Für typische Milchbildungstees ist eine steigernde Wirkung nicht zuverlässig belegt. Bei Sorge um die Milchmenge helfen Hebamme oder qualifizierte Stillberatung gezielter.'
+            },
+            {
+                title: 'Deine Jodversorgung erreicht dein Baby über die Muttermilch.',
+                copy: 'Jod gehört deshalb in der Stillzeit besonders in den Blick. Lass ein passendes Supplement bei Schilddrüsenerkrankungen oder Unsicherheit bitte ärztlich abklären.'
+            }
+        ],
+        reflection: 'Wann fühlst du dich gut versorgt – und in welchen Situationen fehlen dir Zeit, Energie oder passende Lebensmittel?'
+    },
+    [RESULT_MODES.PARTIAL_BREASTFEEDING]: {
+        eyebrow: 'Deine Orientierung beim Teilstillen',
+        title: 'Eine einzelne Zuschlagszahl wäre nur Scheingenauigkeit.',
+        copy: 'Stillhäufigkeit und Milchmenge unterscheiden sich stark. NOURA zeigt dir deshalb deinen regulären Orientierungsbereich getrennt von stillfreundlichen Ernährungsbausteinen.',
+        insights: [
+            {
+                title: 'Stabilisieren darf ein sinnvoller erster Schritt sein.',
+                copy: 'Beobachte Energie, Hunger, Wohlbefinden und Stillverlauf, bevor du deine Energiezufuhr bewusst veränderst.'
+            },
+            {
+                title: 'Versorgung lässt sich ohne Kalorienziel verbessern.',
+                copy: 'Proteinquelle, sättigende Kohlenhydrate, Gemüse oder Obst und eine passende Fettquelle ergeben einen flexiblen Mahlzeitenbaukasten.'
+            },
+            {
+                title: 'Dein zusätzlicher Bedarf ist individuell.',
+                copy: 'Wenn du abnehmen möchtest, lässt sich ein vorsichtiger Start persönlicher besser einordnen als mit einem pauschalen Stillzuschlag.'
+            }
+        ],
+        reflection: 'Was würde dir gerade mehr helfen: Stabilität, einfachere Mahlzeiten oder eine persönliche Einordnung?'
+    },
+    [RESULT_MODES.EARLY_POSTPARTUM]: {
+        eyebrow: 'Deine Orientierung nach der Geburt',
+        title: 'Regeneration ist kein Stillstand.',
+        copy: 'Du bist noch mitten in der körperlichen Erholung. NOURA setzt dir deshalb aktuell kein Abnehmziel. Wir können dir aber helfen, dich ausreichend zu versorgen und wieder eine flexible Struktur in deinen Alltag zu bringen.',
+        insights: [
+            {
+                title: 'Sechs Wochen sind hier eine vorsichtige NOURA-Produktgrenze.',
+                copy: 'Sie sind keine allgemeine medizinische Freigabe für eine Gewichtsabnahme danach. Deine persönliche Erholung bleibt entscheidend.'
+            },
+            {
+                title: 'Einfach versorgt ist besser als perfekt geplant.',
+                copy: 'Gut erreichbare, sättigende Lebensmittel und passende Proteinquellen können dich entlasten, auch wenn gerade keine klassische Mahlzeit möglich ist.'
+            },
+            {
+                title: 'Unterstützung ist Teil deiner Versorgung.',
+                copy: 'Einkauf, Vorbereitung oder eine fertige Mahlzeit abzugeben ist keine Nebensache, sondern kann echte Regeneration ermöglichen.'
+            },
+            {
+                title: 'Hunger und Erschöpfung brauchen keine Bewertung.',
+                copy: 'Beobachte, was dir Energie gibt und was gut verträglich ist. Bei Beschwerden oder starker Erschöpfung hole dir bitte fachliche Unterstützung.'
+            }
+        ],
+        reflection: 'Wo würde eine einfachere Lösung oder konkrete Unterstützung dich gerade am meisten entlasten?'
+    },
+    [RESULT_MODES.SAFETY]: {
+        eyebrow: 'Deine sichere Orientierung',
+        title: 'Persönliche Einordnung vor Zielzahl.',
+        copy: 'Deine Angaben brauchen mehr persönliche Einordnung, als dieser Rechner leisten kann. Deshalb zeigt NOURA dir bewusst kein automatisches Abnehmziel.',
+        insights: [
+            {
+                title: 'Du musst heute nichts erzwingen.',
+                copy: 'Eine verlässliche Versorgung und eine persönliche fachliche Einordnung sind der sinnvollere nächste Schritt.'
+            }
+        ],
+        reflection: 'Welche Information fehlt dir, um deine aktuelle Situation sicher einordnen zu können?'
+    }
+});
+
+const CALCULATED_MODES = new Set([
+    RESULT_MODES.STANDARD,
+    RESULT_MODES.EXCLUSIVE_BREASTFEEDING,
+    RESULT_MODES.PARTIAL_BREASTFEEDING,
+    RESULT_MODES.POSTPARTUM_LOSS
+]);
+const DEFICIT_MODES = new Set([RESULT_MODES.STANDARD, RESULT_MODES.POSTPARTUM_LOSS]);
 
 export function parseGermanNumber(value) {
     if (typeof value === 'number') return value;
@@ -130,13 +276,40 @@ export function validateInputs(input) {
     if (!Number.isFinite(weightKg) || weightKg < 35 || weightKg > 300) {
         errors.weightKg = 'Bitte prüfe deine Gewichtsangabe.';
     }
-    if (!ACTIVITY_RANGES[input.activity]) {
+    if (!['yes', 'no'].includes(input.pregnant)) {
+        errors.pregnant = 'Bitte gib an, ob du aktuell schwanger bist.';
+    }
+    if (input.pregnant === 'yes' && !['first', 'second', 'third', 'unsure'].includes(input.trimester)) {
+        errors.trimester = 'Bitte wähle dein aktuelles Trimester oder „unsicher“.';
+    }
+    if (input.pregnant === 'no' && !['yes', 'no'].includes(input.birthWithin12Months)) {
+        errors.birthWithin12Months = 'Bitte gib an, ob du innerhalb der letzten zwölf Monate entbunden hast.';
+    }
+    if (input.pregnant === 'no' && input.birthWithin12Months === 'yes') {
+        const weeks = parseGermanNumber(input.weeksPostpartum);
+        if (!Number.isFinite(weeks) || weeks < 0 || weeks > 52) {
+            errors.weeksPostpartum = 'Bitte gib die Anzahl der Wochen seit der Geburt zwischen 0 und 52 an.';
+        }
+    }
+    if (input.pregnant === 'no' && !['exclusive', 'partial', 'no'].includes(input.breastfeeding)) {
+        errors.breastfeeding = 'Bitte wähle aus, ob und wie du aktuell stillst.';
+    }
+
+    const needsRecoveryCheck =
+        input.pregnant === 'no' &&
+        input.birthWithin12Months === 'yes' &&
+        parseGermanNumber(input.weeksPostpartum) > 6 &&
+        input.breastfeeding === 'no';
+    if (needsRecoveryCheck) {
+        if (!['yes', 'no', 'unsure'].includes(input.recovered)) errors.recovered = 'Bitte schätze deine körperliche Erholung ein.';
+        if (!['yes', 'no'].includes(input.complications)) errors.complications = 'Bitte triff eine Auswahl.';
+        if (!['yes', 'no', 'unsure'].includes(input.advisedAgainstLoss)) errors.advisedAgainstLoss = 'Bitte triff eine Auswahl.';
+    }
+    const mode = Object.keys(errors).length ? null : determineResultMode(input);
+    if (mode && CALCULATED_MODES.has(mode) && !ACTIVITY_RANGES[input.activity]) {
         errors.activity = 'Bitte wähle die Beschreibung, die deinem typischen Alltag am nächsten kommt.';
     }
-    if (!input.lifePhase) {
-        errors.lifePhase = 'Bitte wähle deine aktuelle Lebensphase.';
-    }
-    if (!MISSIONS[input.obstacle]) {
+    if (mode && DEFICIT_MODES.has(mode) && !MISSIONS[input.obstacle]) {
         errors.obstacle = 'Bitte wähle die Herausforderung, die dich aktuell am meisten beschäftigt.';
     }
 
@@ -150,33 +323,31 @@ export function calculateOrientation(input) {
     }
 
     const { age, heightCm, weightKg } = validation.values;
+    const mode = determineResultMode(input);
+    if (!CALCULATED_MODES.has(mode)) {
+        return {
+            ok: true,
+            mode,
+            guidance: SPECIAL_GUIDANCE[mode],
+            trimesterGuideline: mode === RESULT_MODES.PREGNANCY
+                ? { first: 0, second: 250, third: 500, unsure: null }[input.trimester]
+                : undefined
+        };
+    }
+
     const resting = (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
     const activity = ACTIVITY_RANGES[input.activity];
     const maintenanceLow = roundTo(resting * activity.min, 50);
     const maintenanceHigh = roundTo(resting * activity.max, 50);
-    const specialPhase = SPECIAL_PHASES.has(input.lifePhase);
-    const medicallyLimited = Boolean(input.medicalFlag);
-    const selectedMission = MISSIONS[input.obstacle];
-    const mission = (specialPhase || medicallyLimited)
-        ? {
-            ...selectedMission,
-            actions: selectedMission.actions.map(action =>
-                action.includes('Abnahmebereich')
-                    ? 'Verändere deine Energiezufuhr nicht allein auf Basis dieses Rechners.'
-                    : action
-            )
-        }
-        : selectedMission;
     const result = {
         ok: true,
+        mode,
         resting: roundTo(resting, 50),
         maintenance: { low: maintenanceLow, high: maintenanceHigh },
-        specialPhase,
-        medicallyLimited,
-        mission
+        guidance: SPECIAL_GUIDANCE[mode]
     };
 
-    if (specialPhase || medicallyLimited) return result;
+    if (!DEFICIT_MODES.has(mode)) return result;
 
     const lossLow = roundTo(maintenanceLow * 0.85, 50);
     const lossHigh = roundTo(maintenanceHigh * 0.9, 50);
@@ -200,6 +371,7 @@ export function calculateOrientation(input) {
 
     return {
         ...result,
+        mission: MISSIONS[input.obstacle],
         loss: { low: lossLow, high: lossHigh },
         calculationWeight: roundTo(calculationWeight, 0.1),
         protein: { low: proteinLow, high: proteinHigh, target: proteinTarget },

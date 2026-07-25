@@ -123,10 +123,31 @@ p { margin: 0; color: var(--muted); line-height: 1.65; }
     color: var(--charcoal);
     font-family: "Instrument Sans", Arial, sans-serif;
     font-weight: 500;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .field input:focus { border-color: var(--terracotta); }
+.field input::placeholder {
+    color: rgba(116, 119, 124, 0.62);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.field input:focus-visible {
+    border-bottom-color: var(--terracotta);
+    outline: 0;
+}
+
+.field input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.field input[type="number"]::-webkit-inner-spin-button,
+.field input[type="number"]::-webkit-outer-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
 .field-error { min-height: 18px; color: var(--terracotta); font-size: 11px; }
 
 fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
@@ -169,7 +190,7 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 .primary:hover { background: var(--gold-hover); }
 .secondary { padding: 16px 24px; background: var(--charcoal); color: white; text-decoration: none; text-align: center; }
 .text-button { padding: 12px; background: transparent; color: var(--muted); }
-.primary:focus-visible, .secondary:focus-visible, .text-button:focus-visible, input:focus-visible { outline: 3px solid rgba(200, 137, 81, 0.3); outline-offset: 3px; }
+.primary:focus-visible, .secondary:focus-visible, .text-button:focus-visible { outline: 3px solid rgba(200, 137, 81, 0.3); outline-offset: 3px; }
 
 .results, #standard-results { display: grid; gap: 12px; }
 .result-card { padding: 22px 20px; border: 1px solid rgba(255, 255, 255, 0.88); border-radius: 20px; background: rgba(255, 255, 255, 0.74); box-shadow: 0 16px 42px -36px rgba(37, 40, 45, 0.45); }
@@ -199,6 +220,27 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 .reflection { margin-top: 18px; padding: 16px; border-left: 2px solid var(--terracotta); border-radius: 0 14px 14px 0; background: rgba(244, 223, 201, 0.28); font-family: "Instrument Sans", Arial, sans-serif; font-size: 14px; font-weight: 600; }
 
 .notice { border-color: rgba(166, 139, 124, 0.25); background: rgba(166, 139, 124, 0.07); }
+.insight-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.insight {
+    padding: 17px 16px;
+    border: 1px solid rgba(200, 137, 81, 0.15);
+    border-radius: 3px 16px 16px 16px;
+    background: rgba(255, 250, 244, 0.45);
+}
+
+.insight strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.insight p { font-size: 12px; }
 .cta { padding: 28px 22px; background: linear-gradient(145deg, #2c2e32, #202226); color: white; }
 .cta p { color: rgba(255, 255, 255, 0.7); }
 .cta .eyebrow { color: var(--terracotta); }
@@ -503,17 +545,11 @@ body::after {
 }
 
 .results::before {
-    content: "";
-    position: absolute;
-    top: 116px;
-    bottom: 128px;
-    left: 14px;
-    width: 1px;
-    background: linear-gradient(to bottom, transparent, rgba(200, 137, 81, 0.42) 8%, rgba(132, 155, 135, 0.34) 88%, transparent);
+    display: none;
 }
 
 .result-card {
-    margin-left: 13px;
+    margin-left: 0;
     border-color: rgba(255, 255, 255, 0.42);
     border-radius: 3px 25px 25px 25px;
     background: rgba(249, 248, 245, 0.38);
@@ -525,14 +561,14 @@ body::after {
 .result-card::before {
     content: "";
     position: absolute;
-    top: 31px;
-    left: -18px;
-    width: 9px;
-    height: 9px;
-    border: 3px solid #f2f0eb;
-    border-radius: 50%;
+    top: -1px;
+    left: 22px;
+    width: 32px;
+    height: 2px;
+    border: 0;
+    border-radius: 0 0 999px 999px;
     background: var(--terracotta);
-    box-shadow: 0 4px 12px rgba(37, 40, 45, 0.16);
+    box-shadow: none;
 }
 
 .metric-value {
@@ -545,7 +581,16 @@ body::after {
     box-shadow: 28px 38px 78px -46px rgba(37, 40, 45, 0.82);
 }
 
-.cta::before { background: var(--peach); }
+.result-card.cta {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: #25282d;
+    color: #fff;
+}
+
+.result-card.cta h3 { color: #fff; }
+.result-card.cta p { color: rgba(255, 255, 255, 0.72); }
+.result-card.cta .eyebrow { color: var(--peach); }
+.result-card.cta::before { background: var(--peach); }
 
 @media (min-width: 640px) {
     .card { border-radius: 4px 34px 34px 34px; }

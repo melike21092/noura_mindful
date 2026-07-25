@@ -71,18 +71,75 @@
             <section class="card step" data-step="2" hidden>
                 <span class="eyebrow">Deine Lebensphase</span>
                 <h2>Was braucht gerade besondere Aufmerksamkeit?</h2>
-                <p>In bestimmten Lebensphasen geben wir bewusst kein automatisches Kaloriendefizit aus.</p>
+                <p>Nicht jede Frau braucht gerade ein Kaloriendefizit. Aber jede verdient eine hilfreiche Orientierung.</p>
                 <fieldset>
-                    <legend>Aktuelle Lebensphase</legend>
+                    <legend>Bist du aktuell schwanger?</legend>
                     <div class="choice-list">
-                        <label class="choice"><input type="radio" name="lifePhase" value="none"><span><strong>Keine dieser Situationen</strong></span></label>
-                        <label class="choice"><input type="radio" name="lifePhase" value="pregnant"><span><strong>Ich bin schwanger</strong><small>Keine automatische Abnahme- oder Makrovorgabe.</small></span></label>
-                        <label class="choice"><input type="radio" name="lifePhase" value="breastfeeding"><span><strong>Ich stille</strong><small>Dein zusätzlicher Bedarf ist individuell.</small></span></label>
-                        <label class="choice"><input type="radio" name="lifePhase" value="postpartum"><span><strong>Ich bin in der frühen Phase nach der Geburt</strong><small>Regeneration und regelmäßige Versorgung haben Vorrang.</small></span></label>
-                        <label class="choice"><input type="radio" name="lifePhase" value="unsure"><span><strong>Ich bin unsicher</strong></span></label>
+                        <label class="choice"><input type="radio" name="pregnant" value="yes"><span><strong>Ja</strong></span></label>
+                        <label class="choice"><input type="radio" name="pregnant" value="no"><span><strong>Nein</strong></span></label>
                     </div>
-                    <span class="field-error" data-error="lifePhase"></span>
+                    <span class="field-error" data-error="pregnant"></span>
                 </fieldset>
+                <fieldset data-when="pregnant">
+                    <legend>In welchem Trimester bist du?</legend>
+                    <div class="choice-list">
+                        <label class="choice"><input type="radio" name="trimester" value="first"><span><strong>1. Trimester</strong></span></label>
+                        <label class="choice"><input type="radio" name="trimester" value="second"><span><strong>2. Trimester</strong></span></label>
+                        <label class="choice"><input type="radio" name="trimester" value="third"><span><strong>3. Trimester</strong></span></label>
+                        <label class="choice"><input type="radio" name="trimester" value="unsure"><span><strong>Ich bin unsicher</strong></span></label>
+                    </div>
+                    <span class="field-error" data-error="trimester"></span>
+                </fieldset>
+                <fieldset data-when="not-pregnant">
+                    <legend>Hast du innerhalb der letzten zwölf Monate entbunden?</legend>
+                    <div class="choice-list">
+                        <label class="choice"><input type="radio" name="birthWithin12Months" value="yes"><span><strong>Ja</strong></span></label>
+                        <label class="choice"><input type="radio" name="birthWithin12Months" value="no"><span><strong>Nein</strong></span></label>
+                    </div>
+                    <span class="field-error" data-error="birthWithin12Months"></span>
+                </fieldset>
+                <div class="field" data-when="recent-birth">
+                    <label for="weeksPostpartum">Wie viele Wochen liegt die Geburt zurück?</label>
+                    <input id="weeksPostpartum" name="weeksPostpartum" type="number" inputmode="numeric" min="0" max="52" placeholder="Zum Beispiel 8" autocomplete="off">
+                    <span class="field-error" data-error="weeksPostpartum"></span>
+                </div>
+                <fieldset data-when="not-pregnant">
+                    <legend>Stillst du aktuell?</legend>
+                    <div class="choice-list">
+                        <label class="choice"><input type="radio" name="breastfeeding" value="exclusive"><span><strong>Ausschließlich</strong></span></label>
+                        <label class="choice"><input type="radio" name="breastfeeding" value="partial"><span><strong>Teilweise</strong></span></label>
+                        <label class="choice"><input type="radio" name="breastfeeding" value="no"><span><strong>Nein</strong></span></label>
+                    </div>
+                    <span class="field-error" data-error="breastfeeding"></span>
+                </fieldset>
+                <div data-when="postpartum-recovery">
+                    <fieldset>
+                        <legend>Fühlst du dich körperlich weitgehend erholt?</legend>
+                        <div class="choice-list">
+                            <label class="choice"><input type="radio" name="recovered" value="yes"><span><strong>Ja</strong></span></label>
+                            <label class="choice"><input type="radio" name="recovered" value="no"><span><strong>Nein</strong></span></label>
+                            <label class="choice"><input type="radio" name="recovered" value="unsure"><span><strong>Ich bin unsicher</strong></span></label>
+                        </div>
+                        <span class="field-error" data-error="recovered"></span>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Bestehen noch Beschwerden oder Komplikationen?</legend>
+                        <div class="choice-list">
+                            <label class="choice"><input type="radio" name="complications" value="yes"><span><strong>Ja</strong></span></label>
+                            <label class="choice"><input type="radio" name="complications" value="no"><span><strong>Nein</strong></span></label>
+                        </div>
+                        <span class="field-error" data-error="complications"></span>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Wurde dir medizinisch von einer Gewichtsabnahme abgeraten?</legend>
+                        <div class="choice-list">
+                            <label class="choice"><input type="radio" name="advisedAgainstLoss" value="yes"><span><strong>Ja</strong></span></label>
+                            <label class="choice"><input type="radio" name="advisedAgainstLoss" value="no"><span><strong>Nein</strong></span></label>
+                            <label class="choice"><input type="radio" name="advisedAgainstLoss" value="unsure"><span><strong>Ich bin unsicher</strong></span></label>
+                        </div>
+                        <span class="field-error" data-error="advisedAgainstLoss"></span>
+                    </fieldset>
+                </div>
                 <fieldset>
                     <legend>Sicherheitsfrage</legend>
                     <div class="choice-list">
@@ -151,18 +208,18 @@
         <section id="result" class="results" hidden aria-live="polite">
             <div class="card">
                 <span class="eyebrow">Deine Orientierung</span>
-                <h2>Ein realistischer Rahmen für deinen Alltag.</h2>
-                <p>Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.</p>
+                <h2 id="result-heading">Ein realistischer Rahmen für deinen Alltag.</h2>
+                <p id="result-intro">Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.</p>
             </div>
 
-            <div class="result-card">
+            <div class="result-card energy-result">
                 <span class="eyebrow">Deine Basis</span>
                 <h3>Geschätzter Ruhebedarf</h3>
                 <strong class="metric-value" id="resting-result"></strong>
                 <p class="metric-note">Ungefährer Energieverbrauch für grundlegende Körperfunktionen – noch ohne deinen normalen Alltag.</p>
             </div>
 
-            <div class="result-card">
+            <div class="result-card energy-result">
                 <span class="eyebrow">Dein realistischer Rahmen</span>
                 <h3>Geschätzte Erhaltung</h3>
                 <strong class="metric-value" id="maintenance-result"></strong>
@@ -201,9 +258,11 @@
                 <span class="eyebrow">Deine Lebensphase</span>
                 <h3 id="special-title"></h3>
                 <p id="special-copy"></p>
+                <div class="insight-list" id="special-insights"></div>
+                <p class="reflection" id="special-reflection"></p>
             </div>
 
-            <div class="result-card">
+            <div class="result-card" id="mission-result">
                 <span class="eyebrow">Dein 7-Tage-Startplan</span>
                 <h3 id="mission-title"></h3>
                 <p id="mission-intro"></p>
@@ -211,7 +270,7 @@
                 <p class="reflection" id="mission-question"></p>
             </div>
 
-            <div class="result-card">
+            <div class="result-card" id="standard-next-step">
                 <span class="eyebrow">Dein nächster Schritt</span>
                 <h3>Teste nicht deine Disziplin. Teste deinen Plan.</h3>
                 <p>Beobachte sieben Tage lang, ob deine gewählte Strategie deinen Alltag, Hunger oder Essdrang spürbar ruhiger macht. Ein einzelner Tag entscheidet nichts.</p>
@@ -230,13 +289,22 @@
     </main>
 
     <script type="module">
-        import { calculateOrientation } from './calculator.mjs';
+        import { calculateOrientation, determineResultMode, RESULT_MODES } from './calculator.mjs';
 
         const form = document.getElementById('calculator-form');
         const steps = [...document.querySelectorAll('.step')];
         const progress = [...document.querySelectorAll('#progress span')];
         const resultSection = document.getElementById('result');
         let currentStep = 0;
+
+        document.querySelectorAll('[data-error]').forEach((node, index) => {
+            const fieldName = node.dataset.error;
+            node.id = `error-${fieldName}-${index}`;
+            node.setAttribute('role', 'alert');
+            form.querySelectorAll(`[name="${fieldName}"]`).forEach(input => {
+                input.setAttribute('aria-describedby', node.id);
+            });
+        });
 
         const selectedValue = name => form.querySelector(`[name="${name}"]:checked`)?.value || '';
         const setText = (id, value) => { document.getElementById(id).textContent = value; };
@@ -248,13 +316,66 @@
                 age: form.elements.age.value,
                 heightCm: form.elements.heightCm.value,
                 weightKg: form.elements.weightKg.value,
-                lifePhase: selectedValue('lifePhase'),
+                pregnant: selectedValue('pregnant'),
+                trimester: selectedValue('trimester'),
+                birthWithin12Months: selectedValue('birthWithin12Months'),
+                weeksPostpartum: form.elements.weeksPostpartum.value,
+                breastfeeding: selectedValue('breastfeeding'),
+                recovered: selectedValue('recovered'),
+                complications: selectedValue('complications'),
+                advisedAgainstLoss: selectedValue('advisedAgainstLoss'),
                 activity: selectedValue('activity'),
                 obstacle: selectedValue('obstacle'),
                 medicalStatus: selectedValue('medicalStatus'),
                 medicalFlag: selectedValue('medicalStatus') === 'yes'
             };
         }
+
+        function updateProgressiveFields() {
+            const data = values();
+            const recentBirth = data.birthWithin12Months === 'yes';
+            const needsRecovery =
+                data.pregnant === 'no' &&
+                recentBirth &&
+                Number(data.weeksPostpartum) > 6 &&
+                data.breastfeeding === 'no';
+            const visibility = {
+                pregnant: data.pregnant === 'yes',
+                'not-pregnant': data.pregnant === 'no',
+                'recent-birth': data.pregnant === 'no' && recentBirth,
+                'postpartum-recovery': needsRecovery
+            };
+            document.querySelectorAll('[data-when]').forEach(node => {
+                node.hidden = !visibility[node.dataset.when];
+            });
+        }
+
+        form.addEventListener('change', event => {
+            if (event.target.name === 'pregnant') {
+                if (event.target.value === 'yes') {
+                    ['birthWithin12Months', 'breastfeeding', 'recovered', 'complications', 'advisedAgainstLoss'].forEach(name => {
+                        form.querySelectorAll(`[name="${name}"]`).forEach(input => { input.checked = false; });
+                    });
+                    form.elements.weeksPostpartum.value = '';
+                } else {
+                    form.querySelectorAll('[name="trimester"]').forEach(input => { input.checked = false; });
+                }
+            }
+            if (event.target.name === 'birthWithin12Months' && event.target.value === 'no') {
+                form.elements.weeksPostpartum.value = '';
+                ['recovered', 'complications', 'advisedAgainstLoss'].forEach(name => {
+                    form.querySelectorAll(`[name="${name}"]`).forEach(input => { input.checked = false; });
+                });
+            }
+            if (event.target.name === 'breastfeeding' && event.target.value !== 'no') {
+                ['recovered', 'complications', 'advisedAgainstLoss'].forEach(name => {
+                    form.querySelectorAll(`[name="${name}"]`).forEach(input => { input.checked = false; });
+                });
+            }
+            updateProgressiveFields();
+        });
+        form.elements.weeksPostpartum.addEventListener('input', updateProgressiveFields);
+        updateProgressiveFields();
 
         function showStep(index) {
             currentStep = Math.max(0, Math.min(index, steps.length - 1));
@@ -265,6 +386,7 @@
 
         function clearErrors() {
             document.querySelectorAll('[data-error]').forEach(node => { node.textContent = ''; });
+            form.querySelectorAll('[aria-invalid="true"]').forEach(input => input.removeAttribute('aria-invalid'));
         }
 
         function validateCurrentStep() {
@@ -273,63 +395,117 @@
             const result = calculateOrientation({
                 ...data,
                 activity: data.activity || 'mixed',
-                lifePhase: data.lifePhase || 'none',
                 obstacle: data.obstacle || 'unsure'
             });
-            const requiredByStep = {
-                1: ['age', 'heightCm', 'weightKg'],
-                2: ['lifePhase', 'medicalStatus'],
-                3: ['activity'],
-                4: ['obstacle']
-            };
+            const requiredByStep = { 1: ['age', 'heightCm', 'weightKg'], 2: ['pregnant', 'medicalStatus'], 3: ['activity'], 4: ['obstacle'] };
+            if (currentStep === 2 && data.pregnant === 'yes') requiredByStep[2].push('trimester');
+            if (currentStep === 2 && data.pregnant === 'no') {
+                requiredByStep[2].push('birthWithin12Months', 'breastfeeding');
+                if (data.birthWithin12Months === 'yes') requiredByStep[2].push('weeksPostpartum');
+                if (
+                    data.birthWithin12Months === 'yes' &&
+                    Number(data.weeksPostpartum) > 6 &&
+                    data.breastfeeding === 'no'
+                ) {
+                    requiredByStep[2].push('recovered', 'complications', 'advisedAgainstLoss');
+                }
+            }
             let valid = true;
             for (const key of requiredByStep[currentStep] || []) {
                 let message = result.errors?.[key] || '';
                 if (!data[key] && !message) message = 'Bitte triff eine Auswahl.';
                 if (message) {
                     document.querySelector(`[data-error="${key}"]`).textContent = message;
+                    form.querySelectorAll(`[name="${key}"]`).forEach(input => input.setAttribute('aria-invalid', 'true'));
                     valid = false;
                 }
             }
+            if (!valid) form.querySelector('[aria-invalid="true"]')?.focus();
             return valid;
         }
 
         document.querySelectorAll('[data-next]').forEach(button => {
             button.addEventListener('click', () => {
-                if (currentStep === 0 || validateCurrentStep()) showStep(currentStep + 1);
+                if (currentStep === 0) {
+                    showStep(currentStep + 1);
+                    return;
+                }
+                if (!validateCurrentStep()) return;
+
+                const data = values();
+                const mode = determineResultMode(data);
+                const immediateModes = [RESULT_MODES.PREGNANCY, RESULT_MODES.EARLY_POSTPARTUM, RESULT_MODES.SAFETY];
+                if (currentStep === 2 && immediateModes.includes(mode)) {
+                    const result = calculateOrientation(data);
+                    if (result.ok) renderResult(result, data);
+                    return;
+                }
+                if (
+                    currentStep === 3 &&
+                    [RESULT_MODES.EXCLUSIVE_BREASTFEEDING, RESULT_MODES.PARTIAL_BREASTFEEDING].includes(mode)
+                ) {
+                    const result = calculateOrientation(data);
+                    if (result.ok) renderResult(result, data);
+                    return;
+                }
+                showStep(currentStep + 1);
             });
         });
         document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => showStep(currentStep - 1)));
 
-        function specialCopy(lifePhase, medicallyLimited) {
-            if (medicallyLimited) {
-                return {
-                    title: 'Deine Situation braucht eine persönliche Einordnung.',
-                    copy: 'Dieser Rechner kann eine bekannte Erkrankung, medizinisch verordnete Ernährung oder entsprechende Vorgeschichte nicht angemessen berücksichtigen. Deshalb zeigen wir bewusst keinen automatischen Abnahme- oder Makrobereich.'
-                };
-            }
-            const content = {
-                pregnant: ['In der Schwangerschaft braucht es mehr als eine Formel.', 'Wir zeigen dir deinen geschätzten Basis- und Erhaltungsrahmen, geben aber bewusst kein automatisches Kaloriendefizit und keine starre Makroverteilung aus.'],
-                breastfeeding: ['Stillen verändert deinen Energiebedarf.', 'Dein Bedarf kann deutlich von einer normalen Rechnerformel abweichen. Regelmäßige Mahlzeiten, ausreichende Energie und eine persönlich passende Proteinstruktur haben Vorrang.'],
-                postpartum: ['Ankommen statt drängen.', 'Dein Körper ist noch in Regeneration. NOURA gibt dir in dieser frühen Phase bewusst kein Kaloriendefizit vor. Stabilität, Erholung und regelmäßige Versorgung haben Vorrang.'],
-                unsure: ['Sicherheit vor Scheingenauigkeit.', 'Wenn deine aktuelle Lebensphase unklar ist, geben wir bewusst kein automatisches Defizit aus. Eine persönliche Einordnung ist der verlässlichere nächste Schritt.']
-            };
-            const [title, copy] = content[lifePhase];
-            return { title, copy };
-        }
-
         function renderResult(result, data) {
-            setText('resting-result', `ca. ${formatKcal(result.resting)}`);
-            setText('maintenance-result', `ca. ${formatRange(result.maintenance)}`);
+            const deficitMode = [RESULT_MODES.STANDARD, RESULT_MODES.POSTPARTUM_LOSS].includes(result.mode);
+            const guidanceMode = !deficitMode;
+            const showsEnergy = Boolean(result.maintenance);
+            if (result.mode === RESULT_MODES.POSTPARTUM_LOSS) {
+                setText('result-heading', 'Ein vorsichtiger Start nach deiner Erholungsphase.');
+                setText('result-intro', 'Wenn du dich körperlich ausreichend erholt fühlst und medizinisch nichts dagegenspricht, kann ein moderater Startbereich sinnvoller sein als ein großes Defizit. Diese Auswahl ist keine medizinische Freigabe.');
+            } else if (guidanceMode) {
+                setText('result-heading', 'Nicht jede Frau braucht gerade ein Kaloriendefizit.');
+                setText('result-intro', 'Du bekommst eine Orientierung, die zu deiner aktuellen Lebensphase passt – ohne Scheingenauigkeit, Druck oder Abnahmeversprechen.');
+            } else {
+                setText('result-heading', 'Ein realistischer Rahmen für deinen Alltag.');
+                setText('result-intro', 'Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.');
+            }
+            document.querySelectorAll('.energy-result').forEach(card => { card.hidden = !showsEnergy; });
+            document.getElementById('standard-results').hidden = !deficitMode;
+            document.getElementById('special-result').hidden = !guidanceMode;
+            document.getElementById('mission-result').hidden = !deficitMode;
+            document.getElementById('standard-next-step').hidden = !deficitMode;
 
-            const restricted = result.specialPhase || result.medicallyLimited;
-            document.getElementById('standard-results').hidden = restricted;
-            document.getElementById('special-result').hidden = !restricted;
+            if (showsEnergy) {
+                setText('resting-result', `ca. ${formatKcal(result.resting)}`);
+                setText('maintenance-result', `ca. ${formatRange(result.maintenance)}`);
+            }
 
-            if (restricted) {
-                const notice = specialCopy(data.lifePhase, result.medicallyLimited);
-                setText('special-title', notice.title);
-                setText('special-copy', notice.copy);
+            if (guidanceMode) {
+                const insightList = document.getElementById('special-insights');
+                setText('special-title', result.guidance.title);
+                setText('special-copy', result.guidance.copy);
+                setText('special-reflection', result.guidance.reflection);
+                document.querySelector('#special-result .eyebrow').textContent = result.guidance.eyebrow;
+                const insights = [...result.guidance.insights];
+                if (result.mode === RESULT_MODES.PREGNANCY) {
+                    const guideline = result.trimesterGuideline;
+                    insights.unshift({
+                        title: guideline === null
+                            ? 'Ohne klares Trimester zeigen wir bewusst keinen Energie-Richtwert.'
+                            : guideline === 0
+                                ? 'Im 1. Trimester gibt es keinen pauschalen zusätzlichen Energiebedarf.'
+                                : `Für dieses Trimester nennt die DGE ungefähr +${guideline} kcal pro Tag.`,
+                        copy: 'Das ist keine individuelle Essvorgabe. Der Richtwert gilt nur unter bestimmten Voraussetzungen, unter anderem bei Normalgewicht vor der Schwangerschaft, wünschenswerter Gewichtsentwicklung und gleichbleibender Aktivität.'
+                    });
+                }
+                insightList.replaceChildren(...insights.map(insight => {
+                    const card = document.createElement('div');
+                    card.className = 'insight';
+                    const title = document.createElement('strong');
+                    title.textContent = insight.title;
+                    const copy = document.createElement('p');
+                    copy.textContent = insight.copy;
+                    card.append(title, copy);
+                    return card;
+                }));
             } else {
                 setText('loss-result', `ca. ${formatRange(result.loss)}`);
                 setText('protein-result', `ca. ${result.protein.low}–${result.protein.high} g`);
@@ -341,15 +517,17 @@
                 setText('macro-note', `Beispiel auf Basis von etwa ${formatKcal(result.targetCalories)}. Kohlenhydrate dürfen flexibel zu Bewegung, Familienmahlzeiten und deinem Alltag passen.`);
             }
 
-            setText('mission-title', result.mission.title);
-            setText('mission-intro', result.mission.intro);
-            setText('mission-question', result.mission.question);
-            const actionList = document.getElementById('mission-actions');
-            actionList.replaceChildren(...result.mission.actions.map(action => {
-                const item = document.createElement('li');
-                item.textContent = action;
-                return item;
-            }));
+            if (deficitMode) {
+                setText('mission-title', result.mission.title);
+                setText('mission-intro', result.mission.intro);
+                setText('mission-question', result.mission.question);
+                const actionList = document.getElementById('mission-actions');
+                actionList.replaceChildren(...result.mission.actions.map(action => {
+                    const item = document.createElement('li');
+                    item.textContent = action;
+                    return item;
+                }));
+            }
 
             form.hidden = true;
             document.getElementById('progress').hidden = true;
@@ -370,7 +548,12 @@
             resultSection.hidden = true;
             form.hidden = false;
             document.getElementById('progress').hidden = false;
+            document.querySelectorAll('.energy-result').forEach(card => { card.hidden = false; });
+            document.getElementById('mission-result').hidden = false;
+            document.getElementById('standard-next-step').hidden = false;
+            document.querySelector('#special-result .eyebrow').textContent = 'Deine Lebensphase';
             clearErrors();
+            updateProgressiveFields();
             showStep(0);
         });
 
