@@ -218,8 +218,8 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
     height: 26px;
     place-items: center;
     border-radius: 50%;
-    background: rgba(200, 137, 81, 0.14);
-    color: var(--terracotta);
+    background: rgba(37, 40, 45, 0.07);
+    color: var(--charcoal);
     font-size: 13px;
     font-weight: 600;
 }
@@ -247,8 +247,8 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 }
 
 .result-highlight--quiet .result-highlight-icon {
-    background: rgba(132, 155, 135, 0.16);
-    color: #617865;
+    background: rgba(37, 40, 45, 0.07);
+    color: var(--charcoal);
 }
 
 .result-highlight--quiet p {
@@ -316,7 +316,7 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
     margin-top: 18px;
     padding: 5px 13px;
     border-radius: 14px;
-    background: rgba(132, 155, 135, 0.09);
+    background: rgba(37, 40, 45, 0.035);
 }
 
 .calibration-outcomes p {
@@ -339,13 +339,13 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
     height: 24px;
     place-items: center;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.52);
+    background: rgba(255, 255, 255, 0.72);
     color: var(--charcoal);
     font-weight: 700;
 }
 
 .calibration-outcomes p strong {
-    display: inline;
+    display: block;
     color: var(--charcoal);
 }
 
@@ -355,6 +355,30 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
     margin-top: 16px;
     padding-top: 14px;
     border-top: 1px solid rgba(37, 40, 45, 0.09);
+}
+
+.start-result-card .result-highlight,
+.start-result-card .result-highlight p,
+.start-result-card .calibration-guide,
+.start-result-card .calibration-guide ol,
+.start-result-card .calibration-outcomes p {
+    color: var(--charcoal);
+}
+
+.start-result-card .result-highlight small,
+.start-result-card .calibration-heading small,
+.start-result-card > .metric-note {
+    color: var(--muted);
+}
+
+.start-result-card .calibration-guide strong,
+.start-result-card .result-highlight strong {
+    color: inherit;
+    font-weight: 600;
+}
+
+.start-result-card .calibration-outcomes p {
+    line-height: 1.55;
 }
 
 .macro-grid {
