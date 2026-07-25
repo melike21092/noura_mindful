@@ -207,24 +207,38 @@
         </form>
 
         <section id="result" class="results" hidden aria-live="polite">
-            <div class="result-card start-result-card deficit-result">
-                <span class="eyebrow">Deine Startorientierung</span>
-                <h3>Dein moderater Startwert</h3>
-                <div class="primary-metric">
-                    <span class="metric-prefix">ca.</span>
-                    <strong id="start-result-number"></strong>
-                    <span class="metric-unit">kcal pro Tag</span>
+            <div class="result-card start-result-card energy-result">
+                <div class="deficit-result">
+                    <span class="eyebrow">Deine Startorientierung</span>
+                    <div class="primary-metric">
+                        <strong id="start-result-number"></strong>
+                        <span class="metric-unit">kcal</span>
+                    </div>
+                    <span class="metric-period">pro Tag</span>
+                    <div class="orientation-range">
+                        <small>Orientierungsbereich</small>
+                        <strong id="loss-result"></strong>
+                    </div>
                 </div>
-                <p class="calculation-note">Berechnet mit einem moderaten Defizit von 15 %.</p>
-                <div class="orientation-range">
-                    <small>Dein Orientierungsbereich</small>
-                    <strong id="loss-result"></strong>
-                    <p>im Tagesdurchschnitt</p>
+
+                <div class="compact-derivation">
+                    <div>
+                        <small>Ruhebedarf</small>
+                        <strong id="resting-result"></strong>
+                    </div>
+                    <div>
+                        <small>Gewicht halten</small>
+                        <strong id="maintenance-result"></strong>
+                    </div>
                 </div>
-                <p class="result-context">Nicht jeder Tag muss exakt passen. Entscheidend ist deine durchschnittliche Aufnahme und die Entwicklung über mehrere Wochen.</p>
-                <details class="calibration-details">
-                    <summary>Wie überprüfe ich meinen Startwert?</summary>
+
+                <details class="calibration-details deficit-result">
+                    <summary>Wie wird das berechnet?</summary>
                     <div class="calibration-details-content">
+                        <p>Alle Werte sind Schätzungen und keine exakte Messung deines Energieverbrauchs.</p>
+                        <p>Der Startwert liegt mit einem moderaten Defizit von 15 % unter der Mitte deiner geschätzten Erhaltung.</p>
+                        <p>Nicht jeder Tag muss exakt passen. Entscheidend ist deine durchschnittliche Aufnahme und die Entwicklung über mehrere Wochen.</p>
+                        <p>Der Ruhebedarf beschreibt den ungefähren Energieverbrauch für grundlegende Körperfunktionen. Der Bereich „Gewicht halten“ berücksichtigt zusätzlich deinen gewählten Aktivitätsfaktor.</p>
                         <h4>Teste diesen Startwert drei bis vier Wochen.</h4>
                         <p>Vergleiche Wochendurchschnitte statt einzelner Waagentage. Zyklus, Salz, Verdauung und Stress können dein Gewicht vorübergehend verändern.</p>
                         <h4>Wie geht es danach weiter?</h4>
@@ -237,25 +251,7 @@
                 </details>
             </div>
 
-            <div class="result-card derivation-card energy-result">
-                <span class="eyebrow">So entsteht dein Wert</span>
-                <div class="derivation-row">
-                    <div>
-                        <h3>Ruhebedarf</h3>
-                        <p>Ungefährer Energieverbrauch für grundlegende Körperfunktionen – noch ohne deinen normalen Alltag.</p>
-                    </div>
-                    <strong id="resting-result"></strong>
-                </div>
-                <div class="derivation-row">
-                    <div>
-                        <h3>Gewicht halten</h3>
-                        <p>In diesem Bereich könnte dein Gewicht langfristig ungefähr stabil bleiben.</p>
-                    </div>
-                    <strong id="maintenance-result"></strong>
-                </div>
-            </div>
-
-            <div class="card">
+            <div class="card result-overview">
                 <span class="eyebrow">Deine Orientierung</span>
                 <h2 id="result-heading">Ein realistischer Rahmen für deinen Alltag.</h2>
                 <p id="result-intro">Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.</p>
@@ -501,14 +497,15 @@
             }
             document.querySelectorAll('.energy-result').forEach(card => { card.hidden = !showsEnergy; });
             document.querySelectorAll('.deficit-result').forEach(card => { card.hidden = !deficitMode; });
+            document.querySelector('.result-overview').hidden = deficitMode;
             document.getElementById('standard-results').hidden = !deficitMode;
             document.getElementById('special-result').hidden = !guidanceMode;
             document.getElementById('mission-result').hidden = !deficitMode;
             document.getElementById('standard-next-step').hidden = !deficitMode;
 
             if (showsEnergy) {
-                setText('resting-result', `ca. ${formatKcal(result.resting)}`);
-                setText('maintenance-result', `ca. ${formatRange(result.maintenance)}`);
+                setText('resting-result', formatKcal(result.resting));
+                setText('maintenance-result', formatRange(result.maintenance));
             }
 
             if (guidanceMode) {
@@ -541,7 +538,7 @@
                 }));
             } else {
                 setText('start-result-number', new Intl.NumberFormat('de-DE').format(result.targetCalories));
-                setText('loss-result', `ca. ${formatRange(result.loss)}`);
+                setText('loss-result', formatRange(result.loss));
                 setText('protein-result', `ca. ${result.protein.low}–${result.protein.high} g`);
                 setText('protein-note', `Ein möglicher Startwert liegt bei etwa ${result.protein.target} g täglich. Regelmäßige Proteinanker sind wichtiger als mathematische Perfektion.`);
                 setText('macro-protein', `${result.protein.target} g`);
@@ -584,6 +581,7 @@
             document.getElementById('progress').hidden = false;
             document.querySelectorAll('.energy-result').forEach(card => { card.hidden = false; });
             document.querySelectorAll('.deficit-result').forEach(card => { card.hidden = false; });
+            document.querySelector('.result-overview').hidden = false;
             document.getElementById('mission-result').hidden = false;
             document.getElementById('standard-next-step').hidden = false;
             document.querySelector('#special-result .eyebrow').textContent = 'Deine Lebensphase';
