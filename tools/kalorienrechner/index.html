@@ -163,16 +163,53 @@
             <section class="card step" data-step="3" hidden>
                 <span class="eyebrow">Dein Alltag</span>
                 <h2>Wie bewegt sich deine typische Woche?</h2>
-                <p>Wähle den Alltag, den du meistens tatsächlich lebst. Schritte und Training helfen nur bei der Auswahl des gemeinsamen Aktivitätsfaktors und werden nicht zusätzlich als Kalorien addiert.</p>
+                <p>Wir betrachten deinen normalen Alltag, deine Schritte und aktives Training getrennt. So musst du keine pauschale Aktivitätsstufe erraten.</p>
                 <fieldset>
-                    <legend>Typische Aktivität</legend>
+                    <legend>Wie sieht dein normaler Alltag ohne Training aus?</legend>
                     <div class="choice-list">
-                        <label class="choice"><input type="radio" name="activity" value="low"><span><strong>Wenig aktiv</strong><small>Überwiegend sitzender Alltag, meist unter 5.000 Schritte, kaum strukturiertes Training.</small></span></label>
-                        <label class="choice"><input type="radio" name="activity" value="mixed"><span><strong>Leicht aktiv</strong><small>Überwiegend sitzender Alltag, ungefähr 5.000–7.000 Schritte, etwa 1–2 Trainingseinheiten pro Woche.</small></span></label>
-                        <label class="choice"><input type="radio" name="activity" value="active"><span><strong>Moderat aktiv</strong><small>Überwiegend sitzender Alltag, ungefähr 7.000–10.000 Schritte, etwa 2–4 Trainingseinheiten pro Woche.</small></span></label>
-                        <label class="choice"><input type="radio" name="activity" value="high"><span><strong>Sehr aktiv</strong><small>Im Alltag viel auf den Beinen, meist über 10.000 Schritte oder körperlich fordernde Arbeit und regelmäßiges Training.</small></span></label>
+                        <label class="choice"><input type="radio" name="dailyActivity" value="sedentary"><span><strong>Überwiegend sitzend</strong><small>Büro, Homeoffice oder viel Autofahren.</small></span></label>
+                        <label class="choice"><input type="radio" name="dailyActivity" value="mixed"><span><strong>Teilweise sitzend, teilweise auf den Beinen</strong><small>Wechselnder Alltag, Haushalt oder regelmäßige Wege.</small></span></label>
+                        <label class="choice"><input type="radio" name="dailyActivity" value="standing"><span><strong>Überwiegend auf den Beinen</strong><small>Verkauf, Pflege, Gastronomie oder ein bewegter Arbeitsalltag.</small></span></label>
+                        <label class="choice"><input type="radio" name="dailyActivity" value="strenuous"><span><strong>Körperlich anstrengend</strong><small>Schwere körperliche Arbeit oder ganztägig hohe Bewegung.</small></span></label>
                     </div>
-                    <span class="field-error" data-error="activity"></span>
+                    <span class="field-error" data-error="dailyActivity"></span>
+                </fieldset>
+                <fieldset>
+                    <legend>Wie viele Schritte gehst du durchschnittlich pro Tag?</legend>
+                    <div class="choice-list">
+                        <label class="choice"><input type="radio" name="stepBand" value="under4000"><span><strong>Unter 4.000</strong></span></label>
+                        <label class="choice"><input type="radio" name="stepBand" value="from4000to7000"><span><strong>4.000–7.000</strong></span></label>
+                        <label class="choice"><input type="radio" name="stepBand" value="from7000to10000"><span><strong>7.000–10.000</strong></span></label>
+                        <label class="choice"><input type="radio" name="stepBand" value="over10000"><span><strong>Über 10.000</strong></span></label>
+                        <label class="choice"><input type="radio" name="stepBand" value="unknown"><span><strong>Weiß ich nicht</strong></span></label>
+                    </div>
+                    <span class="field-error" data-error="stepBand"></span>
+                    <div class="field optional-activity-input">
+                        <label for="exactSteps">Oder konkrete durchschnittliche Schrittzahl <small>(optional)</small></label>
+                        <input id="exactSteps" name="exactSteps" type="number" inputmode="numeric" min="0" max="50000" placeholder="8000" autocomplete="off">
+                        <span class="field-error" data-error="exactSteps"></span>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Wie oft trainierst du durchschnittlich pro Woche?</legend>
+                    <div class="field">
+                        <label for="trainingSessions">Einheiten pro Woche</label>
+                        <input id="trainingSessions" name="trainingSessions" type="number" inputmode="numeric" min="0" max="7" value="0" autocomplete="off">
+                        <span class="field-error" data-error="trainingSessions"></span>
+                    </div>
+                    <div data-when="training">
+                        <div class="choice-list">
+                            <label class="choice"><input type="radio" name="trainingType" value="strength"><span><strong>Krafttraining</strong></span></label>
+                            <label class="choice"><input type="radio" name="trainingType" value="cardio"><span><strong>Ausdauertraining</strong></span></label>
+                            <label class="choice"><input type="radio" name="trainingType" value="mixed"><span><strong>Gemischtes Training</strong><small>Zum Beispiel Krafttraining mit anschließendem Cardio.</small></span></label>
+                        </div>
+                        <span class="field-error" data-error="trainingType"></span>
+                        <div class="field optional-activity-input">
+                            <label for="trainingMinutes">Durchschnittliche Minuten pro Einheit</label>
+                            <input id="trainingMinutes" name="trainingMinutes" type="number" inputmode="numeric" min="10" max="180" placeholder="60" autocomplete="off">
+                            <span class="field-error" data-error="trainingMinutes"></span>
+                        </div>
+                    </div>
                 </fieldset>
                 <p class="fine-print">Das Ergebnis ist ein geschätzter Startbereich und keine exakte Messung deines Energieverbrauchs.</p>
                 <div class="actions">
@@ -231,6 +268,7 @@
                         <strong id="maintenance-result"></strong>
                     </div>
                 </div>
+                <p class="activity-summary deficit-result" id="activity-summary"></p>
 
                 <details class="calibration-details deficit-result">
                     <summary>Wie wird das berechnet?</summary>
@@ -238,7 +276,8 @@
                         <p>Alle Werte sind Schätzungen und keine exakte Messung deines Energieverbrauchs.</p>
                         <p>Der Startwert liegt mit einem moderaten Defizit von 15 % unter der Mitte deiner geschätzten Erhaltung.</p>
                         <p>Nicht jeder Tag muss exakt passen. Entscheidend ist deine durchschnittliche Aufnahme und die Entwicklung über mehrere Wochen.</p>
-                        <p>Der Ruhebedarf beschreibt den ungefähren Energieverbrauch für grundlegende Körperfunktionen. Der Bereich „Gewicht halten“ berücksichtigt zusätzlich deinen gewählten Aktivitätsfaktor.</p>
+                        <p>Der Ruhebedarf beschreibt den ungefähren Energieverbrauch für grundlegende Körperfunktionen. Alltag und Schritte bilden gemeinsam die Basis; aktives Training wird anschließend vorsichtig ergänzt.</p>
+                        <p id="activity-method"></p>
                         <h4>Teste diesen Startwert drei bis vier Wochen.</h4>
                         <p>Vergleiche Wochendurchschnitte statt einzelner Waagentage. Zyklus, Salz, Verdauung und Stress können dein Gewicht vorübergehend verändern.</p>
                         <h4>Wie geht es danach weiter?</h4>
@@ -348,7 +387,12 @@
                 recovered: selectedValue('recovered'),
                 complications: selectedValue('complications'),
                 advisedAgainstLoss: selectedValue('advisedAgainstLoss'),
-                activity: selectedValue('activity'),
+                dailyActivity: selectedValue('dailyActivity'),
+                stepBand: selectedValue('stepBand'),
+                exactSteps: form.elements.exactSteps.value,
+                trainingSessions: form.elements.trainingSessions.value,
+                trainingType: selectedValue('trainingType'),
+                trainingMinutes: form.elements.trainingMinutes.value,
                 obstacle: selectedValue('obstacle'),
                 medicalStatus: selectedValue('medicalStatus'),
                 medicalFlag: selectedValue('medicalStatus') === 'yes'
@@ -367,7 +411,8 @@
                 pregnant: data.pregnant === 'yes',
                 'not-pregnant': data.pregnant === 'no',
                 'recent-birth': data.pregnant === 'no' && recentBirth,
-                'postpartum-recovery': needsRecovery
+                'postpartum-recovery': needsRecovery,
+                training: Number(data.trainingSessions) > 0
             };
             document.querySelectorAll('[data-when]').forEach(node => {
                 node.hidden = !visibility[node.dataset.when];
@@ -396,9 +441,22 @@
                     form.querySelectorAll(`[name="${name}"]`).forEach(input => { input.checked = false; });
                 });
             }
+            if (event.target.name === 'trainingSessions' && Number(event.target.value) === 0) {
+                form.querySelectorAll('[name="trainingType"]').forEach(input => { input.checked = false; });
+                form.elements.trainingMinutes.value = '';
+            }
+            if (event.target.name === 'stepBand') {
+                form.elements.exactSteps.value = '';
+            }
             updateProgressiveFields();
         });
         form.elements.weeksPostpartum.addEventListener('input', updateProgressiveFields);
+        form.elements.trainingSessions.addEventListener('input', updateProgressiveFields);
+        form.elements.exactSteps.addEventListener('input', event => {
+            if (event.target.value !== '') {
+                form.querySelectorAll('[name="stepBand"]').forEach(input => { input.checked = false; });
+            }
+        });
         updateProgressiveFields();
 
         function showStep(index) {
@@ -418,10 +476,17 @@
             const data = values();
             const result = calculateOrientation({
                 ...data,
-                activity: data.activity || 'mixed',
+                dailyActivity: data.dailyActivity || 'sedentary',
+                stepBand: data.stepBand || 'unknown',
+                trainingSessions: data.trainingSessions || '0',
                 obstacle: data.obstacle || 'unsure'
             });
-            const requiredByStep = { 1: ['age', 'heightCm', 'weightKg'], 2: ['pregnant', 'medicalStatus'], 3: ['activity'], 4: ['obstacle'] };
+            const requiredByStep = {
+                1: ['age', 'heightCm', 'weightKg'],
+                2: ['pregnant', 'medicalStatus'],
+                3: ['dailyActivity', 'trainingSessions'],
+                4: ['obstacle']
+            };
             if (currentStep === 2 && data.pregnant === 'yes') requiredByStep[2].push('trimester');
             if (currentStep === 2 && data.pregnant === 'no') {
                 requiredByStep[2].push('birthWithin12Months', 'breastfeeding');
@@ -432,6 +497,12 @@
                     data.breastfeeding === 'no'
                 ) {
                     requiredByStep[2].push('recovered', 'complications', 'advisedAgainstLoss');
+                }
+            }
+            if (currentStep === 3) {
+                if (!data.exactSteps) requiredByStep[3].push('stepBand');
+                if (Number(data.trainingSessions) > 0) {
+                    requiredByStep[3].push('trainingType', 'trainingMinutes');
                 }
             }
             let valid = true;
@@ -537,6 +608,41 @@
                     return card;
                 }));
             } else {
+                const dailyActivityLabels = {
+                    sedentary: 'einen überwiegend sitzenden Alltag',
+                    mixed: 'einen teilweise sitzenden und teilweise bewegten Alltag',
+                    standing: 'einen Alltag überwiegend auf den Beinen',
+                    strenuous: 'einen körperlich anstrengenden Alltag'
+                };
+                const stepLabels = {
+                    under4000: 'unter 4.000 Schritte',
+                    from4000to7000: 'etwa 4.000–7.000 Schritte',
+                    from7000to10000: 'etwa 7.000–10.000 Schritte',
+                    over10000: 'über 10.000 Schritte',
+                    unknown: 'eine vorsichtige Schätzung deiner Alltagsbewegung'
+                };
+                const trainingLabels = {
+                    strength: 'Krafttraining',
+                    cardio: 'Ausdauertraining',
+                    mixed: 'gemischtes Training'
+                };
+                const activity = result.activity;
+                const stepsCopy = activity.exactSteps === null
+                    ? stepLabels[activity.stepBand]
+                    : `durchschnittlich etwa ${new Intl.NumberFormat('de-DE').format(activity.exactSteps)} Schritte`;
+                const trainingCopy = activity.trainingSessions > 0
+                    ? ` und ${activity.trainingSessions} ${activity.trainingSessions === 1 ? 'Einheit' : 'Einheiten'} ${trainingLabels[activity.trainingType]} pro Woche`
+                    : ' und kein regelmäßiges aktives Training';
+                setText(
+                    'activity-summary',
+                    `Deine Schätzung berücksichtigt ${dailyActivityLabels[activity.dailyActivity]}, ${stepsCopy}${trainingCopy}.`
+                );
+                setText(
+                    'activity-method',
+                    activity.trainingSessions > 0
+                        ? `Alltag und Schritte ergeben gemeinsam einen Basisfaktor von ${activity.basisFactor.min.toFixed(2).replace('.', ',')}–${activity.basisFactor.max.toFixed(2).replace('.', ',')}. Das Training wird als vorsichtiger Netto-Bereich von ungefähr ${activity.trainingDaily.low}–${activity.trainingDaily.high} kcal pro Tag ergänzt und nicht doppelt gezählt.`
+                        : `Alltag und Schritte ergeben gemeinsam einen Basisfaktor von ${activity.basisFactor.min.toFixed(2).replace('.', ',')}–${activity.basisFactor.max.toFixed(2).replace('.', ',')}. Ein Trainingszuschlag wurde nicht ergänzt.`
+                );
                 setText('start-result-number', new Intl.NumberFormat('de-DE').format(result.targetCalories));
                 setText('loss-result', formatRange(result.loss));
                 setText('protein-result', `ca. ${result.protein.low}–${result.protein.high} g`);

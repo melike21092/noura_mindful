@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import {
+    BASIS_ACTIVITY_RANGES,
+    calculateDailyTrainingRange,
     calculateOrientation,
     determineResultMode,
+    getStepBand,
     getCtaContent,
     parseGermanNumber,
     RESULT_MODES,
@@ -12,7 +15,12 @@ const baseInput = {
     age: 34,
     heightCm: 165,
     weightKg: 82.5,
-    activity: 'mixed',
+    dailyActivity: 'sedentary',
+    stepBand: 'from4000to7000',
+    exactSteps: '',
+    trainingSessions: 0,
+    trainingType: '',
+    trainingMinutes: '',
     pregnant: 'no',
     birthWithin12Months: 'no',
     breastfeeding: 'no',
@@ -22,6 +30,17 @@ const baseInput = {
 
 assert.equal(parseGermanNumber('82,5'), 82.5, 'German decimal commas are supported');
 assert.equal(roundTo(2073, 50), 2050, 'Energy values are rounded to calm 50 kcal steps');
+assert.equal(getStepBand('unknown', 8000), 'from7000to10000', 'Exact steps override the selected band');
+assert.deepEqual(
+    calculateDailyTrainingRange(70, 0, '', ''),
+    { low: 0, high: 0 },
+    'No training adds no training energy'
+);
+assert.deepEqual(
+    BASIS_ACTIVITY_RANGES.sedentary.from7000to10000,
+    { min: 1.45, max: 1.5 },
+    'The sedentary 7,000–10,000 step basis excludes structured training'
+);
 assert.equal(determineResultMode(baseInput), RESULT_MODES.STANDARD);
 
 const result = calculateOrientation(baseInput);
@@ -51,34 +70,91 @@ const moderateActivityCase = calculateOrientation({
     age: 33,
     heightCm: 165,
     weightKg: 69.5,
-    activity: 'active'
+    dailyActivity: 'sedentary',
+    stepBand: 'from7000to10000',
+    exactSteps: 8000,
+    trainingSessions: 3,
+    trainingType: 'strength',
+    trainingMinutes: 65
 });
 assert.equal(moderateActivityCase.resting, 1400);
 assert.deepEqual(moderateActivityCase.maintenance, { low: 2100, high: 2250 });
 assert.equal(moderateActivityCase.targetCalories, 1850);
 assert.deepEqual(moderateActivityCase.loss, { low: 1800, high: 1900 });
+assert.deepEqual(
+    moderateActivityCase.activity.trainingDaily,
+    { low: 81, high: 161 },
+    'Training uses net MET energy and is distributed across seven days'
+);
+assert.equal(moderateActivityCase.activity.stepBand, 'from7000to10000');
+
+const sameCaseWithoutTraining = calculateOrientation({
+    ...baseInput,
+    age: 33,
+    heightCm: 165,
+    weightKg: 69.5,
+    dailyActivity: 'sedentary',
+    exactSteps: 8000,
+    trainingSessions: 0
+});
+assert.deepEqual(
+    sameCaseWithoutTraining.maintenance,
+    { low: 2050, high: 2100 },
+    'Steps affect the shared basis once; structured training is absent'
+);
+
+for (const [dailyActivity, stepRanges] of Object.entries(BASIS_ACTIVITY_RANGES)) {
+    for (const stepBand of Object.keys(stepRanges)) {
+        const matrixCase = calculateOrientation({
+            ...baseInput,
+            dailyActivity,
+            stepBand,
+            exactSteps: '',
+            trainingSessions: 0
+        });
+        assert.equal(matrixCase.ok, true, `${dailyActivity}/${stepBand} is calculable`);
+        assert.equal(matrixCase.activity.stepBand, stepBand);
+    }
+}
+
+const incompleteTraining = calculateOrientation({
+    ...baseInput,
+    trainingSessions: 3,
+    trainingType: '',
+    trainingMinutes: ''
+});
+assert.equal(incompleteTraining.ok, false);
+assert.ok(incompleteTraining.errors.trainingType);
+assert.ok(incompleteTraining.errors.trainingMinutes);
+
+const implausibleSteps = calculateOrientation({
+    ...baseInput,
+    exactSteps: 60000
+});
+assert.equal(implausibleSteps.ok, false);
+assert.ok(implausibleSteps.errors.exactSteps);
 
 const protectedCases = [
     {
         name: 'pregnancy first trimester',
-        input: { ...baseInput, pregnant: 'yes', trimester: 'first', activity: '', obstacle: '' },
+        input: { ...baseInput, pregnant: 'yes', trimester: 'first', dailyActivity: '', obstacle: '' },
         mode: RESULT_MODES.PREGNANCY,
         guideline: 0
     },
     {
         name: 'pregnancy third trimester',
-        input: { ...baseInput, pregnant: 'yes', trimester: 'third', activity: '', obstacle: '' },
+        input: { ...baseInput, pregnant: 'yes', trimester: 'third', dailyActivity: '', obstacle: '' },
         mode: RESULT_MODES.PREGNANCY,
         guideline: 500
     },
     {
         name: 'two weeks postpartum overrides breastfeeding',
-        input: { ...baseInput, birthWithin12Months: 'yes', weeksPostpartum: 2, breastfeeding: 'exclusive', activity: '', obstacle: '' },
+        input: { ...baseInput, birthWithin12Months: 'yes', weeksPostpartum: 2, breastfeeding: 'exclusive', dailyActivity: '', obstacle: '' },
         mode: RESULT_MODES.EARLY_POSTPARTUM
     },
     {
         name: 'medical warning',
-        input: { ...baseInput, medicalFlag: true, activity: '', obstacle: '' },
+        input: { ...baseInput, medicalFlag: true, dailyActivity: '', obstacle: '' },
         mode: RESULT_MODES.SAFETY
     }
 ];
@@ -125,7 +201,7 @@ const sixWeeksPostpartum = calculateOrientation({
     birthWithin12Months: 'yes',
     weeksPostpartum: 6,
     breastfeeding: 'no',
-    activity: '',
+    dailyActivity: '',
     obstacle: ''
 });
 assert.equal(sixWeeksPostpartum.mode, RESULT_MODES.EARLY_POSTPARTUM);
@@ -156,7 +232,7 @@ for (const warning of [
         weeksPostpartum: 20,
         breastfeeding: 'no',
         ...warning,
-        activity: '',
+        dailyActivity: '',
         obstacle: ''
     });
     assert.equal(safety.mode, RESULT_MODES.SAFETY);
@@ -182,7 +258,7 @@ const missingTrimester = calculateOrientation({
     ...baseInput,
     pregnant: 'yes',
     trimester: '',
-    activity: '',
+    dailyActivity: '',
     obstacle: ''
 });
 assert.equal(missingTrimester.ok, false);

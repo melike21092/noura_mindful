@@ -1,8 +1,41 @@
-export const ACTIVITY_RANGES = Object.freeze({
-    low: { min: 1.3, max: 1.4 },
-    mixed: { min: 1.4, max: 1.5 },
-    active: { min: 1.5, max: 1.6 },
-    high: { min: 1.65, max: 1.75 }
+// NOURA product mapping anchored to DGE PAL ranges and adult step-count categories.
+// It describes everyday activity plus steps without structured training.
+export const BASIS_ACTIVITY_RANGES = Object.freeze({
+    sedentary: Object.freeze({
+        under4000: { min: 1.35, max: 1.4 },
+        from4000to7000: { min: 1.4, max: 1.45 },
+        from7000to10000: { min: 1.45, max: 1.5 },
+        over10000: { min: 1.5, max: 1.6 },
+        unknown: { min: 1.4, max: 1.45 }
+    }),
+    mixed: Object.freeze({
+        under4000: { min: 1.45, max: 1.55 },
+        from4000to7000: { min: 1.5, max: 1.6 },
+        from7000to10000: { min: 1.55, max: 1.65 },
+        over10000: { min: 1.65, max: 1.75 },
+        unknown: { min: 1.5, max: 1.6 }
+    }),
+    standing: Object.freeze({
+        under4000: { min: 1.6, max: 1.7 },
+        from4000to7000: { min: 1.65, max: 1.75 },
+        from7000to10000: { min: 1.7, max: 1.8 },
+        over10000: { min: 1.8, max: 1.9 },
+        unknown: { min: 1.7, max: 1.8 }
+    }),
+    strenuous: Object.freeze({
+        under4000: { min: 1.75, max: 1.9 },
+        from4000to7000: { min: 1.85, max: 2.0 },
+        from7000to10000: { min: 1.9, max: 2.1 },
+        over10000: { min: 2.0, max: 2.2 },
+        unknown: { min: 1.9, max: 2.1 }
+    })
+});
+
+// Conservative ranges from the 2024 Adult Compendium of Physical Activities.
+export const TRAINING_MET_RANGES = Object.freeze({
+    strength: { min: 3.5, max: 6.0 },
+    cardio: { min: 4.8, max: 9.0 },
+    mixed: { min: 4.0, max: 7.0 }
 });
 
 export const RESULT_MODES = Object.freeze({
@@ -323,6 +356,29 @@ export function roundTo(value, step = 1) {
     return Math.round(value / step) * step;
 }
 
+export function getStepBand(stepBand, exactSteps) {
+    const steps = parseGermanNumber(exactSteps);
+    if (String(exactSteps ?? '').trim() !== '' && Number.isFinite(steps)) {
+        if (steps < 4000) return 'under4000';
+        if (steps < 7000) return 'from4000to7000';
+        if (steps <= 10000) return 'from7000to10000';
+        return 'over10000';
+    }
+    return stepBand;
+}
+
+export function calculateDailyTrainingRange(weightKg, sessionsPerWeek, minutesPerSession, trainingType) {
+    const sessions = parseGermanNumber(sessionsPerWeek);
+    if (sessions === 0) return { low: 0, high: 0 };
+    const minutes = parseGermanNumber(minutesPerSession);
+    const met = TRAINING_MET_RANGES[trainingType];
+    const weeklyHours = sessions * minutes / 60;
+    return {
+        low: ((met.min - 1) * weightKg * weeklyHours) / 7,
+        high: ((met.max - 1) * weightKg * weeklyHours) / 7
+    };
+}
+
 export function validateInputs(input) {
     const age = parseGermanNumber(input.age);
     const heightCm = parseGermanNumber(input.heightCm);
@@ -368,8 +424,32 @@ export function validateInputs(input) {
         if (!['yes', 'no', 'unsure'].includes(input.advisedAgainstLoss)) errors.advisedAgainstLoss = 'Bitte triff eine Auswahl.';
     }
     const mode = Object.keys(errors).length ? null : determineResultMode(input);
-    if (mode && CALCULATED_MODES.has(mode) && !ACTIVITY_RANGES[input.activity]) {
-        errors.activity = 'Bitte wähle die Beschreibung, die deinem typischen Alltag am nächsten kommt.';
+    if (mode && CALCULATED_MODES.has(mode)) {
+        const activityRange = BASIS_ACTIVITY_RANGES[input.dailyActivity];
+        const exactStepsProvided = String(input.exactSteps ?? '').trim() !== '';
+        const exactSteps = parseGermanNumber(input.exactSteps);
+        const stepBand = getStepBand(input.stepBand, input.exactSteps);
+        const sessions = parseGermanNumber(input.trainingSessions);
+        const minutes = parseGermanNumber(input.trainingMinutes);
+
+        if (!activityRange) {
+            errors.dailyActivity = 'Bitte wähle die Beschreibung, die deinem normalen Alltag am nächsten kommt.';
+        }
+        if (exactStepsProvided && (!Number.isFinite(exactSteps) || exactSteps < 0 || exactSteps > 50000)) {
+            errors.exactSteps = 'Bitte gib eine durchschnittliche Schrittzahl zwischen 0 und 50.000 an.';
+        } else if (!activityRange?.[stepBand]) {
+            errors.stepBand = 'Bitte wähle deinen ungefähren täglichen Schrittbereich.';
+        }
+        if (!Number.isInteger(sessions) || sessions < 0 || sessions > 7) {
+            errors.trainingSessions = 'Bitte gib eine ganze Zahl zwischen 0 und 7 an.';
+        } else if (sessions > 0) {
+            if (!TRAINING_MET_RANGES[input.trainingType]) {
+                errors.trainingType = 'Bitte wähle die Trainingsart, die am besten passt.';
+            }
+            if (!Number.isFinite(minutes) || minutes < 10 || minutes > 180) {
+                errors.trainingMinutes = 'Bitte gib eine durchschnittliche Dauer zwischen 10 und 180 Minuten an.';
+            }
+        }
     }
     if (mode && DEFICIT_MODES.has(mode) && !MISSIONS[input.obstacle]) {
         errors.obstacle = 'Bitte wähle die Herausforderung, die dich aktuell am meisten beschäftigt.';
@@ -399,14 +479,36 @@ export function calculateOrientation(input) {
     }
 
     const resting = (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
-    const activity = ACTIVITY_RANGES[input.activity];
-    const maintenanceLow = roundTo(resting * activity.min, 50);
-    const maintenanceHigh = roundTo(resting * activity.max, 50);
+    const stepBand = getStepBand(input.stepBand, input.exactSteps);
+    const activity = BASIS_ACTIVITY_RANGES[input.dailyActivity][stepBand];
+    const training = calculateDailyTrainingRange(
+        weightKg,
+        input.trainingSessions,
+        input.trainingMinutes,
+        input.trainingType
+    );
+    const maintenanceLow = roundTo((resting * activity.min) + training.low, 50);
+    const maintenanceHigh = roundTo((resting * activity.max) + training.high, 50);
     const result = {
         ok: true,
         mode,
         resting: roundTo(resting, 50),
         maintenance: { low: maintenanceLow, high: maintenanceHigh },
+        activity: {
+            dailyActivity: input.dailyActivity,
+            stepBand,
+            exactSteps: String(input.exactSteps ?? '').trim() === '' ? null : parseGermanNumber(input.exactSteps),
+            basisFactor: activity,
+            trainingType: parseGermanNumber(input.trainingSessions) > 0 ? input.trainingType : null,
+            trainingSessions: parseGermanNumber(input.trainingSessions),
+            trainingMinutes: parseGermanNumber(input.trainingSessions) > 0
+                ? parseGermanNumber(input.trainingMinutes)
+                : 0,
+            trainingDaily: {
+                low: roundTo(training.low),
+                high: roundTo(training.high)
+            }
+        },
         guidance: SPECIAL_GUIDANCE[mode],
         cta: getCtaContent(mode, input.obstacle)
     };
