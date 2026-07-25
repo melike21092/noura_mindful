@@ -8,7 +8,8 @@
     --white: #ffffff;
     --muted: #74777c;
     --line: rgba(37, 40, 45, 0.09);
-    --gold-gradient: linear-gradient(105deg, #bd7940 0%, #e1a86f 48%, #f0cba8 100%);
+    --gold: #c88951;
+    --gold-hover: #b87843;
 }
 
 * { box-sizing: border-box; }
@@ -70,7 +71,7 @@ button { cursor: pointer; }
     transition: background 240ms ease;
 }
 
-.progress span.is-active { background: var(--gold-gradient); }
+.progress span.is-active { background: var(--gold); }
 
 .card {
     padding: 30px 22px;
@@ -164,7 +165,8 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
     letter-spacing: 0.02em;
 }
 
-.primary { padding: 14px 24px; background: var(--gold-gradient); color: white; box-shadow: 0 14px 28px -16px rgba(189, 121, 64, 0.9); }
+.primary { padding: 14px 24px; background: var(--gold); color: white; box-shadow: 0 14px 28px -16px rgba(189, 121, 64, 0.9); transition: background 180ms ease, transform 180ms ease; }
+.primary:hover { background: var(--gold-hover); }
 .secondary { padding: 16px 24px; background: var(--charcoal); color: white; text-decoration: none; text-align: center; }
 .text-button { padding: 12px; background: transparent; color: var(--muted); }
 .primary:focus-visible, .secondary:focus-visible, .text-button:focus-visible, input:focus-visible { outline: 3px solid rgba(200, 137, 81, 0.3); outline-offset: 3px; }
@@ -200,7 +202,8 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 .cta { padding: 28px 22px; background: linear-gradient(145deg, #2c2e32, #202226); color: white; }
 .cta p { color: rgba(255, 255, 255, 0.7); }
 .cta .eyebrow { color: var(--terracotta); }
-.cta .secondary { margin-top: 22px; background: var(--gold-gradient); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 14px 28px -18px rgba(239, 205, 178, 0.8); }
+.cta .secondary { margin-top: 22px; background: var(--gold); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 14px 28px -18px rgba(239, 205, 178, 0.8); transition: background 180ms ease, transform 180ms ease; }
+.cta .secondary:hover { background: var(--gold-hover); }
 
 @media (min-width: 640px) {
     .page-shell { padding-top: 32px; }
