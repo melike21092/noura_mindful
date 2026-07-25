@@ -201,25 +201,26 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 
 .result-highlight {
     display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 12px;
+    grid-template-columns: 26px 1fr;
+    gap: 10px;
     align-items: center;
-    margin-top: 10px;
-    padding: 14px;
-    border: 1px solid rgba(200, 137, 81, 0.17);
-    border-radius: 3px 15px 15px 15px;
-    background: rgba(255, 248, 239, 0.48);
+    margin-top: 0;
+    padding: 12px 0;
+    border: 0;
+    border-top: 1px solid rgba(37, 40, 45, 0.09);
+    border-radius: 0;
+    background: transparent;
 }
 
 .result-highlight-icon {
     display: grid;
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     place-items: center;
     border-radius: 50%;
-    background: var(--terracotta);
-    color: #fff;
-    font-size: 16px;
+    background: rgba(200, 137, 81, 0.14);
+    color: var(--terracotta);
+    font-size: 13px;
     font-weight: 600;
 }
 
@@ -235,17 +236,19 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 
 .result-highlight strong {
     display: block;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.35;
 }
 
 .result-highlight--quiet {
     align-items: start;
-    background: rgba(255, 255, 255, 0.28);
+    padding-top: 12px;
+    background: transparent;
 }
 
 .result-highlight--quiet .result-highlight-icon {
-    background: var(--sage);
+    background: rgba(132, 155, 135, 0.16);
+    color: #617865;
 }
 
 .result-highlight--quiet p {
@@ -259,22 +262,24 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 }
 
 .calibration-guide {
-    margin-top: 14px;
-    padding: 17px 16px;
-    border: 1px solid rgba(132, 155, 135, 0.22);
-    border-radius: 3px 17px 17px 17px;
-    background: rgba(241, 246, 240, 0.42);
+    margin-top: 8px;
+    padding: 20px 0 0;
+    border: 0;
+    border-top: 1px solid rgba(37, 40, 45, 0.09);
+    border-radius: 0;
+    background: transparent;
 }
 
 .calibration-heading {
     display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 12px;
+    grid-template-columns: 30px 1fr;
+    gap: 10px;
     align-items: center;
 }
 
 .calibration-heading .result-highlight-icon {
     background: var(--charcoal);
+    color: #fff;
     font-size: 10px;
     letter-spacing: -0.03em;
 }
@@ -295,8 +300,8 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 }
 
 .calibration-guide ol {
-    margin: 17px 0 0;
-    padding-left: 20px;
+    margin: 18px 0 0;
+    padding-left: 18px;
     color: var(--muted);
     font-size: 12px;
     line-height: 1.55;
@@ -307,15 +312,19 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 
 .calibration-outcomes {
     display: grid;
-    gap: 8px;
-    margin-top: 16px;
+    gap: 0;
+    margin-top: 18px;
+    padding: 5px 13px;
+    border-radius: 14px;
+    background: rgba(132, 155, 135, 0.09);
 }
 
 .calibration-outcomes p {
     position: relative;
     min-height: 33px;
     padding-left: 33px;
-    padding-top: 9px;
+    padding-top: 11px;
+    padding-bottom: 11px;
     border-top: 1px solid rgba(37, 40, 45, 0.08);
     font-size: 11px;
     line-height: 1.5;
@@ -323,14 +332,14 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 
 .calibration-outcomes p span {
     position: absolute;
-    top: 9px;
+    top: 10px;
     left: 0;
     display: grid;
     width: 24px;
     height: 24px;
     place-items: center;
     border-radius: 50%;
-    background: rgba(132, 155, 135, 0.18);
+    background: rgba(255, 255, 255, 0.52);
     color: var(--charcoal);
     font-weight: 700;
 }
@@ -338,6 +347,14 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 .calibration-outcomes p strong {
     display: inline;
     color: var(--charcoal);
+}
+
+.calibration-outcomes p:first-child { border-top: 0; }
+
+.start-result-card > .metric-note {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(37, 40, 45, 0.09);
 }
 
 .macro-grid {
