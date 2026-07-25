@@ -197,188 +197,122 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 .metric-value { display: block; margin: 8px 0 10px; color: var(--charcoal); font-size: clamp(30px, 8vw, 40px); font-weight: 600; letter-spacing: -0.045em; line-height: 1; }
 .metric-note { font-size: 12px; }
 
-.start-result-card .metric-value { margin-bottom: 18px; }
+.start-result-card .metric-value { margin-bottom: 8px; }
 
-.result-highlight {
-    display: grid;
-    grid-template-columns: 26px 1fr;
-    gap: 10px;
-    align-items: center;
-    margin-top: 0;
-    padding: 12px 0;
-    border: 0;
-    border-top: 1px solid rgba(37, 40, 45, 0.09);
-    border-radius: 0;
-    background: transparent;
+.calculation-note {
+    color: var(--muted);
+    font-size: 11px;
 }
 
-.result-highlight-icon {
-    display: grid;
-    width: 26px;
-    height: 26px;
-    place-items: center;
-    border-radius: 50%;
-    background: rgba(37, 40, 45, 0.07);
+.orientation-range {
+    margin-top: 22px;
+    padding: 16px 0;
+    border-top: 1px solid rgba(37, 40, 45, 0.09);
+    border-bottom: 1px solid rgba(37, 40, 45, 0.09);
+}
+
+.orientation-range small {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.orientation-range strong {
+    display: inline;
+    color: var(--charcoal);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.orientation-range p {
+    display: inline;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.result-context {
+    margin-top: 14px;
+    color: var(--charcoal);
+    font-size: 12px;
+}
+
+.calibration-details {
+    margin-top: 20px;
+    border-top: 1px solid rgba(37, 40, 45, 0.09);
+    border-bottom: 1px solid rgba(37, 40, 45, 0.09);
+}
+
+.calibration-details summary {
+    position: relative;
+    padding: 16px 28px 16px 0;
+    color: var(--charcoal);
+    font-size: 12px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+}
+
+.calibration-details summary::-webkit-details-marker { display: none; }
+
+.calibration-details summary::after {
+    content: "+";
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    translate: 0 -50%;
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.calibration-details[open] summary::after { content: "−"; }
+
+.calibration-details summary:focus-visible {
+    outline: 3px solid rgba(200, 137, 81, 0.3);
+    outline-offset: 3px;
+}
+
+.calibration-details-content {
+    padding: 0 0 18px;
+}
+
+.calibration-details-content h4 {
+    margin: 0;
     color: var(--charcoal);
     font-size: 13px;
-    font-weight: 600;
-}
-
-.result-highlight small {
-    display: block;
-    margin-bottom: 3px;
-    color: var(--muted);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.result-highlight strong {
-    display: block;
-    font-size: 14px;
-    line-height: 1.35;
-}
-
-.result-highlight--quiet {
-    align-items: start;
-    padding-top: 12px;
-    background: transparent;
-}
-
-.result-highlight--quiet .result-highlight-icon {
-    background: rgba(37, 40, 45, 0.07);
-    color: var(--charcoal);
-}
-
-.result-highlight--quiet p {
-    font-size: 12px;
-    line-height: 1.55;
-}
-
-.result-highlight--quiet p strong {
-    display: inline;
-    font-size: inherit;
-}
-
-.calibration-guide {
-    margin-top: 8px;
-    padding: 20px 0 0;
-    border: 0;
-    border-top: 1px solid rgba(37, 40, 45, 0.09);
-    border-radius: 0;
-    background: transparent;
-}
-
-.calibration-heading {
-    display: grid;
-    grid-template-columns: 30px 1fr;
-    gap: 10px;
-    align-items: center;
-}
-
-.calibration-heading .result-highlight-icon {
-    background: var(--charcoal);
-    color: #fff;
-    font-size: 10px;
-    letter-spacing: -0.03em;
-}
-
-.calibration-heading small {
-    display: block;
-    margin-bottom: 2px;
-    color: var(--muted);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.calibration-heading strong {
-    font-size: 14px;
     line-height: 1.4;
 }
 
-.calibration-guide ol {
-    margin: 18px 0 0;
-    padding-left: 18px;
+.calibration-details-content h4 + p {
+    margin-top: 7px;
     color: var(--muted);
     font-size: 12px;
-    line-height: 1.55;
 }
 
-.calibration-guide li + li { margin-top: 8px; }
-.calibration-guide li strong { color: var(--charcoal); }
+.calibration-details-content p + h4 {
+    margin-top: 20px;
+}
 
 .calibration-outcomes {
     display: grid;
-    gap: 0;
-    margin-top: 18px;
-    padding: 5px 13px;
-    border-radius: 14px;
-    background: rgba(37, 40, 45, 0.035);
+    margin-top: 10px;
 }
 
 .calibration-outcomes p {
-    position: relative;
-    min-height: 33px;
-    padding-left: 33px;
-    padding-top: 11px;
-    padding-bottom: 11px;
+    padding: 10px 0;
     border-top: 1px solid rgba(37, 40, 45, 0.08);
+    color: var(--muted);
     font-size: 11px;
-    line-height: 1.5;
-}
-
-.calibration-outcomes p span {
-    position: absolute;
-    top: 10px;
-    left: 0;
-    display: grid;
-    width: 24px;
-    height: 24px;
-    place-items: center;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.72);
-    color: var(--charcoal);
-    font-weight: 700;
+    line-height: 1.55;
 }
 
 .calibration-outcomes p strong {
     display: block;
     color: var(--charcoal);
-}
-
-.calibration-outcomes p:first-child { border-top: 0; }
-
-.start-result-card > .metric-note {
-    margin-top: 16px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(37, 40, 45, 0.09);
-}
-
-.start-result-card .result-highlight,
-.start-result-card .result-highlight p,
-.start-result-card .calibration-guide,
-.start-result-card .calibration-guide ol,
-.start-result-card .calibration-outcomes p {
-    color: var(--charcoal);
-}
-
-.start-result-card .result-highlight small,
-.start-result-card .calibration-heading small,
-.start-result-card > .metric-note {
-    color: var(--muted);
-}
-
-.start-result-card .calibration-guide strong,
-.start-result-card .result-highlight strong {
-    color: inherit;
     font-weight: 600;
-}
-
-.start-result-card .calibration-outcomes p {
-    line-height: 1.55;
 }
 
 .macro-grid {
