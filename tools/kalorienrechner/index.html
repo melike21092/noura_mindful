@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NOURA Kalorienrechner: eine ruhige Orientierung für Energie, Protein, Makros und deinen nächsten realistischen Schritt.">
+    <title>NOURA | Deine Energie-Orientierung</title>
+    <link rel="icon" href="../../images/n-logo.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="calculator.css">
+</head>
+<body>
+    <main class="page-shell">
+        <header class="brand">
+            <span class="brand-mark">NOURA TOOLS</span>
+            <img src="../../images/n-logo.svg" alt="NOURA">
+        </header>
+
+        <div class="progress" id="progress" aria-label="Fortschritt">
+            <span class="is-active"></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <form id="calculator-form" novalidate>
+            <section class="card step" data-step="0">
+                <span class="eyebrow">Deine Orientierung</span>
+                <h1>Dein Bedarf ist keine starre Zahl.</h1>
+                <p class="lead">Dieser Rechner gibt dir einen realistischen Rahmen für Energie, Protein und Makros – und einen konkreten ersten Schritt für deinen Alltag.</p>
+                <div class="actions">
+                    <span></span>
+                    <button class="primary" type="button" data-next>Orientierung berechnen</button>
+                </div>
+                <p class="fine-print">Für erwachsene Frauen ab 18 Jahren. Die Ergebnisse sind Schätzwerte und ersetzen keine medizinische, psychologische oder ernährungstherapeutische Beratung.</p>
+            </section>
+
+            <section class="card step" data-step="1" hidden>
+                <span class="eyebrow">Deine Basis</span>
+                <h2>Erzähl uns kurz von deinem Körper.</h2>
+                <p>Deine Angaben werden nur für diese Berechnung im Browser verwendet und nicht dauerhaft gespeichert.</p>
+                <div class="fields">
+                    <div class="field">
+                        <label for="age">Alter</label>
+                        <input id="age" name="age" type="number" inputmode="numeric" min="18" max="80" placeholder="34" autocomplete="off">
+                        <span class="field-error" data-error="age"></span>
+                    </div>
+                    <div class="field">
+                        <label for="heightCm">Größe in cm</label>
+                        <input id="heightCm" name="heightCm" type="number" inputmode="decimal" min="130" max="220" placeholder="165" autocomplete="off">
+                        <span class="field-error" data-error="heightCm"></span>
+                    </div>
+                    <div class="field">
+                        <label for="weightKg">Gewicht in kg</label>
+                        <input id="weightKg" name="weightKg" type="text" inputmode="decimal" placeholder="82,5" autocomplete="off">
+                        <span class="field-error" data-error="weightKg"></span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="text-button" type="button" data-back>Zurück</button>
+                    <button class="primary" type="button" data-next>Weiter</button>
+                </div>
+            </section>
+
+            <section class="card step" data-step="2" hidden>
+                <span class="eyebrow">Deine Lebensphase</span>
+                <h2>Was braucht gerade besondere Aufmerksamkeit?</h2>
+                <p>In bestimmten Lebensphasen geben wir bewusst kein automatisches Kaloriendefizit aus.</p>
+                <fieldset>
+                    <legend>Aktuelle Lebensphase</legend>
+                    <div class="choice-list">
+                        <label class="choice"><input type="radio" name="lifePhase" value="none"><span><strong>Keine dieser Situationen</strong></span></label>
+                        <label class="choice"><input type="radio" name="lifePhase" value="pregnant"><span><strong>Ich bin schwanger</strong><small>Keine automatische Abnahme- oder Makrovorgabe.</small></span></label>
+                        <label class="choice"><input type="radio" name="lifePhase" value="breastfeeding"><span><strong>Ich stille</strong><small>Dein zusätzlicher Bedarf ist individuell.</small></span></label>
+                        <label class="choice"><input type="radio" name="lifePhase" value="postpartum"><span><strong>Ich bin in der frühen Phase nach der Geburt</strong><small>Regeneration und regelmäßige Versorgung haben Vorrang.</small></span></label>
+                        <label class="choice"><input type="radio" name="lifePhase" value="unsure"><span><strong>Ich bin unsicher</strong></span></label>
+                    </div>
+                    <span class="field-error" data-error="lifePhase"></span>
+                </fieldset>
+                <fieldset>
+                    <legend>Sicherheitsfrage</legend>
+                    <div class="choice-list">
+                        <label class="choice">
+                            <input type="radio" name="medicalStatus" value="yes">
+                            <span><strong>Bei mir ist eine persönliche Abklärung wichtig</strong><small>Zum Beispiel bei Nieren- oder Lebererkrankung, medizinischer Ernährungsform, Essstörung beziehungsweise entsprechender Vorgeschichte oder ungeklärtem starkem Gewichtsverlust.</small></span>
+                        </label>
+                        <label class="choice">
+                            <input type="radio" name="medicalStatus" value="no">
+                            <span><strong>Nichts davon trifft auf mich zu</strong></span>
+                        </label>
+                    </div>
+                    <span class="field-error" data-error="medicalStatus"></span>
+                </fieldset>
+                <div class="actions">
+                    <button class="text-button" type="button" data-back>Zurück</button>
+                    <button class="primary" type="button" data-next>Weiter</button>
+                </div>
+            </section>
+
+            <section class="card step" data-step="3" hidden>
+                <span class="eyebrow">Dein Alltag</span>
+                <h2>Wie bewegt sich deine typische Woche?</h2>
+                <p>Wähle den Alltag, den du meistens tatsächlich lebst – nicht die Woche, die du gerne hättest.</p>
+                <fieldset>
+                    <legend>Typische Aktivität</legend>
+                    <div class="choice-list">
+                        <label class="choice"><input type="radio" name="activity" value="low"><span><strong>Viel Sitzen, wenig Bewegung</strong><small>Mein Alltag findet überwiegend im Sitzen statt.</small></span></label>
+                        <label class="choice"><input type="radio" name="activity" value="mixed"><span><strong>Gemischter Alltag</strong><small>Ich sitze teilweise, bin aber regelmäßig auf den Beinen oder gehe spazieren.</small></span></label>
+                        <label class="choice"><input type="radio" name="activity" value="active"><span><strong>Deutlich aktiv</strong><small>Ich bewege mich viel im Alltag und/oder trainiere regelmäßig.</small></span></label>
+                        <label class="choice"><input type="radio" name="activity" value="high"><span><strong>Körperlich sehr aktiv</strong><small>Mein Beruf, Alltag oder Training fordert mich körperlich stark.</small></span></label>
+                    </div>
+                    <span class="field-error" data-error="activity"></span>
+                </fieldset>
+                <div class="actions">
+                    <button class="text-button" type="button" data-back>Zurück</button>
+                    <button class="primary" type="button" data-next>Weiter</button>
+                </div>
+            </section>
+
+            <section class="card step" data-step="4" hidden>
+                <span class="eyebrow">Dein Alltag im Fokus</span>
+                <h2>Wo kippt dein Plan meistens?</h2>
+                <p>Wir suchen keine Schuld, sondern den wahrscheinlich sinnvollsten ersten Hebel.</p>
+                <fieldset>
+                    <legend>Größte aktuelle Herausforderung</legend>
+                    <div class="choice-list">
+                        <label class="choice"><input type="radio" name="obstacle" value="hunger"><span><strong>Ich habe ständig Hunger</strong></span></label>
+                        <label class="choice"><input type="radio" name="obstacle" value="cravings"><span><strong>Abends kommt starker Essdrang</strong></span></label>
+                        <label class="choice"><input type="radio" name="obstacle" value="irregular"><span><strong>Ich esse unregelmäßig oder lasse Mahlzeiten aus</strong></span></label>
+                        <label class="choice"><input type="radio" name="obstacle" value="family"><span><strong>Familienessen macht die Planung schwierig</strong></span></label>
+                        <label class="choice"><input type="radio" name="obstacle" value="stress"><span><strong>Stress führt bei mir zum Essen</strong></span></label>
+                        <label class="choice"><input type="radio" name="obstacle" value="weekend"><span><strong>Am Wochenende verliere ich meine Struktur</strong></span></label>
+                        <label class="choice"><input type="radio" name="obstacle" value="consistency"><span><strong>Ich halte ein paar Tage durch und breche dann ab</strong></span></label>
+                        <label class="choice"><input type="radio" name="obstacle" value="unsure"><span><strong>Ich weiß es noch nicht</strong></span></label>
+                    </div>
+                    <span class="field-error" data-error="obstacle"></span>
+                </fieldset>
+                <div class="actions">
+                    <button class="text-button" type="button" data-back>Zurück</button>
+                    <button class="primary" type="submit">Meinen Startplan ansehen</button>
+                </div>
+            </section>
+        </form>
+
+        <section id="result" class="results" hidden aria-live="polite">
+            <div class="card">
+                <span class="eyebrow">Deine Orientierung</span>
+                <h2>Ein realistischer Rahmen für deinen Alltag.</h2>
+                <p>Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.</p>
+            </div>
+
+            <div class="result-card">
+                <span class="eyebrow">Deine Basis</span>
+                <h3>Geschätzter Ruhebedarf</h3>
+                <strong class="metric-value" id="resting-result"></strong>
+                <p class="metric-note">Ungefährer Energieverbrauch für grundlegende Körperfunktionen – noch ohne deinen normalen Alltag.</p>
+            </div>
+
+            <div class="result-card">
+                <span class="eyebrow">Dein realistischer Rahmen</span>
+                <h3>Geschätzte Erhaltung</h3>
+                <strong class="metric-value" id="maintenance-result"></strong>
+                <p class="metric-note">In diesem Bereich könnte dein Gewicht langfristig ungefähr stabil bleiben.</p>
+            </div>
+
+            <div id="standard-results">
+                <div class="result-card">
+                    <span class="eyebrow">Dein sanfter Startpunkt</span>
+                    <h3>Moderater Abnahmebereich</h3>
+                    <strong class="metric-value" id="loss-result"></strong>
+                    <p class="metric-note">Starte nicht automatisch am unteren Ende. Die höhere Zahl ist häufig der bessere erste Test.</p>
+                </div>
+
+                <div class="result-card">
+                    <span class="eyebrow">Dein Proteinanker</span>
+                    <h3>Orientierung statt Treffpflicht</h3>
+                    <strong class="metric-value" id="protein-result"></strong>
+                    <p class="metric-note" id="protein-note"></p>
+                </div>
+
+                <div class="result-card">
+                    <span class="eyebrow">Ein möglicher Tagesrahmen</span>
+                    <h3>Makros für einen mittleren Startwert</h3>
+                    <div class="macro-grid">
+                        <div class="macro"><span>Protein</span><strong id="macro-protein"></strong></div>
+                        <div class="macro"><span>Fett</span><strong id="macro-fat"></strong></div>
+                        <div class="macro"><span>Kohlenhydrate</span><strong id="macro-carbs"></strong></div>
+                        <div class="macro"><span>Ballaststoffe</span><strong id="macro-fiber"></strong></div>
+                    </div>
+                    <p class="fine-print" id="macro-note"></p>
+                </div>
+            </div>
+
+            <div class="result-card notice" id="special-result" hidden>
+                <span class="eyebrow">Deine Lebensphase</span>
+                <h3 id="special-title"></h3>
+                <p id="special-copy"></p>
+            </div>
+
+            <div class="result-card">
+                <span class="eyebrow">Dein 7-Tage-Startplan</span>
+                <h3 id="mission-title"></h3>
+                <p id="mission-intro"></p>
+                <ul class="mission-list" id="mission-actions"></ul>
+                <p class="reflection" id="mission-question"></p>
+            </div>
+
+            <div class="result-card">
+                <span class="eyebrow">Dein nächster Schritt</span>
+                <h3>Teste nicht deine Disziplin. Teste deinen Plan.</h3>
+                <p>Beobachte sieben Tage lang, ob deine gewählte Strategie deinen Alltag, Hunger oder Essdrang spürbar ruhiger macht. Ein einzelner Tag entscheidet nichts.</p>
+            </div>
+
+            <div class="result-card cta">
+                <span class="eyebrow">Persönliche Begleitung</span>
+                <h3>Eine Zahl erklärt noch nicht, warum dein Alltag kippt.</h3>
+                <p>Im NOURA Coaching schauen wir gemeinsam auf die Muster hinter Hunger, Essdrang, Stress, Schlaf, Zyklus und Familienalltag – und finden Strategien, die wirklich zu deinem Leben passen.</p>
+                <a class="secondary" href="https://zeeg.me/nouraxbalance/kennenlernen" target="_blank" rel="noopener noreferrer">Persönlichen Klarheits-Check anfragen</a>
+            </div>
+
+            <button class="text-button" type="button" id="restart">Neu berechnen</button>
+            <p class="fine-print">Die Berechnung ist eine allgemeine Schätzung, keine Diagnose, Therapie oder Abnahmegarantie. Bei Beschwerden oder besonderen gesundheitlichen Situationen wende dich bitte an eine geeignete medizinische oder ernährungsfachliche Stelle.</p>
+        </section>
+    </main>
+
+    <script type="module">
+        import { calculateOrientation } from './calculator.mjs';
+
+        const form = document.getElementById('calculator-form');
+        const steps = [...document.querySelectorAll('.step')];
+        const progress = [...document.querySelectorAll('#progress span')];
+        const resultSection = document.getElementById('result');
+        let currentStep = 0;
+
+        const selectedValue = name => form.querySelector(`[name="${name}"]:checked`)?.value || '';
+        const setText = (id, value) => { document.getElementById(id).textContent = value; };
+        const formatKcal = value => `${new Intl.NumberFormat('de-DE').format(value)} kcal`;
+        const formatRange = range => `${new Intl.NumberFormat('de-DE').format(range.low)}–${new Intl.NumberFormat('de-DE').format(range.high)} kcal`;
+
+        function values() {
+            return {
+                age: form.elements.age.value,
+                heightCm: form.elements.heightCm.value,
+                weightKg: form.elements.weightKg.value,
+                lifePhase: selectedValue('lifePhase'),
+                activity: selectedValue('activity'),
+                obstacle: selectedValue('obstacle'),
+                medicalStatus: selectedValue('medicalStatus'),
+                medicalFlag: selectedValue('medicalStatus') === 'yes'
+            };
+        }
+
+        function showStep(index) {
+            currentStep = Math.max(0, Math.min(index, steps.length - 1));
+            steps.forEach((step, stepIndex) => { step.hidden = stepIndex !== currentStep; });
+            progress.forEach((item, progressIndex) => item.classList.toggle('is-active', progressIndex <= Math.max(0, currentStep - 1)));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('[data-error]').forEach(node => { node.textContent = ''; });
+        }
+
+        function validateCurrentStep() {
+            clearErrors();
+            const data = values();
+            const result = calculateOrientation({
+                ...data,
+                activity: data.activity || 'mixed',
+                lifePhase: data.lifePhase || 'none',
+                obstacle: data.obstacle || 'unsure'
+            });
+            const requiredByStep = {
+                1: ['age', 'heightCm', 'weightKg'],
+                2: ['lifePhase', 'medicalStatus'],
+                3: ['activity'],
+                4: ['obstacle']
+            };
+            let valid = true;
+            for (const key of requiredByStep[currentStep] || []) {
+                let message = result.errors?.[key] || '';
+                if (!data[key] && !message) message = 'Bitte triff eine Auswahl.';
+                if (message) {
+                    document.querySelector(`[data-error="${key}"]`).textContent = message;
+                    valid = false;
+                }
+            }
+            return valid;
+        }
+
+        document.querySelectorAll('[data-next]').forEach(button => {
+            button.addEventListener('click', () => {
+                if (currentStep === 0 || validateCurrentStep()) showStep(currentStep + 1);
+            });
+        });
+        document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => showStep(currentStep - 1)));
+
+        function specialCopy(lifePhase, medicallyLimited) {
+            if (medicallyLimited) {
+                return {
+                    title: 'Deine Situation braucht eine persönliche Einordnung.',
+                    copy: 'Dieser Rechner kann eine bekannte Erkrankung, medizinisch verordnete Ernährung oder entsprechende Vorgeschichte nicht angemessen berücksichtigen. Deshalb zeigen wir bewusst keinen automatischen Abnahme- oder Makrobereich.'
+                };
+            }
+            const content = {
+                pregnant: ['In der Schwangerschaft braucht es mehr als eine Formel.', 'Wir zeigen dir deinen geschätzten Basis- und Erhaltungsrahmen, geben aber bewusst kein automatisches Kaloriendefizit und keine starre Makroverteilung aus.'],
+                breastfeeding: ['Stillen verändert deinen Energiebedarf.', 'Dein Bedarf kann deutlich von einer normalen Rechnerformel abweichen. Regelmäßige Mahlzeiten, ausreichende Energie und eine persönlich passende Proteinstruktur haben Vorrang.'],
+                postpartum: ['Ankommen statt drängen.', 'Dein Körper ist noch in Regeneration. NOURA gibt dir in dieser frühen Phase bewusst kein Kaloriendefizit vor. Stabilität, Erholung und regelmäßige Versorgung haben Vorrang.'],
+                unsure: ['Sicherheit vor Scheingenauigkeit.', 'Wenn deine aktuelle Lebensphase unklar ist, geben wir bewusst kein automatisches Defizit aus. Eine persönliche Einordnung ist der verlässlichere nächste Schritt.']
+            };
+            const [title, copy] = content[lifePhase];
+            return { title, copy };
+        }
+
+        function renderResult(result, data) {
+            setText('resting-result', `ca. ${formatKcal(result.resting)}`);
+            setText('maintenance-result', `ca. ${formatRange(result.maintenance)}`);
+
+            const restricted = result.specialPhase || result.medicallyLimited;
+            document.getElementById('standard-results').hidden = restricted;
+            document.getElementById('special-result').hidden = !restricted;
+
+            if (restricted) {
+                const notice = specialCopy(data.lifePhase, result.medicallyLimited);
+                setText('special-title', notice.title);
+                setText('special-copy', notice.copy);
+            } else {
+                setText('loss-result', `ca. ${formatRange(result.loss)}`);
+                setText('protein-result', `ca. ${result.protein.low}–${result.protein.high} g`);
+                setText('protein-note', `Ein möglicher Startwert liegt bei etwa ${result.protein.target} g täglich. Regelmäßige Proteinanker sind wichtiger als mathematische Perfektion.`);
+                setText('macro-protein', `${result.protein.target} g`);
+                setText('macro-fat', `${result.fat.target} g`);
+                setText('macro-carbs', `${result.carbs.target} g`);
+                setText('macro-fiber', `ca. ${result.fiber} g`);
+                setText('macro-note', `Beispiel auf Basis von etwa ${formatKcal(result.targetCalories)}. Kohlenhydrate dürfen flexibel zu Bewegung, Familienmahlzeiten und deinem Alltag passen.`);
+            }
+
+            setText('mission-title', result.mission.title);
+            setText('mission-intro', result.mission.intro);
+            setText('mission-question', result.mission.question);
+            const actionList = document.getElementById('mission-actions');
+            actionList.replaceChildren(...result.mission.actions.map(action => {
+                const item = document.createElement('li');
+                item.textContent = action;
+                return item;
+            }));
+
+            form.hidden = true;
+            document.getElementById('progress').hidden = true;
+            resultSection.hidden = false;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+            if (!validateCurrentStep()) return;
+            const data = values();
+            const result = calculateOrientation(data);
+            if (result.ok) renderResult(result, data);
+        });
+
+        document.getElementById('restart').addEventListener('click', () => {
+            form.reset();
+            resultSection.hidden = true;
+            form.hidden = false;
+            document.getElementById('progress').hidden = false;
+            clearErrors();
+            showStep(0);
+        });
+    </script>
+</body>
+</html>
