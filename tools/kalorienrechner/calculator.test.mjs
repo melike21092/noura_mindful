@@ -43,6 +43,16 @@ const displayedEnergy =
     (result.carbs.target * 4);
 assert.ok(Math.abs(displayedEnergy - result.targetCalories) <= 35, 'Rounded macros remain close to target calories');
 
+const moderateActivityCase = calculateOrientation({
+    ...baseInput,
+    age: 33,
+    heightCm: 165,
+    weightKg: 69.5,
+    activity: 'active'
+});
+assert.equal(moderateActivityCase.resting, 1400);
+assert.deepEqual(moderateActivityCase.maintenance, { low: 2100, high: 2250 });
+
 const protectedCases = [
     {
         name: 'pregnancy first trimester',

@@ -1,8 +1,8 @@
 export const ACTIVITY_RANGES = Object.freeze({
-    low: { min: 1.35, max: 1.45 },
-    mixed: { min: 1.45, max: 1.6 },
-    active: { min: 1.6, max: 1.75 },
-    high: { min: 1.75, max: 1.9 }
+    low: { min: 1.3, max: 1.4 },
+    mixed: { min: 1.4, max: 1.5 },
+    active: { min: 1.5, max: 1.6 },
+    high: { min: 1.65, max: 1.75 }
 });
 
 export const RESULT_MODES = Object.freeze({
