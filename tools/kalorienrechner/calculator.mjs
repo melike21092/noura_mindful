@@ -9,11 +9,11 @@ export const BASIS_ACTIVITY_RANGES = Object.freeze({
         unknown: { min: 1.4, max: 1.45 }
     }),
     mixed: Object.freeze({
-        under4000: { min: 1.45, max: 1.55 },
-        from4000to7000: { min: 1.5, max: 1.6 },
-        from7000to10000: { min: 1.55, max: 1.65 },
-        over10000: { min: 1.65, max: 1.75 },
-        unknown: { min: 1.5, max: 1.6 }
+        under4000: { min: 1.4, max: 1.45 },
+        from4000to7000: { min: 1.4, max: 1.5 },
+        from7000to10000: { min: 1.45, max: 1.55 },
+        over10000: { min: 1.55, max: 1.65 },
+        unknown: { min: 1.45, max: 1.5 }
     }),
     standing: Object.freeze({
         under4000: { min: 1.6, max: 1.7 },
@@ -376,6 +376,18 @@ export function calculateDailyTrainingRange(weightKg, sessionsPerWeek, minutesPe
     return {
         low: ((met.min - 1) * weightKg * weeklyHours) / 7,
         high: ((met.max - 1) * weightKg * weeklyHours) / 7
+    };
+}
+
+export function distributeProteinAnchors(target) {
+    const breakfast = roundTo(target * 0.26, 5);
+    const lunch = roundTo(target * 0.32, 5);
+    const snack = roundTo(target * 0.16, 5);
+    return {
+        breakfast,
+        lunch,
+        snack,
+        dinner: target - breakfast - lunch - snack
     };
 }
 

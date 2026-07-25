@@ -8,7 +8,7 @@
     <link rel="icon" href="../../images/n-logo.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="calculator.css">
 </head>
 <body>
@@ -25,8 +25,9 @@
             <img src="../../images/n-logo.svg" alt="NOURA">
         </header>
 
-        <div class="progress" id="progress" aria-label="Fortschritt">
-            <span class="is-active"></span><span></span><span></span><span></span><span></span>
+        <div class="progress" id="progress" aria-live="polite" hidden>
+            <span class="progress-copy" id="progress-copy">Schritt 1 von 6</span>
+            <span class="progress-track" aria-hidden="true"><span id="progress-value"></span></span>
         </div>
 
         <form id="calculator-form" novalidate>
@@ -162,10 +163,10 @@
 
             <section class="card step" data-step="3" hidden>
                 <span class="eyebrow">Dein Alltag</span>
-                <h2>Wie bewegt sich deine typische Woche?</h2>
-                <p>Wir betrachten deinen normalen Alltag, deine Schritte und aktives Training getrennt. So musst du keine pauschale Aktivitätsstufe erraten.</p>
+                <h2>Wie sieht dein normaler Alltag aus?</h2>
+                <p>Denke an einen typischen Tag ohne bewusstes Training.</p>
                 <fieldset>
-                    <legend>Wie sieht dein normaler Alltag ohne Training aus?</legend>
+                    <legend>Was passt am ehesten?</legend>
                     <div class="choice-list">
                         <label class="choice"><input type="radio" name="dailyActivity" value="sedentary"><span><strong>Überwiegend sitzend</strong><small>Büro, Homeoffice oder viel Autofahren.</small></span></label>
                         <label class="choice"><input type="radio" name="dailyActivity" value="mixed"><span><strong>Teilweise sitzend, teilweise auf den Beinen</strong><small>Wechselnder Alltag, Haushalt oder regelmäßige Wege.</small></span></label>
@@ -174,8 +175,18 @@
                     </div>
                     <span class="field-error" data-error="dailyActivity"></span>
                 </fieldset>
+                <div class="actions">
+                    <button class="text-button" type="button" data-back>Zurück</button>
+                    <button class="primary" type="button" data-next>Weiter</button>
+                </div>
+            </section>
+
+            <section class="card step" data-step="4" hidden>
+                <span class="eyebrow">Deine Alltagsbewegung</span>
+                <h2>Wie viele Schritte kommen ungefähr zusammen?</h2>
+                <p>Ein Durchschnitt reicht. Du musst nicht jeden Tag exakt treffen.</p>
                 <fieldset>
-                    <legend>Wie viele Schritte gehst du durchschnittlich pro Tag?</legend>
+                    <legend>Schritte pro Tag</legend>
                     <div class="choice-list">
                         <label class="choice"><input type="radio" name="stepBand" value="under4000"><span><strong>Unter 4.000</strong></span></label>
                         <label class="choice"><input type="radio" name="stepBand" value="from4000to7000"><span><strong>4.000–7.000</strong></span></label>
@@ -190,8 +201,18 @@
                         <span class="field-error" data-error="exactSteps"></span>
                     </div>
                 </fieldset>
+                <div class="actions">
+                    <button class="text-button" type="button" data-back>Zurück</button>
+                    <button class="primary" type="button" data-next>Weiter</button>
+                </div>
+            </section>
+
+            <section class="card step" data-step="5" hidden>
+                <span class="eyebrow">Dein Training</span>
+                <h2>Wie oft trainierst du aktiv?</h2>
+                <p>Gemeint ist bewusstes Training zusätzlich zu deinem normalen Alltag.</p>
                 <fieldset>
-                    <legend>Wie oft trainierst du durchschnittlich pro Woche?</legend>
+                    <legend>Durchschnittliche Trainingswoche</legend>
                     <div class="field">
                         <label for="trainingSessions">Einheiten pro Woche</label>
                         <input id="trainingSessions" name="trainingSessions" type="number" inputmode="numeric" min="0" max="7" value="0" autocomplete="off">
@@ -211,14 +232,14 @@
                         </div>
                     </div>
                 </fieldset>
-                <p class="fine-print">Das Ergebnis ist ein geschätzter Startbereich und keine exakte Messung deines Energieverbrauchs.</p>
+                <p class="fine-print">Training wird vorsichtig geschätzt und nicht doppelt zu Alltag und Schritten addiert.</p>
                 <div class="actions">
                     <button class="text-button" type="button" data-back>Zurück</button>
                     <button class="primary" type="button" data-next>Weiter</button>
                 </div>
             </section>
 
-            <section class="card step" data-step="4" hidden>
+            <section class="card step" data-step="6" hidden>
                 <span class="eyebrow">Dein Alltag im Fokus</span>
                 <h2>Wo kippt dein Plan meistens?</h2>
                 <p>Wir suchen keine Schuld, sondern den wahrscheinlich sinnvollsten ersten Hebel.</p>
@@ -245,6 +266,11 @@
 
         <section id="result" class="results" hidden aria-live="polite">
             <div class="result-card start-result-card energy-result">
+                <div class="breastfeeding-basis" hidden>
+                    <span class="eyebrow">Deine Basisorientierung</span>
+                    <h3>Grundbedarf ohne zusätzlichen Stillbedarf</h3>
+                    <p>Diese Schätzung beschreibt deinen normalen Alltag. Der zusätzliche Energiebedarf durch das Stillen ist darin nicht enthalten.</p>
+                </div>
                 <div class="deficit-result">
                     <span class="eyebrow">Deine Startorientierung</span>
                     <div class="primary-metric">
@@ -264,7 +290,7 @@
                         <strong id="resting-result"></strong>
                     </div>
                     <div>
-                        <small>Gewicht halten</small>
+                        <small id="maintenance-label">Gewicht halten</small>
                         <strong id="maintenance-result"></strong>
                     </div>
                 </div>
@@ -273,17 +299,23 @@
                 <details class="calibration-details deficit-result">
                     <summary>Wie wird das berechnet?</summary>
                     <div class="calibration-details-content">
-                        <p>Alle Werte sind Schätzungen und keine exakte Messung deines Energieverbrauchs.</p>
-                        <p>Der Startwert liegt mit einem moderaten Defizit von 15 % unter der Mitte deiner geschätzten Erhaltung.</p>
-                        <p>Nicht jeder Tag muss exakt passen. Entscheidend ist deine durchschnittliche Aufnahme und die Entwicklung über mehrere Wochen.</p>
-                        <p>Der Ruhebedarf beschreibt den ungefähren Energieverbrauch für grundlegende Körperfunktionen. Alltag und Schritte bilden gemeinsam die Basis; aktives Training wird anschließend vorsichtig ergänzt.</p>
-                        <p id="activity-method"></p>
-                        <h4>Teste diesen Startwert drei bis vier Wochen.</h4>
-                        <p>Vergleiche Wochendurchschnitte statt einzelner Waagentage. Zyklus, Salz, Verdauung und Stress können dein Gewicht vorübergehend verändern.</p>
-                        <h4>Wie geht es danach weiter?</h4>
+                        <p>Dein Bedarf wird anhand deiner Körperdaten, deines Alltags, deiner Schritte und deines Trainings geschätzt. Der Startwert liegt 15 % unter deiner geschätzten Erhaltung. Alle Werte dienen als Orientierung.</p>
+                    </div>
+                </details>
+
+                <details class="calibration-details deficit-result">
+                    <summary>Wie überprüfe ich meinen Startwert?</summary>
+                    <div class="calibration-details-content">
+                        <p>Teste den Startwert drei bis vier Wochen. Wiege dich möglichst regelmäßig unter ähnlichen Bedingungen und schau auf deinen Wochendurchschnitt statt auf einzelne Tage. So erkennst du den Trend besser. Zyklus, Salz, Verdauung und Stress können dein Gewicht kurzfristig verändern.</p>
+                    </div>
+                </details>
+
+                <details class="calibration-details deficit-result">
+                    <summary>Wie geht es danach weiter?</summary>
+                    <div class="calibration-details-content">
                         <div class="calibration-outcomes">
                             <p><strong>Gewicht sinkt langsam und du fühlst dich gut?</strong> Beibehalten.</p>
-                            <p><strong>Kein klarer Trend?</strong> Angaben, tatsächlichen Durchschnitt und mögliche Schwankungen prüfen.</p>
+                            <p><strong>Kein klarer Trend?</strong> Prüfe zuerst deinen tatsächlichen Kaloriendurchschnitt und beobachte den Gewichtstrend noch etwas länger. Erst danach den Startwert vorsichtig anpassen.</p>
                             <p><strong>Starker Hunger, wenig Energie oder Leistungseinbruch?</strong> Nicht weiter reduzieren.</p>
                         </div>
                     </div>
@@ -297,23 +329,36 @@
             </div>
 
             <div id="standard-results">
-                <div class="result-card">
-                    <span class="eyebrow">Dein Proteinanker</span>
-                    <h3>Orientierung statt Treffpflicht</h3>
-                    <strong class="metric-value" id="protein-result"></strong>
-                    <p class="metric-note" id="protein-note"></p>
-                </div>
-
-                <div class="result-card">
-                    <span class="eyebrow">Ein möglicher Tagesrahmen</span>
-                    <h3>Makros für einen mittleren Startwert</h3>
-                    <div class="macro-grid">
-                        <div class="macro"><span>Protein</span><strong id="macro-protein"></strong></div>
-                        <div class="macro"><span>Fett</span><strong id="macro-fat"></strong></div>
-                        <div class="macro"><span>Kohlenhydrate</span><strong id="macro-carbs"></strong></div>
-                        <div class="macro"><span>Ballaststoffe</span><strong id="macro-fiber"></strong></div>
+                <div class="result-card protein-card">
+                    <span class="eyebrow">Dein Proteinrahmen</span>
+                    <h3>Dein Protein-Startwert</h3>
+                    <div class="protein-primary">
+                        <span>ca.</span>
+                        <strong id="protein-result"></strong>
+                        <span>g pro Tag</span>
                     </div>
-                    <p class="fine-print" id="macro-note"></p>
+                    <p class="protein-range">Ein sinnvoller Orientierungsbereich liegt bei <strong id="protein-range"></strong>.</p>
+                    <p>Du musst nicht jeden Tag exakt treffen. Denk lieber in 3–4 Proteinankern über den Tag verteilt.</p>
+
+                    <div class="protein-anchor-grid" aria-label="Beispielverteilung der Proteinanker">
+                        <div><span>Frühstück</span><strong id="protein-breakfast"></strong></div>
+                        <div><span>Mittagessen</span><strong id="protein-lunch"></strong></div>
+                        <div><span>Snack</span><strong id="protein-snack"></strong></div>
+                        <div><span>Abendessen</span><strong id="protein-dinner"></strong></div>
+                    </div>
+
+                    <details class="calibration-details macro-details">
+                        <summary>Du trackst Makros? Tagesrahmen ansehen</summary>
+                        <div class="calibration-details-content">
+                            <div class="macro-grid">
+                                <div class="macro"><span>Protein</span><strong id="macro-protein"></strong></div>
+                                <div class="macro"><span>Fett</span><strong id="macro-fat"></strong></div>
+                                <div class="macro"><span>Kohlenhydrate</span><strong id="macro-carbs"></strong></div>
+                                <div class="macro"><span>Ballaststoffe</span><strong id="macro-fiber"></strong></div>
+                            </div>
+                            <p class="fine-print" id="macro-note"></p>
+                        </div>
+                    </details>
                 </div>
             </div>
 
@@ -322,6 +367,15 @@
                 <h3 id="special-title"></h3>
                 <p id="special-copy"></p>
                 <div class="insight-list" id="special-insights"></div>
+                <div class="breastfeeding-focus" hidden>
+                    <span class="eyebrow">Dein Versorgungsfokus</span>
+                    <ul class="mission-list">
+                        <li>Plane drei verlässliche Mahlzeiten.</li>
+                        <li>Verteile Proteinanker über den Tag.</li>
+                        <li>Beobachte Hunger, Energie und Wohlbefinden.</li>
+                        <li>Halte ein Getränk am Stillplatz bereit.</li>
+                    </ul>
+                </div>
                 <p class="reflection" id="special-reflection"></p>
             </div>
 
@@ -352,11 +406,13 @@
     </main>
 
     <script type="module">
-        import { calculateOrientation, determineResultMode, RESULT_MODES } from './calculator.mjs';
+        import { calculateOrientation, determineResultMode, distributeProteinAnchors, RESULT_MODES } from './calculator.mjs';
 
         const form = document.getElementById('calculator-form');
         const steps = [...document.querySelectorAll('.step')];
-        const progress = [...document.querySelectorAll('#progress span')];
+        const progressElement = document.getElementById('progress');
+        const progressCopy = document.getElementById('progress-copy');
+        const progressValue = document.getElementById('progress-value');
         const resultSection = document.getElementById('result');
         let currentStep = 0;
 
@@ -462,7 +518,13 @@
         function showStep(index) {
             currentStep = Math.max(0, Math.min(index, steps.length - 1));
             steps.forEach((step, stepIndex) => { step.hidden = stepIndex !== currentStep; });
-            progress.forEach((item, progressIndex) => item.classList.toggle('is-active', progressIndex <= Math.max(0, currentStep - 1)));
+            const totalInputSteps = steps.length - 1;
+            progressElement.hidden = currentStep === 0;
+            if (currentStep > 0) {
+                progressCopy.textContent = `Schritt ${currentStep} von ${totalInputSteps}`;
+                progressValue.style.width = `${(currentStep / totalInputSteps) * 100}%`;
+                progressElement.setAttribute('aria-label', `Schritt ${currentStep} von ${totalInputSteps}`);
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -484,8 +546,10 @@
             const requiredByStep = {
                 1: ['age', 'heightCm', 'weightKg'],
                 2: ['pregnant', 'medicalStatus'],
-                3: ['dailyActivity', 'trainingSessions'],
-                4: ['obstacle']
+                3: ['dailyActivity'],
+                4: [],
+                5: ['trainingSessions'],
+                6: ['obstacle']
             };
             if (currentStep === 2 && data.pregnant === 'yes') requiredByStep[2].push('trimester');
             if (currentStep === 2 && data.pregnant === 'no') {
@@ -499,10 +563,12 @@
                     requiredByStep[2].push('recovered', 'complications', 'advisedAgainstLoss');
                 }
             }
-            if (currentStep === 3) {
-                if (!data.exactSteps) requiredByStep[3].push('stepBand');
+            if (currentStep === 4) {
+                requiredByStep[4].push(data.exactSteps ? 'exactSteps' : 'stepBand');
+            }
+            if (currentStep === 5) {
                 if (Number(data.trainingSessions) > 0) {
-                    requiredByStep[3].push('trainingType', 'trainingMinutes');
+                    requiredByStep[5].push('trainingType', 'trainingMinutes');
                 }
             }
             let valid = true;
@@ -536,7 +602,7 @@
                     return;
                 }
                 if (
-                    currentStep === 3 &&
+                    currentStep === 5 &&
                     [RESULT_MODES.EXCLUSIVE_BREASTFEEDING, RESULT_MODES.PARTIAL_BREASTFEEDING].includes(mode)
                 ) {
                     const result = calculateOrientation(data);
@@ -552,6 +618,10 @@
             const deficitMode = [RESULT_MODES.STANDARD, RESULT_MODES.POSTPARTUM_LOSS].includes(result.mode);
             const guidanceMode = !deficitMode;
             const showsEnergy = Boolean(result.maintenance);
+            const breastfeedingMode = [
+                RESULT_MODES.EXCLUSIVE_BREASTFEEDING,
+                RESULT_MODES.PARTIAL_BREASTFEEDING
+            ].includes(result.mode);
             setText('cta-eyebrow', result.cta.eyebrow);
             setText('cta-title', result.cta.title);
             setText('cta-copy', result.cta.copy);
@@ -568,7 +638,9 @@
             }
             document.querySelectorAll('.energy-result').forEach(card => { card.hidden = !showsEnergy; });
             document.querySelectorAll('.deficit-result').forEach(card => { card.hidden = !deficitMode; });
-            document.querySelector('.result-overview').hidden = deficitMode;
+            document.querySelector('.breastfeeding-basis').hidden = !breastfeedingMode;
+            document.querySelector('.breastfeeding-focus').hidden = !breastfeedingMode;
+            document.querySelector('.result-overview').hidden = deficitMode || breastfeedingMode;
             document.getElementById('standard-results').hidden = !deficitMode;
             document.getElementById('special-result').hidden = !guidanceMode;
             document.getElementById('mission-result').hidden = !deficitMode;
@@ -577,6 +649,7 @@
             if (showsEnergy) {
                 setText('resting-result', formatKcal(result.resting));
                 setText('maintenance-result', formatRange(result.maintenance));
+                setText('maintenance-label', breastfeedingMode ? 'Grundbedarf im Alltag' : 'Gewicht halten');
             }
 
             if (guidanceMode) {
@@ -637,16 +710,15 @@
                     'activity-summary',
                     `Deine Schätzung berücksichtigt ${dailyActivityLabels[activity.dailyActivity]}, ${stepsCopy}${trainingCopy}.`
                 );
-                setText(
-                    'activity-method',
-                    activity.trainingSessions > 0
-                        ? `Alltag und Schritte ergeben gemeinsam einen Basisfaktor von ${activity.basisFactor.min.toFixed(2).replace('.', ',')}–${activity.basisFactor.max.toFixed(2).replace('.', ',')}. Das Training wird als vorsichtiger Netto-Bereich von ungefähr ${activity.trainingDaily.low}–${activity.trainingDaily.high} kcal pro Tag ergänzt und nicht doppelt gezählt.`
-                        : `Alltag und Schritte ergeben gemeinsam einen Basisfaktor von ${activity.basisFactor.min.toFixed(2).replace('.', ',')}–${activity.basisFactor.max.toFixed(2).replace('.', ',')}. Ein Trainingszuschlag wurde nicht ergänzt.`
-                );
                 setText('start-result-number', new Intl.NumberFormat('de-DE').format(result.targetCalories));
                 setText('loss-result', formatRange(result.loss));
-                setText('protein-result', `ca. ${result.protein.low}–${result.protein.high} g`);
-                setText('protein-note', `Ein möglicher Startwert liegt bei etwa ${result.protein.target} g täglich. Regelmäßige Proteinanker sind wichtiger als mathematische Perfektion.`);
+                const proteinAnchors = distributeProteinAnchors(result.protein.target);
+                setText('protein-result', result.protein.target);
+                setText('protein-range', `${result.protein.low}–${result.protein.high} g`);
+                setText('protein-breakfast', `${proteinAnchors.breakfast} g`);
+                setText('protein-lunch', `${proteinAnchors.lunch} g`);
+                setText('protein-snack', `${proteinAnchors.snack} g`);
+                setText('protein-dinner', `${proteinAnchors.dinner} g`);
                 setText('macro-protein', `${result.protein.target} g`);
                 setText('macro-fat', `${result.fat.target} g`);
                 setText('macro-carbs', `${result.carbs.target} g`);
@@ -674,6 +746,10 @@
 
         form.addEventListener('submit', event => {
             event.preventDefault();
+            if (currentStep < steps.length - 1) {
+                steps[currentStep].querySelector('[data-next]')?.click();
+                return;
+            }
             if (!validateCurrentStep()) return;
             const data = values();
             const result = calculateOrientation(data);
@@ -687,7 +763,10 @@
             document.getElementById('progress').hidden = false;
             document.querySelectorAll('.energy-result').forEach(card => { card.hidden = false; });
             document.querySelectorAll('.deficit-result').forEach(card => { card.hidden = false; });
+            document.querySelector('.breastfeeding-basis').hidden = true;
+            document.querySelector('.breastfeeding-focus').hidden = true;
             document.querySelector('.result-overview').hidden = false;
+            document.getElementById('maintenance-label').textContent = 'Gewicht halten';
             document.getElementById('mission-result').hidden = false;
             document.getElementById('standard-next-step').hidden = false;
             document.querySelector('#special-result .eyebrow').textContent = 'Deine Lebensphase';

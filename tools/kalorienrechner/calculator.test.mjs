@@ -4,6 +4,7 @@ import {
     calculateDailyTrainingRange,
     calculateOrientation,
     determineResultMode,
+    distributeProteinAnchors,
     getStepBand,
     getCtaContent,
     parseGermanNumber,
@@ -30,6 +31,18 @@ const baseInput = {
 
 assert.equal(parseGermanNumber('82,5'), 82.5, 'German decimal commas are supported');
 assert.equal(roundTo(2073, 50), 2050, 'Energy values are rounded to calm 50 kcal steps');
+assert.deepEqual(
+    distributeProteinAnchors(95),
+    { breakfast: 25, lunch: 30, snack: 15, dinner: 25 }
+);
+for (const target of [50, 75, 95, 115, 140]) {
+    const anchors = Object.values(distributeProteinAnchors(target));
+    assert.equal(
+        anchors.reduce((sum, value) => sum + value, 0),
+        target,
+        `Protein anchors add up to ${target} g`
+    );
+}
 assert.equal(getStepBand('unknown', 8000), 'from7000to10000', 'Exact steps override the selected band');
 assert.deepEqual(
     calculateDailyTrainingRange(70, 0, '', ''),
@@ -87,6 +100,25 @@ assert.deepEqual(
     'Training uses net MET energy and is distributed across seven days'
 );
 assert.equal(moderateActivityCase.activity.stepBand, 'from7000to10000');
+
+const householdGymCase = calculateOrientation({
+    ...baseInput,
+    age: 33,
+    heightCm: 165,
+    weightKg: 69.5,
+    dailyActivity: 'mixed',
+    exactSteps: 9000,
+    trainingSessions: 3,
+    trainingType: 'mixed',
+    trainingMinutes: 60
+});
+assert.deepEqual(householdGymCase.maintenance, { low: 2100, high: 2350 });
+assert.equal(householdGymCase.targetCalories, 1900);
+assert.deepEqual(
+    householdGymCase.loss,
+    { low: 1850, high: 1950 },
+    'Household movement and 8,000–10,000 steps are not counted like a highly active occupation'
+);
 
 const sameCaseWithoutTraining = calculateOrientation({
     ...baseInput,

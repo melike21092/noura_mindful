@@ -59,19 +59,33 @@ button { cursor: pointer; }
 
 .progress {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
+    gap: 8px;
     margin: 0 0 18px;
 }
 
-.progress span {
-    height: 4px;
-    border-radius: 999px;
-    background: rgba(45, 55, 72, 0.08);
-    transition: background 240ms ease;
+.progress-copy {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
 }
 
-.progress span.is-active { background: var(--gold); }
+.progress-track {
+    display: block;
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(45, 55, 72, 0.08);
+}
+
+.progress-track > span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--gold);
+    transition: width 240ms ease;
+}
 
 .card {
     padding: 30px 22px;
@@ -177,6 +191,42 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 .optional-activity-input { margin-top: 18px; }
 
 .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; }
+.actions .primary { order: -1; }
+
+.step .choice {
+    min-height: 54px;
+}
+
+.step .choice input {
+    width: 19px;
+    height: 19px;
+}
+
+.step .choice strong {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.step .choice small {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.step .field label,
+.step legend {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.step .field input {
+    min-height: 50px;
+    font-size: 20px;
+}
+
+.step .primary,
+.step .text-button {
+    min-height: 52px;
+}
 
 .primary, .secondary, .text-button {
     min-height: 48px;
@@ -333,6 +383,89 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 .macro span { display: block; color: var(--terracotta); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
 .macro strong { display: block; margin-top: 6px; font-family: "Instrument Sans", Arial, sans-serif; font-size: 21px; font-weight: 600; letter-spacing: -0.035em; }
 
+.protein-card h3 {
+    margin-bottom: 14px;
+}
+
+.protein-primary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 8px;
+    align-items: baseline;
+    color: var(--charcoal);
+    font-family: "Inter", Arial, sans-serif;
+}
+
+.protein-primary strong {
+    font-size: clamp(38px, 11vw, 48px);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 1;
+}
+
+.protein-primary span {
+    color: #55595b;
+    font-size: 15px;
+}
+
+.protein-range {
+    margin-top: 18px;
+    color: #55595b;
+    font-size: 14px;
+}
+
+.protein-range strong {
+    color: var(--charcoal);
+    font-weight: 600;
+}
+
+.protein-card > p:not(.protein-range) {
+    margin-top: 8px;
+    color: #55595b;
+    font-size: 14px;
+}
+
+.protein-anchor-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 18px;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(37, 40, 45, 0.09);
+}
+
+.protein-anchor-grid > div {
+    min-width: 0;
+}
+
+.protein-anchor-grid span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.protein-anchor-grid strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--charcoal);
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.protein-card .macro-details {
+    margin-top: 18px;
+    border: 0;
+}
+
+.protein-card .macro-details .macro-grid {
+    margin-top: 4px;
+}
+
+.protein-card .macro-details .fine-print {
+    margin-top: 14px;
+}
+
 .mission-list { margin: 20px 0 0; padding: 0; list-style: none; }
 .mission-list li { position: relative; margin-top: 10px; padding-left: 22px; color: #555960; line-height: 1.5; }
 .mission-list li::before { content: "✓"; position: absolute; left: 0; color: var(--terracotta); font-weight: 700; }
@@ -370,6 +503,7 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
     .page-shell { padding-top: 32px; }
     .card { padding: 42px; border-radius: 28px; }
     .actions { flex-direction: row; justify-content: space-between; align-items: center; }
+    .actions .primary { order: 0; }
     .primary { min-width: 220px; }
     .macro-grid { grid-template-columns: repeat(4, 1fr); }
 }
@@ -582,52 +716,33 @@ body::after {
 
 /* NOURA path and editorial map */
 .progress {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    gap: 0;
+    display: grid;
+    gap: 8px;
     margin: 0 3px 22px;
 }
 
-.progress span {
-    position: relative;
-    z-index: 1;
-    width: 9px;
-    height: 9px;
-    border: 2px solid rgba(255, 255, 255, 0.72);
-    border-radius: 50%;
-    background: #d8d4cd;
-    box-shadow: 0 2px 9px rgba(37, 40, 45, 0.12);
-    transition: background 240ms ease, transform 240ms ease;
+.progress-copy {
+    color: #62666b;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
 }
 
-.progress::before,
-.progress::after {
-    content: "";
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    left: 4px;
-    height: 1px;
+.progress-track {
+    display: block;
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(37, 40, 45, 0.1);
 }
 
-.progress::before { background: rgba(37, 40, 45, 0.12); }
-
-.progress::after {
-    right: auto;
-    width: calc((100% - 8px) * var(--path-progress, 0));
+.progress-track > span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
     background: var(--terracotta);
-    transition: width 420ms cubic-bezier(.2, .7, .2, 1);
-}
-
-.progress:has(span:nth-child(2).is-active) { --path-progress: .25; }
-.progress:has(span:nth-child(3).is-active) { --path-progress: .5; }
-.progress:has(span:nth-child(4).is-active) { --path-progress: .75; }
-.progress:has(span:nth-child(5).is-active) { --path-progress: 1; }
-
-.progress span.is-active {
-    background: var(--gold);
-    transform: scale(1.18);
+    transition: width 360ms cubic-bezier(.2, .7, .2, 1);
 }
 
 .card {
@@ -740,8 +855,8 @@ body::after {
 
 .results h2,
 .results h3 {
-    font-family: "Playfair Display", Georgia, serif;
-    font-weight: 500;
+    font-family: "Instrument Sans", Arial, sans-serif;
+    font-weight: 600;
     letter-spacing: -0.025em;
 }
 
@@ -781,6 +896,40 @@ body::after {
     border-color: rgba(139, 168, 142, 0.24);
     background: #f1f4ee;
     box-shadow: 0 10px 24px -24px rgba(57, 77, 60, 0.5);
+}
+
+.breastfeeding-basis {
+    margin-bottom: 22px;
+}
+
+.breastfeeding-basis h3 {
+    margin-bottom: 8px;
+    font-family: "Instrument Sans", Arial, sans-serif;
+    font-size: 21px;
+    font-weight: 600;
+}
+
+.breastfeeding-basis p {
+    color: #4f5551;
+    font-size: 14px;
+}
+
+.breastfeeding-focus {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(37, 40, 45, 0.09);
+}
+
+.breastfeeding-focus .eyebrow {
+    margin-bottom: 8px;
+}
+
+.breastfeeding-focus .mission-list {
+    margin-top: 0;
+}
+
+.results #special-result {
+    order: -1;
 }
 
 .results .start-result-card,
