@@ -42,6 +42,9 @@ button, input { font: inherit; }
 button { cursor: pointer; }
 
 .page-shell {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
     width: min(100% - 28px, 680px);
     margin: 0 auto;
     padding: 20px 0 64px;
@@ -242,6 +245,28 @@ fieldset { min-width: 0; margin: 26px 0 0; padding: 0; border: 0; }
 .secondary { padding: 16px 24px; background: var(--charcoal); color: white; text-decoration: none; text-align: center; }
 .text-button { padding: 12px; background: transparent; color: var(--muted); }
 .primary:focus-visible, .secondary:focus-visible, .text-button:focus-visible { outline: 3px solid rgba(200, 137, 81, 0.3); outline-offset: 3px; }
+
+.legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 20px;
+    margin-top: auto;
+    padding-top: 32px;
+    text-align: center;
+}
+
+.legal-links a {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-underline-offset: 3px;
+}
+
+.legal-links a:focus-visible {
+    outline: 3px solid rgba(200, 137, 81, 0.3);
+    outline-offset: 3px;
+}
 
 .results, #standard-results { display: grid; gap: 12px; }
 .result-card { padding: 22px 20px; border: 1px solid rgba(255, 255, 255, 0.88); border-radius: 20px; background: rgba(255, 255, 255, 0.74); box-shadow: 0 16px 42px -36px rgba(37, 40, 45, 0.45); }
@@ -1063,6 +1088,13 @@ body::after {
 
 .results .result-card.cta h3 { color: #fff; }
 .results .result-card.cta p { color: rgba(255, 255, 255, 0.76); }
+
+.results .result-card.cta .external-note {
+    margin-top: 12px;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 11px;
+    line-height: 1.5;
+}
 
 @media (max-width: 380px) {
     .results .result-card,
