@@ -8,6 +8,7 @@ import {
     distributeProteinAnchors,
     getStepBand,
     getCtaContent,
+    MISSIONS,
     normalizeInput,
     parseGermanNumber,
     RESULT_MODES,
@@ -83,6 +84,13 @@ assert.ok(result.carbs.target > 0);
 assert.equal(result.mission.lever, 'Abendlichen Essdrang verstehen');
 assert.match(result.cta.title, /Abend/);
 assert.equal(result.cta.button, 'Meinen persönlichen Start besprechen');
+
+for (const obstacle of Object.keys(MISSIONS)) {
+    const missionResult = calculateOrientation({ ...baseInput, obstacle });
+    assert.equal(missionResult.mission, MISSIONS[obstacle], `${obstacle} maps to its mission`);
+    assert.equal(missionResult.mission.actions.length, 3, `${obstacle} has exactly three 7-day actions`);
+    assert.ok(!missionResult.mission.actions.some(action => /Abnahmebereich|Kalorienzahl|21 Tage|drei Wochen/i.test(action)), `${obstacle} does not mix calorie validation into the 7-day mission`);
+}
 
 const displayedEnergy =
     (result.protein.target * 4) +

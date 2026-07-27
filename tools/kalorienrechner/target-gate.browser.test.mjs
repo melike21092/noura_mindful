@@ -679,6 +679,12 @@ try {
         return {
             detailTitles: firstCardDetails.map(details => details.querySelector('summary').textContent.trim()),
             detailsClosed: firstCardDetails.every(details => !details.open),
+            startValueTestAria: document.getElementById('start-value-test-toggle').getAttribute('aria-expanded'),
+            startValueTestControls: document.getElementById('start-value-test-toggle').getAttribute('aria-controls'),
+            startValueTestTouchHeight: document.getElementById('start-value-test-toggle').getBoundingClientRect().height,
+            startValueTestSteps: document.querySelectorAll('.start-value-test__steps > li').length,
+            startValueTestStates: document.querySelectorAll('.start-value-test__state').length,
+            startValueTestFollowUpHidden: document.querySelector('[data-follow-up-slot]').hidden,
             order: standardChildren.map(element => element.id || [...element.classList].join('.')),
             missionTitle: document.getElementById('mission-title').textContent.trim(),
             missionIntro: document.getElementById('mission-intro').textContent.trim(),
@@ -714,11 +720,14 @@ try {
             }
         };
     `);
-    assert(resultHierarchy.detailTitles.join('|') === 'Wie wurden meine Kalorien berechnet?|Woran erkenne ich, ob die Kalorien passen?', 'Die Kalorienkarte enthält nicht genau die zwei verständlichen Akkordeons');
+    assert(resultHierarchy.detailTitles.join('|') === 'Wie wurden meine Kalorien berechnet?|Dein 21-Tage-Test', 'Die Kalorienkarte enthält nicht genau die zwei verständlichen Akkordeons');
     assert(resultHierarchy.detailsClosed, 'Die Akkordeons der Kalorienkarte sind nicht initial geschlossen');
+    assert(resultHierarchy.startValueTestAria === 'false' && resultHierarchy.startValueTestControls === 'start-value-test-content', 'Das 21-Tage-Accordion ist initial nicht korrekt ausgezeichnet');
+    assert(resultHierarchy.startValueTestTouchHeight >= 44 && resultHierarchy.startValueTestSteps === 3 && resultHierarchy.startValueTestStates === 3, 'Das 21-Tage-Accordion ist nicht zugänglich oder unvollständig');
+    assert(resultHierarchy.startValueTestFollowUpHidden, 'Der vorbereitete Folge-Check-Slot darf noch nicht sichtbar sein');
     assert(resultHierarchy.order[0] === 'mission-result' && resultHierarchy.order[1].includes('protein-card') && resultHierarchy.order[2].includes('macro-details'), 'Die Ergebnishierarchie ist nicht Hebel, Protein, Nährwertdetails');
-    assert(resultHierarchy.missionTitle === 'Nicht tiefer starten. Erst stabiler essen.', 'Die Hunger-Personalisierung zeigt die falsche Überschrift');
-    assert(resultHierarchy.missionIntro.startsWith('Starker Hunger ist kein Beweis'), 'Die Hunger-Personalisierung zeigt die falsche Einleitung');
+    assert(resultHierarchy.missionTitle === 'Mehr Struktur für ruhigeren Hunger.', 'Die Hunger-Personalisierung zeigt die falsche Überschrift');
+    assert(resultHierarchy.missionIntro.startsWith('Teste zunächst, ob verlässliche'), 'Die Hunger-Personalisierung zeigt die falsche Einleitung');
     assert(resultHierarchy.missionActions.length === 3, 'Das 7-Tage-Experiment enthält nicht genau drei Schritte');
     assert(resultHierarchy.missionQuestion === 'Wird dein Hunger dadurch ruhiger – besonders am Nachmittag oder Abend?', 'Die Hunger-Personalisierung zeigt die falsche Abschlussfrage');
     assert(resultHierarchy.protein && resultHierarchy.proteinRange, 'Dynamische Proteinwerte fehlen');
@@ -729,6 +738,21 @@ try {
     assert(Math.abs(resultHierarchy.rangePosition - expectedRangePosition) < 0.000001, 'Der Range-Marker wird nicht relativ aus Untergrenze, Startwert und Obergrenze berechnet');
     assert(resultHierarchy.markerLeft === `${expectedRangePosition * 100}%`, 'Die visuelle Markerposition entspricht nicht der berechneten Position');
     assert(resultHierarchy.rangeDescription.includes('Kilokalorien') && resultHierarchy.rangeDescription.includes(resultHierarchy.startValue), 'Die Screenreader-Zusammenfassung des Korridors fehlt');
+
+    await evaluate(`document.getElementById('start-value-test-toggle').click(); return true;`);
+    await waitForCondition(
+        `document.getElementById('start-value-test').open &&
+            document.getElementById('start-value-test-toggle').getAttribute('aria-expanded') === 'true'`,
+        'Das 21-Tage-Accordion öffnet nicht per Maus'
+    );
+    await evaluate(`document.getElementById('start-value-test-toggle').focus(); return true;`);
+    await command('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: ' ', code: 'Space', windowsVirtualKeyCode: 32, nativeVirtualKeyCode: 32 });
+    await command('Input.dispatchKeyEvent', { type: 'keyUp', key: ' ', code: 'Space', windowsVirtualKeyCode: 32, nativeVirtualKeyCode: 32 });
+    await waitForCondition(
+        `!document.getElementById('start-value-test').open &&
+            document.getElementById('start-value-test-toggle').getAttribute('aria-expanded') === 'false'`,
+        'Das 21-Tage-Accordion schließt nicht per Tastatur'
+    );
     assert(resultHierarchy.activityChips.length === 3 && resultHierarchy.activityChips.every(Boolean), 'Die Aktivitätszusammenfassung besteht nicht aus drei dynamischen Chips');
     assert(resultHierarchy.macrosClosed && resultHierarchy.macroSummary === 'Weitere Nährwertdetails', 'Makros sind nicht als geschlossenes Detail erreichbar');
     assert(resultHierarchy.macroValues.every(Boolean), 'Dynamische Makrowerte fehlen');
@@ -764,6 +788,7 @@ try {
 
     for (const viewport of [
         { width: 375, height: 812, mobile: true },
+        { width: 390, height: 844, mobile: true },
         { width: 430, height: 932, mobile: true },
         { width: 768, height: 1024, mobile: false },
         { width: 1440, height: 900, mobile: false }
@@ -774,6 +799,34 @@ try {
             deviceScaleFactor: 1,
             mobile: viewport.mobile
         });
+        if (viewport.width === 390) {
+            await evaluate(`
+                const accordion = document.getElementById('start-value-test');
+                accordion.open = false;
+                document.getElementById('start-value-test-toggle').setAttribute('aria-expanded', 'false');
+                return true;
+            `);
+            await command('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 1 });
+            const touchPoint = await evaluate(`
+                const summary = document.getElementById('start-value-test-toggle');
+                summary.scrollIntoView({ block: 'center' });
+                const rect = summary.getBoundingClientRect();
+                return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            `);
+            await command('Input.dispatchTouchEvent', {
+                type: 'touchStart',
+                touchPoints: [{ x: touchPoint.x, y: touchPoint.y }]
+            });
+            await command('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+            await waitForCondition(
+                `document.getElementById('start-value-test').open &&
+                    document.getElementById('start-value-test-toggle').getAttribute('aria-expanded') === 'true'`,
+                'Das 21-Tage-Accordion öffnet nicht per Touch'
+            );
+            await command('Emulation.setTouchEmulationEnabled', { enabled: false });
+        } else {
+            await evaluate(`document.getElementById('start-value-test').open = true; return true;`);
+        }
         const responsiveResult = await evaluate(`
             return {
                 documentOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,

@@ -177,99 +177,91 @@ export function determineResultMode(input) {
 export const MISSIONS = Object.freeze({
     hunger: {
         lever: 'Sättigung über den Tag',
-        title: 'Nicht tiefer starten – stabiler essen.',
-        intro: 'Starker Hunger ist kein Beweis für fehlende Disziplin. Teste zuerst, ob mehr Struktur deinen Tag ruhiger macht.',
+        title: 'Mehr Struktur für ruhigeren Hunger.',
+        intro: 'Teste zunächst, ob verlässliche und sättigende Mahlzeiten deinen Hunger im Tagesverlauf verändern.',
         actions: [
-            'Starte im oberen Teil deines Abnahmebereichs.',
             'Plane drei verlässliche Hauptmahlzeiten.',
-            'Setze zu jeder Hauptmahlzeit einen Proteinanker.',
-            'Ergänze täglich mindestens zwei ballaststoffreiche Bausteine.'
+            'Ergänze zu jeder Hauptmahlzeit eine Proteinquelle.',
+            'Baue jeweils einen ballaststoffreichen Bestandteil ein.'
         ],
-        question: 'Wird dein Hunger dadurch ruhiger – besonders am Nachmittag und Abend?'
+        question: 'Wird dein Hunger dadurch ruhiger – besonders am Nachmittag oder Abend?'
     },
     cravings: {
         lever: 'Abendlichen Essdrang verstehen',
-        title: 'Stabilisiere zuerst deinen Tag, nicht nur den Abend.',
-        intro: 'Abendlicher Essdrang entsteht häufig nicht erst am Abend. Beobachte, was deinem Körper vorher gefehlt hat.',
+        title: 'Mehr Sicherheit vor dem Abend.',
+        intro: 'Abendlicher Essdrang beginnt oft früher am Tag. Teste eine verlässlichere Tagesstruktur, bevor du den Abend veränderst.',
         actions: [
-            'Lass Frühstück oder Mittagessen nicht bewusst aus.',
-            'Plane mittags einen klaren Proteinanker.',
-            'Halte einen passenden Nachmittagssnack bereit.',
-            'Halte dein Abendessen nicht künstlich klein.'
+            'Plane eine verlässliche Mahlzeit am Nachmittag.',
+            'Kombiniere sie mit Protein und einem sättigenden Bestandteil.',
+            'Bereite dein Abendessen ohne Zeitdruck vor.'
         ],
-        question: 'An welchen Tagen wird der Essdrang stärker – und was hat vorher gefehlt?'
+        question: 'Wird der Essdrang am Abend an diesen Tagen leichter?'
     },
     irregular: {
         lever: 'Verlässliche Mahlzeiten',
-        title: 'Noch nicht perfekt – zuerst verlässlich.',
-        intro: 'Dein erster Hebel ist nicht die perfekte Lebensmittelauswahl, sondern eine Struktur, die auch an engen Tagen trägt.',
+        title: 'Ein verlässlicher Rhythmus für volle Tage.',
+        intro: 'Teste eine einfache Mahlzeitenstruktur, die auch an engen Tagen umsetzbar bleibt. Perfekte Planung ist dafür nicht nötig.',
         actions: [
-            'Bestimme zwei Mahlzeiten als feste Tagesanker.',
-            'Lege die Proteinquelle möglichst am Vorabend fest.',
-            'Halte einen Rettungssnack griffbereit.',
-            'Ersetze eine Mahlzeit nicht nur durch Kaffee.'
+            'Lege zwei Mahlzeiten als feste Tagesanker fest.',
+            'Halte eine einfache Option für hektische Tage bereit.',
+            'Plane einen Snack für lange Pausen ein.'
         ],
-        question: 'Welche beiden Mahlzeiten lassen sich in deinem Alltag am zuverlässigsten schützen?'
+        question: 'Welche Mahlzeiten bleiben mit diesem Rhythmus auch an vollen Tagen verlässlich?'
     },
     family: {
         lever: 'Familienessen passend bauen',
-        title: 'Kein separates Diätessen.',
-        intro: 'Das Familiengericht darf bleiben. Verändere zuerst nur die Bausteine auf deinem eigenen Teller.',
+        title: 'Familienessen ohne Extra-Küche.',
+        intro: 'Das Familiengericht darf bleiben. Teste eine kleine Anpassung an deinem eigenen Teller.',
         actions: [
-            'Plane eine sichtbare Proteinquelle ein.',
-            'Ergänze Gemüse, Salat oder Hülsenfrüchte.',
             'Richte dir bewusst einen eigenen Teller an.',
-            'Beobachte das nebenbei Essen von Kinderresten.'
+            'Ergänze eine sichtbare Proteinquelle.',
+            'Stelle Gemüse, Salat oder Hülsenfrüchte dazu.'
         ],
-        question: 'Welches Familiengericht kannst du diese Woche mit einem Proteinanker ergänzen?'
+        question: 'Welche kleine Telleranpassung passt am besten zu eurem Familienessen?'
     },
     stress: {
         lever: 'Stress und Essen entkoppeln',
-        title: 'Erst verstehen, dann entscheiden.',
-        intro: 'Stressessen kann eine verständliche Reaktion auf Belastung sein. Ein kurzer Zwischenraum kann dir helfen zu erkennen, was du gerade brauchst.',
+        title: 'Ein kurzer Zwischenraum bei Stress.',
+        intro: 'Stressessen kann eine verständliche Reaktion auf Belastung sein. Ein kurzer Moment vor dem Essen schafft mehr Orientierung.',
         actions: [
             'Halte vor dem Essen zehn Sekunden inne.',
             'Frage dich: Hunger, Essdrang oder beides?',
-            'Bei Hunger: Iss eine richtige Mahlzeit oder einen geplanten Snack.',
-            'Bei Essdrang: Teste eine kurze Safety-Strategie – ohne anschließendes Verbot.'
+            'Wähle danach bewusst eine Mahlzeit, einen Snack oder eine kurze Pause.'
         ],
-        question: 'Welche kurze Handlung beruhigt dich, ohne dass sie sich wie eine weitere Aufgabe anfühlt?'
+        question: 'Hilft dir der kurze Zwischenraum, deine nächste Handlung bewusster zu wählen?'
     },
     weekend: {
         lever: 'Wochenenden strukturieren',
-        title: 'Flexibilität braucht einen kleinen Rahmen.',
-        intro: 'Am Wochenende kann ein kleiner Rahmen hilfreicher sein als ein strenger Plan. Zwei verlässliche Anker eignen sich für einen ersten Test.',
+        title: 'Ein kleiner Rahmen für dein Wochenende.',
+        intro: 'Am Wochenende kann ein kleiner Rahmen hilfreicher sein als ein strenger Plan. Teste zwei verlässliche Anker.',
         actions: [
             'Behalte eine gewohnte erste Mahlzeit bei.',
-            'Plane vor längeren Unternehmungen einen Proteinanker.',
-            'Entscheide bewusst, welche Mahlzeit flexibel sein darf.',
-            'Kehre bei der nächsten Mahlzeit normal zurück.'
+            'Plane vor längeren Unternehmungen eine passende Mahlzeit.',
+            'Lege eine Mahlzeit fest, die flexibel bleiben darf.'
         ],
         question: 'Welche zwei Anker geben deinem Wochenende Halt, ohne es einzuengen?'
     },
     consistency: {
         lever: 'Den Plan kleiner machen',
-        title: 'Du brauchst einen Plan, den du wiederholen kannst.',
-        intro: 'Wenn ein Plan nur wenige Tage funktioniert, war er möglicherweise zu groß – nicht deine Motivation zu klein.',
+        title: 'Ein Plan, den du wiederholen kannst.',
+        intro: 'Wenn ein Plan nur wenige Tage funktioniert, darf er kleiner werden. Teste eine Veränderung, die auch an schwierigen Tagen möglich ist.',
         actions: [
-            'Starte im oberen Teil deines Abnahmebereichs.',
             'Wähle nur eine Veränderung für sieben Tage.',
             'Plane unperfekte Tage von Anfang an mit ein.',
-            'Kehre nach Abweichungen bei der nächsten Mahlzeit zurück.'
+            'Kehre nach einer Abweichung bei der nächsten Mahlzeit zurück.'
         ],
-        question: 'Welche eine Veränderung würdest du auch an einem schwierigen Tag schaffen?'
+        question: 'Welche eine Veränderung kannst du auch an einem schwierigen Tag wiederholen?'
     },
     unsure: {
         lever: 'Beobachten statt raten',
-        title: 'Dein erster Schritt ist ein kleines Experiment.',
-        intro: 'Du darfst die Ursache zunächst offenlassen und sieben Tage lang wenige, aber hilfreiche Beobachtungen sammeln.',
+        title: 'Ein kleines Experiment statt weiterer Vermutungen.',
+        intro: 'Du darfst die Ursache zunächst offenlassen. Sammle sieben Tage lang wenige, aber hilfreiche Beobachtungen.',
         actions: [
-            'Nutze den oberen Teil deines Abnahmebereichs.',
-            'Plane drei Proteinanker über den Tag.',
-            'Notiere abends Hunger, Essdrang und größtes Hindernis.',
-            'Bewerte nicht einzelne Tage, sondern wiederkehrende Situationen.'
+            'Notiere abends Hunger und Essdrang kurz.',
+            'Halte die schwierigste Alltagssituation fest.',
+            'Bewerte am Ende wiederkehrende Situationen statt einzelner Tage.'
         ],
-        question: 'Was fällt nach sieben Tagen häufiger auf als erwartet?'
+        question: 'Welche Situation oder welcher Zeitpunkt kehrt in dieser Woche wieder?'
     }
 });
 

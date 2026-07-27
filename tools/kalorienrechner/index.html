@@ -221,13 +221,14 @@
             <section class="card step direct-step" data-step="2" hidden>
                 <span class="eyebrow">Dein Alltag</span>
                 <h2 tabindex="-1">Wie sieht dein normaler Alltag aus?</h2>
-                <p>Denke an einen typischen Tag ohne bewusstes Training.</p>
+                <p>Denke an einen typischen Tag ohne Training. Wähle, was die meiste Zeit deines Tages beschreibt – nicht die aktivste Stunde.</p>
                 <div class="direct-choice-list" aria-label="Was passt am ehesten?">
-                    <button class="direct-choice" type="button" data-daily-activity="sedentary"><span><strong>Überwiegend sitzend</strong><small>Büro, Homeoffice oder viel Autofahren.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
-                    <button class="direct-choice" type="button" data-daily-activity="mixed"><span><strong>Teilweise sitzend, teilweise auf den Beinen</strong><small>Wechselnder Alltag, Haushalt oder regelmäßige Wege.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
-                    <button class="direct-choice" type="button" data-daily-activity="standing"><span><strong>Überwiegend auf den Beinen</strong><small>Verkauf, Pflege, Gastronomie oder ein bewegter Arbeitsalltag.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
-                    <button class="direct-choice" type="button" data-daily-activity="strenuous"><span><strong>Körperlich anstrengend</strong><small>Schwere körperliche Arbeit oder ganztägig hohe Bewegung.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="sedentary"><span><strong>Überwiegend sitzend</strong><small>Du sitzt den größten Teil des Tages. Normale Haushaltswege zählen noch dazu.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="mixed"><span><strong>Teils sitzend, teils auf den Beinen</strong><small>Du verbringst täglich mehrere Stunden im Wechsel sitzend, stehend und gehend.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="standing"><span><strong>Überwiegend auf den Beinen</strong><small>Du stehst oder gehst den Großteil des Tages, etwa im Verkauf, in der Pflege oder Gastronomie.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="strenuous"><span><strong>Körperlich anstrengend</strong><small>Dein Alltag umfasst über mehrere Stunden schwere körperliche Arbeit, Tragen oder intensive Bewegung.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
                 </div>
+                <p class="direct-choice-note">Deine Schritte werden separat berücksichtigt. Wähle hier nur, wie du deinen Tag überwiegend verbringst.</p>
                 <div class="actions direct-step__actions">
                     <button class="button-secondary-back" type="button" data-back><span aria-hidden="true">←</span><span>Zurück</span></button>
                 </div>
@@ -373,13 +374,49 @@
                     </div>
                 </details>
 
-                <details class="calibration-details deficit-result">
-                    <summary>Woran erkenne ich, ob die Kalorien passen?</summary>
-                    <div class="calibration-details-content">
-                        <p>Teste deinen Startwert drei bis vier Wochen und vergleiche Wochendurchschnitte beziehungsweise deinen gleitenden Gewichtstrend.</p>
-                        <p>Wenn nach mehreren Wochen kein klarer Trend erkennbar ist, prüfe zunächst deine Angaben, Portionsgrößen, Wochenstruktur und mögliche Gewichtsschwankungen.</p>
-                        <p>Beobachte außerdem Hunger, Energie, Training und Wohlbefinden. Wenn es für dich passt, kann etwas mehr Bewegung im Alltag sinnvoller sein, als die Kalorien direkt weiter zu senken.</p>
-                        <p>Erst danach kannst du den Startwert bei Bedarf vorsichtig um 100–150 kcal anpassen.</p>
+                <details class="calibration-details deficit-result start-value-test" id="start-value-test">
+                    <summary id="start-value-test-toggle" aria-expanded="false" aria-controls="start-value-test-content">Dein 21-Tage-Test</summary>
+                    <div class="calibration-details-content start-value-test__content" id="start-value-test-content" role="region" aria-labelledby="start-value-test-toggle">
+                        <p class="start-value-test__intro">Nutze deinen Startwert drei Wochen lang als durchschnittliche Orientierung. Einzelne Tage dürfen abweichen – gleiche sie nicht nachträglich aus.</p>
+                        <ol class="start-value-test__steps">
+                            <li>
+                                <div>
+                                    <h4>Orientiere dich an deinem Korridor.</h4>
+                                    <p>Versuche, im Durchschnitt in deinem angezeigten Kalorienbereich zu bleiben.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <h4>Wiege dich regelmäßig.</h4>
+                                    <p>Drei bis vier Messungen pro Woche unter ähnlichen Bedingungen reichen aus.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <h4>Vergleiche Wochendurchschnitte.</h4>
+                                    <p>Einzelne Waagentage schwanken. Entscheidend ist, wie sich dein durchschnittliches Gewicht entwickelt.</p>
+                                </div>
+                            </li>
+                        </ol>
+                        <p class="start-value-test__note">Bei starken zyklusbedingten Schwankungen können vier Wochen aussagekräftiger sein.</p>
+                        <section class="start-value-test__evaluation" aria-labelledby="start-value-test-trend-heading">
+                            <h3 id="start-value-test-trend-heading">Was sagt dir dein Trend?</h3>
+                            <div class="start-value-test__states">
+                                <div class="start-value-test__state">
+                                    <h4>Der Trend sinkt langsam und du fühlst dich gut?</h4>
+                                    <p>Behalte deinen Startwert bei.</p>
+                                </div>
+                                <div class="start-value-test__state">
+                                    <h4>Kein klarer Trend?</h4>
+                                    <p>Prüfe zuerst deine Portionsgrößen, Getränke, Wochenstruktur und durchschnittlichen Schritte. Wenn deine Umsetzung konstant war, verändere nur einen Hebel: Reduziere deinen Startwert vorsichtig um 100–150 kcal oder erhöhe deine Alltagsbewegung leicht.</p>
+                                </div>
+                                <div class="start-value-test__state">
+                                    <h4>Starker Hunger, wenig Energie oder deutlicher Leistungsabfall?</h4>
+                                    <p>Reduziere nicht weiter. Nutze zunächst das obere Ende deines Korridors und lass deine Situation bei Bedarf persönlich einordnen.</p>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="start-value-test__follow-up" data-follow-up-slot hidden></div>
                     </div>
                 </details>
             </div>
@@ -392,12 +429,15 @@
 
             <div id="standard-results">
                 <div class="result-card result-lever" id="mission-result">
-                    <span class="eyebrow">Dein erster Hebel</span>
+                    <span class="eyebrow">DEIN ERSTER HEBEL</span>
                     <h3 id="mission-title"></h3>
                     <p id="mission-intro"></p>
-                    <h4>Dein 7-Tage-Experiment</h4>
+                    <h4>Teste diesen Hebel 7 Tage</h4>
                     <ol class="mission-list" id="mission-actions"></ol>
-                    <p class="reflection" id="mission-question"></p>
+                    <div class="reflection">
+                        <span class="eyebrow">ACHTE DIESE WOCHE DARAUF</span>
+                        <p id="mission-question"></p>
+                    </div>
                 </div>
 
                 <div class="result-card protein-card">
@@ -488,6 +528,11 @@
         const progressCopy = document.getElementById('progress-copy');
         const progressValue = document.getElementById('progress-value');
         const resultSection = document.getElementById('result');
+        const startValueTest = document.getElementById('start-value-test');
+        const startValueTestToggle = document.getElementById('start-value-test-toggle');
+        startValueTest.addEventListener('toggle', () => {
+            startValueTestToggle.setAttribute('aria-expanded', String(startValueTest.open));
+        });
         const safetyGate = document.getElementById('safety-gate');
         const safetyGateQuestion = safetyGate.querySelector('.safety-gate__question');
         const safetyGateConfirmation = safetyGate.querySelector('.safety-gate__confirmation');
@@ -1295,19 +1340,7 @@
             }
 
             if (deficitMode) {
-                const hungerMission = data.obstacle === 'hunger';
-                const mission = hungerMission
-                    ? {
-                        title: 'Nicht tiefer starten. Erst stabiler essen.',
-                        intro: 'Starker Hunger ist kein Beweis für fehlende Disziplin. Teste zuerst, ob mehr Struktur deinen Tag ruhiger macht.',
-                        actions: [
-                            'Starte im oberen Teil deines Orientierungskorridors.',
-                            'Plane drei verlässliche Hauptmahlzeiten.',
-                            'Ergänze zu jeder Hauptmahlzeit eine Proteinquelle und einen ballaststoffreichen Baustein.'
-                        ],
-                        question: 'Wird dein Hunger dadurch ruhiger – besonders am Nachmittag oder Abend?'
-                    }
-                    : result.mission;
+                const mission = result.mission;
                 setText('mission-title', mission.title);
                 setText('mission-intro', mission.intro);
                 setText('mission-question', mission.question);
