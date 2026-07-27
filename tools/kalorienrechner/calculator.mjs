@@ -539,8 +539,10 @@ export function calculateOrientation(input) {
         input.trainingMinutes,
         input.trainingType
     );
-    const maintenanceLow = roundTo((resting * activity.min) + training.low, 50);
-    const maintenanceHigh = roundTo((resting * activity.max) + training.high, 50);
+    const maintenanceLowRaw = (resting * activity.min) + training.low;
+    const maintenanceHighRaw = (resting * activity.max) + training.high;
+    const maintenanceLow = roundTo(maintenanceLowRaw, 50);
+    const maintenanceHigh = roundTo(maintenanceHighRaw, 50);
     const result = {
         ok: true,
         mode,
@@ -567,10 +569,11 @@ export function calculateOrientation(input) {
 
     if (!DEFICIT_MODES.has(mode)) return result;
 
-    const maintenanceMidpoint = (maintenanceLow + maintenanceHigh) / 2;
-    const targetCalories = roundTo(maintenanceMidpoint * 0.85, 50);
-    const lossLow = targetCalories - 50;
-    const lossHigh = targetCalories + 50;
+    const maintenanceMidpointRaw = (maintenanceLowRaw + maintenanceHighRaw) / 2;
+    const targetCaloriesRaw = maintenanceMidpointRaw * 0.85;
+    const targetCalories = roundTo(targetCaloriesRaw, 50);
+    const lossLow = roundTo(targetCaloriesRaw - 50, 50);
+    const lossHigh = roundTo(targetCaloriesRaw + 50, 50);
     const heightM = heightCm / 100;
     const calculationWeight = Math.min(weightKg, 30 * heightM * heightM);
     const proteinLow = roundTo(calculationWeight * 1.2, 5);
@@ -580,11 +583,11 @@ export function calculateOrientation(input) {
     const fatHigh = roundTo(calculationWeight, 5);
     const fatByWeight = calculationWeight * 0.9;
     const fatTarget = roundTo(
-        Math.max(targetCalories * 0.25 / 9, Math.min(fatByWeight, targetCalories * 0.35 / 9)),
+        Math.max(targetCaloriesRaw * 0.25 / 9, Math.min(fatByWeight, targetCaloriesRaw * 0.35 / 9)),
         5
     );
     const carbsTarget = roundTo(
-        Math.max(0, (targetCalories - (proteinTarget * 4) - (fatTarget * 9)) / 4),
+        Math.max(0, (targetCaloriesRaw - (proteinTarget * 4) - (fatTarget * 9)) / 4),
         5
     );
 

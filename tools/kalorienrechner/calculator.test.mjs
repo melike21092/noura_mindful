@@ -64,11 +64,17 @@ assert.equal(result.mode, RESULT_MODES.STANDARD);
 assert.ok(result.resting > 1400 && result.resting < 1800);
 assert.ok(result.maintenance.low < result.maintenance.high);
 assert.ok(result.loss.low < result.loss.high);
+const rawResting = (10 * baseInput.weightKg) + (6.25 * baseInput.heightCm) - (5 * baseInput.age) - 161;
+const rawActivity = BASIS_ACTIVITY_RANGES[baseInput.dailyActivity][getStepBand(baseInput.stepBand, baseInput.exactSteps)];
+const rawMaintenanceLow = rawResting * rawActivity.min;
+const rawMaintenanceHigh = rawResting * rawActivity.max;
 assert.equal(
     result.targetCalories,
-    roundTo(((result.maintenance.low + result.maintenance.high) / 2) * 0.85, 50),
-    'The standard start value remains 15% below maintenance midpoint without a BMR cap'
+    roundTo(((rawMaintenanceLow + rawMaintenanceHigh) / 2) * 0.85, 50),
+    'The 15% start value uses the unrounded maintenance midpoint'
 );
+assert.equal(roundTo(1624.999, 50), 1600, 'Values just below a 50 kcal midpoint round down');
+assert.equal(roundTo(1625, 50), 1650, 'Values at a 50 kcal midpoint round up');
 assert.ok(result.protein.low < result.protein.target);
 assert.ok(result.protein.target < result.protein.high);
 assert.ok(result.fat.target >= result.targetCalories * 0.25 / 9 - 5);
