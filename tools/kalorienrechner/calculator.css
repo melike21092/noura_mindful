@@ -3782,3 +3782,107 @@ body:has(.start-hero:not([hidden])) .brand-home {
         font-size: 11px;
     }
 }
+/* Optional atmospheric mist layer: decorative only, never affects layout. */
+.dawn-mist-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: .3;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  user-select: none;
+  animation: dawn-mist-drift 20s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* CSS fallback fog remains visible even when the optional MP4 is unavailable. */
+.dawn-fog-layer {
+  position: fixed;
+  inset: -12%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 38% 18% at 18% 62%, rgba(244, 235, 213, .24), transparent 72%),
+    radial-gradient(ellipse 34% 16% at 76% 44%, rgba(232, 220, 193, .2), transparent 74%),
+    radial-gradient(ellipse 46% 20% at 52% 78%, rgba(177, 191, 163, .16), transparent 76%);
+  filter: blur(16px);
+  opacity: .72;
+  animation: dawn-fog-drift 22s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+/* Keep the mist between the landscape and all readable interface content. */
+.page-shell,
+.site-header,
+.site-footer,
+main {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dawn-mist-layer {
+    display: none;
+  }
+}
+
+/* Very slow camera drift: adds depth without pulling focus from the content. */
+.dawn-scene {
+  transform-origin: 50% 48%;
+  animation: dawn-camera-drift 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes dawn-camera-drift {
+  0% {
+    transform: scale(1.035) translate3d(-12px, 5px, 0) rotate(-0.12deg);
+  }
+  100% {
+    transform: scale(1.06) translate3d(14px, -8px, 0) rotate(0.12deg);
+  }
+}
+
+@keyframes dawn-mist-drift {
+  0% {
+    transform: scale(1.04) translate3d(10px, 3px, 0);
+  }
+  100% {
+    transform: scale(1.08) translate3d(-14px, -6px, 0);
+  }
+}
+
+@keyframes dawn-fog-drift {
+  0% {
+    transform: translate3d(-18px, 8px, 0) scale(1.02);
+    opacity: .58;
+  }
+  100% {
+    transform: translate3d(22px, -10px, 0) scale(1.08);
+    opacity: .82;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dawn-scene {
+    animation: none;
+    transform: none;
+    will-change: auto;
+  }
+
+  .dawn-mist-layer {
+    animation: none;
+    transform: none;
+    will-change: auto;
+  }
+
+  .dawn-fog-layer {
+    animation: none;
+    transform: none;
+    opacity: .68;
+    will-change: auto;
+  }
+}
