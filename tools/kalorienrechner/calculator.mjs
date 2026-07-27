@@ -52,42 +52,42 @@ const STANDARD_CTA_TITLES = Object.freeze({
     hunger: 'Dein Plan sollte dich nicht den ganzen Tag hungrig lassen.',
     cravings: 'Dein Abend beginnt oft mit dem, was tagsüber gefehlt hat.',
     irregular: 'Eine Kalorienzahl hilft wenig, wenn im Alltag Mahlzeiten ausfallen.',
-    family: 'Dein Plan muss auch am Familientisch funktionieren.',
+    family: 'Ein passender Plan sollte sich auch am Familientisch umsetzen lassen.',
     stress: 'Stressessen löst man nicht mit einer strengeren Zahl.',
     weekend: 'Ein guter Plan darf auch am Wochenende tragen.',
-    consistency: 'Du brauchst keinen härteren Plan, sondern einen wiederholbaren.',
-    unsure: 'Wenn du nicht weißt, wo es kippt, schauen wir gemeinsam auf die Muster.'
+    consistency: 'Vielleicht hilft dir kein härterer, sondern ein besser wiederholbarer Plan.',
+    unsure: 'Wenn du nicht weißt, wo es kippt, schaue ich gemeinsam mit dir auf die Muster.'
 });
 
 const MODE_CTA = Object.freeze({
     [RESULT_MODES.PREGNANCY]: {
         eyebrow: 'Ernährungscoaching in der Schwangerschaft',
         title: 'Gute Versorgung ist jetzt wichtiger als ein Kalorienziel.',
-        copy: 'Gemeinsam entwickeln wir alltagstaugliche Mahlzeiten und passende Ernährungsbausteine. Medizinische Fragen und deine individuelle Versorgung bleiben Teil deiner Betreuung durch Hebamme oder Ärztin.',
+        copy: 'Ich entwickle mit dir alltagstaugliche Mahlzeiten und passende Ernährungsbausteine. Medizinische Fragen und deine individuelle Versorgung bleiben Teil deiner Betreuung durch Hebamme oder Ärztin.',
         button: 'Meine Ernährung im Alltag besprechen'
     },
     [RESULT_MODES.EARLY_POSTPARTUM]: {
         eyebrow: 'Begleitung nach der Geburt',
         title: 'Gerade brauchst du vielleicht keine strengere Zahl, sondern mehr Entlastung.',
-        copy: 'Wir schauen, wie einfache Mahlzeiten, erreichbare Proteinquellen und kleine Versorgungsanker in deinen neuen Alltag passen. Bei Beschwerden oder Komplikationen ersetzt das keine medizinische Rücksprache.',
+        copy: 'Ich schaue mit dir, wie einfache Mahlzeiten, erreichbare Proteinquellen und kleine Versorgungsanker in deinen neuen Alltag passen. Bei Beschwerden oder Komplikationen ersetzt das keine medizinische Rücksprache.',
         button: 'Meine Alltagssituation besprechen'
     },
     [RESULT_MODES.EXCLUSIVE_BREASTFEEDING]: {
         eyebrow: 'Stillfreundliches Ernährungscoaching',
         title: 'Eine Rechnerformel kennt deinen Stillalltag nicht.',
-        copy: 'Gemeinsam betrachten wir Hunger, Energie, Mahlzeitenstruktur und die Anforderungen deines Alltags. NOURA ersetzt keine Stillberatung, hilft dir aber dabei, deine Ernährung stillfreundlich und alltagstauglich zu gestalten.',
+        copy: 'Ich betrachte mit dir Hunger, Energie, Mahlzeitenstruktur und die Anforderungen deines Alltags. NOURA ersetzt keine Stillberatung, hilft dir aber dabei, deine Ernährung stillfreundlich und alltagstauglich zu gestalten.',
         button: 'Stillfreundliche Ernährung besprechen'
     },
     [RESULT_MODES.PARTIAL_BREASTFEEDING]: {
         eyebrow: 'Persönliche Orientierung',
         title: 'Beim Teilstillen ist eine einzelne Kalorienzahl selten die ganze Antwort.',
-        copy: 'Wir schauen gemeinsam, ob zunächst Stabilität, eine einfachere Mahlzeitenstruktur oder ein vorsichtiger persönlicher Abnahmestart zu deiner Situation passt.',
+        copy: 'Ich schaue gemeinsam mit dir, ob zunächst Stabilität, eine einfachere Mahlzeitenstruktur oder ein vorsichtiger persönlicher Abnahmestart zu deiner Situation passt.',
         button: 'Meine persönliche Orientierung besprechen'
     },
     [RESULT_MODES.POSTPARTUM_LOSS]: {
         eyebrow: 'Persönlicher Wiedereinstieg',
-        title: 'Abnehmen nach der Geburt braucht keinen schnellen Neustart.',
-        copy: 'Wir entwickeln einen vorsichtigen Start, der zu deiner Erholung, deinem Alltag und deiner aktuellen Belastung passt – ohne Druck oder starre Regeln.',
+        title: 'Ein ruhiger Wiedereinstieg kann nach der Geburt passender sein als ein schneller Neustart.',
+        copy: 'Ich entwickle mit dir einen vorsichtigen Start, der zu deiner Erholung, deinem Alltag und deiner aktuellen Belastung passt – ohne Druck oder starre Regeln.',
         button: 'Meinen passenden Wiedereinstieg besprechen'
     },
     [RESULT_MODES.SAFETY]: {
@@ -103,30 +103,71 @@ export function getCtaContent(mode, obstacle) {
         return {
             eyebrow: 'Persönliche Begleitung',
             title: STANDARD_CTA_TITLES[obstacle] || STANDARD_CTA_TITLES.unsure,
-            copy: 'Im NOURA Coaching verbinden wir deinen Startwert mit deinem tatsächlichen Alltag. Wir schauen auf Hunger, Essdrang, Mahlzeitenstruktur, Stress und die Situationen, in denen dein Plan bisher nicht funktioniert.',
+            copy: 'Im NOURA Coaching verbinde ich deinen Startwert mit deinem tatsächlichen Alltag. Ich schaue mit dir auf Hunger, Essdrang, Mahlzeitenstruktur, Stress und die Situationen, in denen dein Plan bisher nicht funktioniert.',
             button: 'Meinen persönlichen Start besprechen'
         };
     }
     return MODE_CTA[mode];
 }
 
-export function determineResultMode(input) {
-    if (input.medicalFlag) return RESULT_MODES.SAFETY;
-    if (input.pregnant === 'yes') return RESULT_MODES.PREGNANCY;
+function isPositiveSafetyValue(value) {
+    if (value === true) return true;
+    return ['yes', 'true', 'positive'].includes(String(value ?? '').trim().toLowerCase());
+}
 
-    const recentBirth = input.birthWithin12Months === 'yes';
-    const weeksPostpartum = parseGermanNumber(input.weeksPostpartum);
-    if (recentBirth && Number.isFinite(weeksPostpartum) && weeksPostpartum <= 6) {
+export function normalizeInput(input = {}) {
+    const normalized = { ...input };
+    const lifeStage = String(input.lifeStage ?? '').trim().toLowerCase();
+
+    normalized.medicalFlag =
+        isPositiveSafetyValue(input.medicalFlag) ||
+        isPositiveSafetyValue(input.medicalStatus) ||
+        isPositiveSafetyValue(input.eatingDisorder);
+
+    if (['pregnant', 'pregnancy'].includes(lifeStage)) {
+        normalized.pregnant = 'yes';
+    }
+    if (['exclusive', 'exclusive_breastfeeding'].includes(lifeStage)) {
+        if (normalized.pregnant !== 'yes') normalized.pregnant = 'no';
+        normalized.breastfeeding = 'exclusive';
+    }
+    if (['partial', 'partial_breastfeeding'].includes(lifeStage)) {
+        if (normalized.pregnant !== 'yes') normalized.pregnant = 'no';
+        normalized.breastfeeding = 'partial';
+    }
+    if (['postpartum', 'early_postpartum'].includes(lifeStage)) {
+        if (normalized.pregnant !== 'yes') normalized.pregnant = 'no';
+        normalized.birthWithin12Months = 'yes';
+        if (!['exclusive', 'partial'].includes(normalized.breastfeeding)) {
+            normalized.breastfeeding = 'no';
+        }
+    }
+
+    if (String(input.weeksPostpartum ?? '').trim() !== '') {
+        normalized.weeksPostpartum = parseGermanNumber(input.weeksPostpartum);
+    }
+
+    return normalized;
+}
+
+export function determineResultMode(input) {
+    const normalized = normalizeInput(input);
+    if (normalized.medicalFlag) return RESULT_MODES.SAFETY;
+    if (normalized.pregnant === 'yes') return RESULT_MODES.PREGNANCY;
+
+    const recentBirth = normalized.birthWithin12Months === 'yes';
+    const weeksPostpartum = parseGermanNumber(normalized.weeksPostpartum);
+    if (recentBirth && Number.isFinite(weeksPostpartum) && weeksPostpartum < 6) {
         return RESULT_MODES.EARLY_POSTPARTUM;
     }
-    if (input.breastfeeding === 'exclusive') return RESULT_MODES.EXCLUSIVE_BREASTFEEDING;
-    if (input.breastfeeding === 'partial') return RESULT_MODES.PARTIAL_BREASTFEEDING;
+    if (normalized.breastfeeding === 'exclusive') return RESULT_MODES.EXCLUSIVE_BREASTFEEDING;
+    if (normalized.breastfeeding === 'partial') return RESULT_MODES.PARTIAL_BREASTFEEDING;
 
     if (recentBirth) {
         const warning =
-            input.recovered !== 'yes' ||
-            input.complications !== 'no' ||
-            input.advisedAgainstLoss !== 'no';
+            normalized.recovered !== 'yes' ||
+            normalized.complications !== 'no' ||
+            normalized.advisedAgainstLoss !== 'no';
         return warning ? RESULT_MODES.SAFETY : RESULT_MODES.POSTPARTUM_LOSS;
     }
 
@@ -148,7 +189,7 @@ export const MISSIONS = Object.freeze({
     },
     cravings: {
         lever: 'Abendlichen Essdrang verstehen',
-        title: 'Wir stabilisieren den Tag, nicht nur den Abend.',
+        title: 'Stabilisiere zuerst deinen Tag, nicht nur den Abend.',
         intro: 'Abendlicher Essdrang entsteht häufig nicht erst am Abend. Beobachte, was deinem Körper vorher gefehlt hat.',
         actions: [
             'Lass Frühstück oder Mittagessen nicht bewusst aus.',
@@ -185,7 +226,7 @@ export const MISSIONS = Object.freeze({
     stress: {
         lever: 'Stress und Essen entkoppeln',
         title: 'Erst verstehen, dann entscheiden.',
-        intro: 'Stressessen ist keine Charakterschwäche. Ein kurzer Zwischenraum hilft dir zu erkennen, was du gerade brauchst.',
+        intro: 'Stressessen kann eine verständliche Reaktion auf Belastung sein. Ein kurzer Zwischenraum kann dir helfen zu erkennen, was du gerade brauchst.',
         actions: [
             'Halte vor dem Essen zehn Sekunden inne.',
             'Frage dich: Hunger, Essdrang oder beides?',
@@ -197,7 +238,7 @@ export const MISSIONS = Object.freeze({
     weekend: {
         lever: 'Wochenenden strukturieren',
         title: 'Flexibilität braucht einen kleinen Rahmen.',
-        intro: 'Du brauchst am Wochenende keinen strengen Plan. Zwei verlässliche Anker reichen für den ersten Test.',
+        intro: 'Am Wochenende kann ein kleiner Rahmen hilfreicher sein als ein strenger Plan. Zwei verlässliche Anker eignen sich für einen ersten Test.',
         actions: [
             'Behalte eine gewohnte erste Mahlzeit bei.',
             'Plane vor längeren Unternehmungen einen Proteinanker.',
@@ -221,7 +262,7 @@ export const MISSIONS = Object.freeze({
     unsure: {
         lever: 'Beobachten statt raten',
         title: 'Dein erster Schritt ist ein kleines Experiment.',
-        intro: 'Du musst die Ursache heute noch nicht kennen. Sammle sieben Tage lang wenige, aber hilfreiche Beobachtungen.',
+        intro: 'Du darfst die Ursache zunächst offenlassen und sieben Tage lang wenige, aber hilfreiche Beobachtungen sammeln.',
         actions: [
             'Nutze den oberen Teil deines Abnahmebereichs.',
             'Plane drei Proteinanker über den Tag.',
@@ -247,7 +288,7 @@ export const SPECIAL_GUIDANCE = Object.freeze({
                 copy: 'Folsäure und Jod brauchen besondere Aufmerksamkeit. Eisen und weitere Präparate gehören passend zu deinen Befunden und deiner Situation abgeklärt.'
             },
             {
-                title: 'Sicher essen heißt nicht, pauschal alles zu verbieten.',
+                title: 'Bei der Lebensmittelauswahl hilft eine differenzierte Orientierung mehr als pauschale Verbote.',
                 copy: 'Achte besonders auf gut durcherhitzte tierische Lebensmittel, pasteurisierte Produkte, saubere Zubereitung und eine sichere Lagerung.'
             }
         ],
@@ -255,7 +296,7 @@ export const SPECIAL_GUIDANCE = Object.freeze({
     },
     [RESULT_MODES.EXCLUSIVE_BREASTFEEDING]: {
         eyebrow: 'Deine stillfreundliche Orientierung',
-        title: 'Gute Versorgung braucht keine Stilldiät.',
+        title: 'Gute Versorgung kann ohne pauschale Stilldiät gelingen.',
         copy: 'Wie viel Energie du brauchst, hängt unter anderem von Stillintensität, Regeneration, Schlaf und Hunger ab. NOURA legt deshalb kein automatisches Kaloriendefizit fest.',
         insights: [
             {
@@ -263,7 +304,7 @@ export const SPECIAL_GUIDANCE = Object.freeze({
                 copy: 'Dieser Richtwert bezieht sich auf ausschließliches Stillen während der ersten vier bis sechs Monate. Dein persönlicher Mehrbedarf kann davon abweichen.'
             },
             {
-                title: 'Du musst nicht vorsorglich auf blähende Lebensmittel verzichten.',
+                title: 'Ein vorsorglicher Verzicht auf blähende Lebensmittel ist häufig nicht nötig.',
                 copy: 'Kohl, Hülsenfrüchte oder säurehaltige Lebensmittel müssen nicht pauschal verschwinden. Beobachte individuell, was dir und deinem Baby bekommt.'
             },
             {
@@ -304,11 +345,11 @@ export const SPECIAL_GUIDANCE = Object.freeze({
     [RESULT_MODES.EARLY_POSTPARTUM]: {
         eyebrow: 'Deine Orientierung nach der Geburt',
         title: 'Regeneration ist kein Stillstand.',
-        copy: 'Du bist noch mitten in der körperlichen Erholung. NOURA setzt dir deshalb aktuell kein Abnehmziel. Wir können dir aber helfen, dich ausreichend zu versorgen und wieder eine flexible Struktur in deinen Alltag zu bringen.',
+        copy: 'Du bist noch mitten in der körperlichen Erholung. NOURA setzt dir deshalb aktuell kein Abnehmziel. Ich kann dir aber helfen, dich ausreichend zu versorgen und wieder eine flexible Struktur in deinen Alltag zu bringen.',
         insights: [
             {
                 title: 'Sechs Wochen sind hier eine vorsichtige NOURA-Produktgrenze.',
-                copy: 'Sie sind keine allgemeine medizinische Freigabe für eine Gewichtsabnahme danach. Deine persönliche Erholung bleibt entscheidend.'
+                copy: 'Sie sind keine allgemeine medizinische Freigabe für eine Gewichtsabnahme danach. Wie passend ein Wiedereinstieg ist, hängt auch von deiner persönlichen Erholung ab.'
             },
             {
                 title: 'Einfach versorgt ist besser als perfekt geplant.',
@@ -331,11 +372,11 @@ export const SPECIAL_GUIDANCE = Object.freeze({
         copy: 'Deine Angaben brauchen mehr persönliche Einordnung, als dieser Rechner leisten kann. Deshalb zeigt NOURA dir bewusst kein automatisches Abnehmziel.',
         insights: [
             {
-                title: 'Du musst heute nichts erzwingen.',
+                title: 'Du darfst dir Zeit für die nächste Einordnung nehmen.',
                 copy: 'Eine verlässliche Versorgung und eine persönliche fachliche Einordnung sind der sinnvollere nächste Schritt.'
             }
         ],
-        reflection: 'Welche Information fehlt dir, um deine aktuelle Situation sicher einordnen zu können?'
+        reflection: 'Welche Information würde dir helfen, deine aktuelle Situation besser einzuordnen?'
     }
 });
 
@@ -392,6 +433,7 @@ export function distributeProteinAnchors(target) {
 }
 
 export function validateInputs(input) {
+    input = normalizeInput(input);
     const age = parseGermanNumber(input.age);
     const heightCm = parseGermanNumber(input.heightCm);
     const weightKg = parseGermanNumber(input.weightKg);
@@ -428,7 +470,7 @@ export function validateInputs(input) {
     const needsRecoveryCheck =
         input.pregnant === 'no' &&
         input.birthWithin12Months === 'yes' &&
-        parseGermanNumber(input.weeksPostpartum) > 6 &&
+        parseGermanNumber(input.weeksPostpartum) >= 6 &&
         input.breastfeeding === 'no';
     if (needsRecoveryCheck) {
         if (!['yes', 'no', 'unsure'].includes(input.recovered)) errors.recovered = 'Bitte schätze deine körperliche Erholung ein.';
@@ -467,7 +509,7 @@ export function validateInputs(input) {
         errors.obstacle = 'Bitte wähle die Herausforderung, die dich aktuell am meisten beschäftigt.';
     }
 
-    return { valid: Object.keys(errors).length === 0, errors, values: { age, heightCm, weightKg } };
+    return { valid: Object.keys(errors).length === 0, errors, values: { age, heightCm, weightKg }, input };
 }
 
 export function calculateOrientation(input) {
@@ -477,16 +519,14 @@ export function calculateOrientation(input) {
     }
 
     const { age, heightCm, weightKg } = validation.values;
+    input = validation.input;
     const mode = determineResultMode(input);
     if (!CALCULATED_MODES.has(mode)) {
         return {
             ok: true,
             mode,
             guidance: SPECIAL_GUIDANCE[mode],
-            cta: getCtaContent(mode, input.obstacle),
-            trimesterGuideline: mode === RESULT_MODES.PREGNANCY
-                ? { first: 0, second: 250, third: 500, unsure: null }[input.trimester]
-                : undefined
+            cta: getCtaContent(mode, input.obstacle)
         };
     }
 

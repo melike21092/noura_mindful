@@ -7,6 +7,7 @@ import {
     distributeProteinAnchors,
     getStepBand,
     getCtaContent,
+    normalizeInput,
     parseGermanNumber,
     RESULT_MODES,
     roundTo
@@ -170,14 +171,12 @@ const protectedCases = [
     {
         name: 'pregnancy first trimester',
         input: { ...baseInput, pregnant: 'yes', trimester: 'first', dailyActivity: '', obstacle: '' },
-        mode: RESULT_MODES.PREGNANCY,
-        guideline: 0
+        mode: RESULT_MODES.PREGNANCY
     },
     {
         name: 'pregnancy third trimester',
         input: { ...baseInput, pregnant: 'yes', trimester: 'third', dailyActivity: '', obstacle: '' },
-        mode: RESULT_MODES.PREGNANCY,
-        guideline: 500
+        mode: RESULT_MODES.PREGNANCY
     },
     {
         name: 'two weeks postpartum overrides breastfeeding',
@@ -201,8 +200,66 @@ for (const testCase of protectedCases) {
     assert.equal(protectedResult.mission, undefined, testCase.name);
     assert.ok(protectedResult.guidance, testCase.name);
     assert.ok(protectedResult.cta?.title, testCase.name);
-    if ('guideline' in testCase) assert.equal(protectedResult.trimesterGuideline, testCase.guideline);
 }
+
+for (const trimester of ['first', 'second', 'third', 'unsure']) {
+    const pregnancy = calculateOrientation({
+        ...baseInput,
+        pregnant: 'yes',
+        trimester,
+        dailyActivity: '',
+        obstacle: ''
+    });
+    assert.equal(pregnancy.ok, true, `pregnancy/${trimester}`);
+    assert.equal(pregnancy.mode, RESULT_MODES.PREGNANCY, `pregnancy/${trimester}`);
+    for (const forbidden of ['maintenance', 'loss', 'protein', 'fat', 'carbs', 'targetCalories', 'trimesterGuideline']) {
+        assert.equal(pregnancy[forbidden], undefined, `pregnancy/${trimester} has no ${forbidden}`);
+    }
+}
+
+const normalizedSafetyCases = [
+    {
+        name: 'medicalStatus overrides a false medicalFlag',
+        input: { ...baseInput, medicalStatus: 'yes', medicalFlag: false }
+    },
+    {
+        name: 'medicalFlag works without medicalStatus',
+        input: { ...baseInput, medicalFlag: true }
+    },
+    {
+        name: 'eatingDisorder is safety relevant',
+        input: { ...baseInput, eatingDisorder: 'yes', medicalFlag: false }
+    },
+    {
+        name: 'combined contradictory safety values remain protected',
+        input: { ...baseInput, medicalStatus: 'no', medicalFlag: false, eatingDisorder: true }
+    }
+];
+
+for (const testCase of normalizedSafetyCases) {
+    const safety = calculateOrientation(testCase.input);
+    assert.equal(safety.ok, true, testCase.name);
+    assert.equal(safety.mode, RESULT_MODES.SAFETY, testCase.name);
+    for (const forbidden of ['maintenance', 'loss', 'protein', 'fat', 'carbs', 'targetCalories']) {
+        assert.equal(safety[forbidden], undefined, `${testCase.name} has no ${forbidden}`);
+    }
+}
+
+assert.equal(
+    normalizeInput({ medicalStatus: 'yes', medicalFlag: false }).medicalFlag,
+    true,
+    'a positive safety value cannot be negated by a contradictory false value'
+);
+assert.equal(
+    determineResultMode({ ...baseInput, lifeStage: 'pregnant', pregnant: 'no' }),
+    RESULT_MODES.PREGNANCY,
+    'normalized lifeStage protects direct function calls'
+);
+assert.equal(
+    determineResultMode({ ...baseInput, lifeStage: 'postpartum', weeksPostpartum: '5,5' }),
+    RESULT_MODES.EARLY_POSTPARTUM,
+    'lifeStage and German postpartum weeks are normalized before mode selection'
+);
 
 const exclusivelyBreastfeeding = calculateOrientation({
     ...baseInput,
@@ -228,29 +285,31 @@ assert.equal(partiallyBreastfeeding.mode, RESULT_MODES.PARTIAL_BREASTFEEDING);
 assert.ok(partiallyBreastfeeding.maintenance);
 assert.equal(partiallyBreastfeeding.loss, undefined);
 
-const sixWeeksPostpartum = calculateOrientation({
+const fiveWeeksPostpartum = calculateOrientation({
     ...baseInput,
     birthWithin12Months: 'yes',
-    weeksPostpartum: 6,
+    weeksPostpartum: 5,
     breastfeeding: 'no',
     dailyActivity: '',
     obstacle: ''
 });
-assert.equal(sixWeeksPostpartum.mode, RESULT_MODES.EARLY_POSTPARTUM);
-assert.equal(sixWeeksPostpartum.loss, undefined);
+assert.equal(fiveWeeksPostpartum.mode, RESULT_MODES.EARLY_POSTPARTUM);
+assert.equal(fiveWeeksPostpartum.loss, undefined);
 
-const postpartumLoss = calculateOrientation({
-    ...baseInput,
-    birthWithin12Months: 'yes',
-    weeksPostpartum: 20,
-    breastfeeding: 'no',
-    recovered: 'yes',
-    complications: 'no',
-    advisedAgainstLoss: 'no'
-});
-assert.equal(postpartumLoss.mode, RESULT_MODES.POSTPARTUM_LOSS);
-assert.ok(postpartumLoss.loss);
-assert.match(postpartumLoss.cta.title, /nach der Geburt/);
+for (const weeksPostpartum of [6, 7, 20]) {
+    const postpartumLoss = calculateOrientation({
+        ...baseInput,
+        birthWithin12Months: 'yes',
+        weeksPostpartum,
+        breastfeeding: 'no',
+        recovered: 'yes',
+        complications: 'no',
+        advisedAgainstLoss: 'no'
+    });
+    assert.equal(postpartumLoss.mode, RESULT_MODES.POSTPARTUM_LOSS, `${weeksPostpartum} weeks postpartum`);
+    assert.ok(postpartumLoss.loss, `${weeksPostpartum} weeks postpartum can continue after confirmation`);
+    assert.match(postpartumLoss.cta.title, /nach der Geburt/);
+}
 
 for (const warning of [
     { recovered: 'no', complications: 'no', advisedAgainstLoss: 'no' },

@@ -39,14 +39,25 @@ body::before {
 .legal-nav {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
+    justify-content: flex-start;
     margin-bottom: 28px;
 }
 
-.legal-nav strong {
-    font-size: 11px;
-    letter-spacing: 0.14em;
+.legal-brand {
+    display: block;
+    color: #35433d;
+    text-decoration: none;
+}
+
+.legal-brand:hover {
+    color: #485a50;
+}
+
+.legal-brand img {
+    display: block;
+    width: 112px;
+    height: auto;
+    aspect-ratio: 357.94 / 83.3;
 }
 
 a {
@@ -105,4 +116,8 @@ address { font-style: normal; }
 @media (min-width: 640px) {
     .legal-shell { padding-top: 34px; }
     main { padding: 40px; }
+}
+
+@media (min-width: 900px) {
+    .legal-brand img { width: 160px; }
 }
