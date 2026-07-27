@@ -16,18 +16,18 @@ export const BASIS_ACTIVITY_RANGES = Object.freeze({
         unknown: { min: 1.45, max: 1.5 }
     }),
     standing: Object.freeze({
-        under4000: { min: 1.6, max: 1.7 },
-        from4000to7000: { min: 1.65, max: 1.75 },
-        from7000to10000: { min: 1.7, max: 1.8 },
-        over10000: { min: 1.8, max: 1.9 },
-        unknown: { min: 1.7, max: 1.8 }
+        under4000: { min: 1.4, max: 1.44 },
+        from4000to7000: { min: 1.44, max: 1.48 },
+        from7000to10000: { min: 1.48, max: 1.52 },
+        over10000: { min: 1.51, max: 1.56 },
+        unknown: { min: 1.44, max: 1.48 }
     }),
     strenuous: Object.freeze({
-        under4000: { min: 1.75, max: 1.9 },
-        from4000to7000: { min: 1.85, max: 2.0 },
-        from7000to10000: { min: 1.9, max: 2.1 },
-        over10000: { min: 2.0, max: 2.2 },
-        unknown: { min: 1.9, max: 2.1 }
+        under4000: { min: 1.68, max: 1.74 },
+        from4000to7000: { min: 1.72, max: 1.78 },
+        from7000to10000: { min: 1.76, max: 1.82 },
+        over10000: { min: 1.8, max: 1.88 },
+        unknown: { min: 1.72, max: 1.78 }
     })
 });
 
