@@ -105,11 +105,20 @@ async function chooseTarget(value) {
         return true;
     `);
     const expectedState = value === 'standard'
-            ? `!document.querySelector('[data-step="1"]').hidden`
+            ? `!document.querySelector('.safety-gate__confirmation').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`
             : value === 'postpartum'
-                ? `!document.querySelector('.safety-gate__timing').hidden`
-                : `!document.querySelector('.guidance-view').hidden`;
+                ? `!document.querySelector('.safety-gate__timing').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`
+                : `!document.querySelector('.guidance-view').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`;
     await waitForCondition(expectedState, `Zielgruppenpfad ${value} erreichte nicht den erwarteten Zustand`);
+    if (value === 'standard') {
+        await evaluate(`
+            const confirmation = document.querySelector('[name="generalConfirmation"]');
+            if (!confirmation.checked) confirmation.click();
+            document.getElementById('general-confirmation-continue').click();
+            return true;
+        `);
+        await waitForCondition(`!document.querySelector('[data-step="1"]').hidden`, 'Bestätigung führte nicht zu den Körperdaten');
+    }
     return evaluate(`
         return {
             guidance: !document.querySelector('.guidance-view').hidden,
@@ -126,18 +135,43 @@ async function readGuidancePresentation() {
         const view = document.querySelector('.guidance-view');
         return {
             renderer: view.dataset.guidanceRenderer,
+            layout: view.dataset.layout,
             title: document.getElementById('safety-gate-guidance-title').textContent,
             intro: document.getElementById('safety-gate-guidance-copy').textContent,
             sectionTitle: document.getElementById('safety-gate-guidance-section-title').textContent,
             noticeVisible: !document.getElementById('safety-gate-guidance-notice').hidden,
             noticeText: document.getElementById('safety-gate-guidance-notice').textContent.trim(),
+            noticeTag: document.getElementById('safety-gate-guidance-notice').tagName,
+            noticeBackground: getComputedStyle(document.getElementById('safety-gate-guidance-notice')).backgroundColor,
             noticeIcon: Boolean(document.querySelector('.guidance-view__notice-icon svg[aria-hidden="true"]')),
             itemCount: document.querySelectorAll('.guidance-item').length,
+            itemDescriptionCount: document.querySelectorAll('.guidance-item__text').length,
             icons: [...document.querySelectorAll('.guidance-item')].map(item => item.dataset.icon),
             decorativeIconsHidden: [...document.querySelectorAll('.guidance-item__icon svg')]
                 .every(icon => icon.getAttribute('aria-hidden') === 'true'),
             oldCopyVisible: /nicht sinnvoll pauschal berechnen|Starte ohne aggressives Defizit|die bessere Anlaufstelle|klassisches Kaloriendefizit/.test(view.textContent),
             emphasizedConclusion: document.querySelectorAll('.guidance-view__closing strong').length,
+            ctaVisible: !document.getElementById('safety-gate-guidance-cta').hidden,
+            ctaTitle: document.getElementById('safety-gate-guidance-cta-title').textContent,
+            ctaCopy: document.getElementById('safety-gate-guidance-cta-copy').textContent,
+            ctaEyebrow: document.getElementById('safety-gate-guidance-cta-eyebrow').textContent,
+            ctaLabel: document.getElementById('safety-gate-guidance-cta-label').textContent,
+            ctaHref: document.getElementById('safety-gate-guidance-cta-button').href,
+            ctaHeight: document.getElementById('safety-gate-guidance-cta-button').getBoundingClientRect().height,
+            ctaDisplay: getComputedStyle(document.getElementById('safety-gate-guidance-cta-button')).display,
+            ctaBackground: getComputedStyle(document.getElementById('safety-gate-guidance-cta-button')).backgroundColor,
+            ctaColor: getComputedStyle(document.getElementById('safety-gate-guidance-cta-button')).color,
+            ctaPanelBackground: getComputedStyle(document.getElementById('safety-gate-guidance-cta')).backgroundColor,
+            ctaBeforeBack: Boolean(document.getElementById('safety-gate-guidance-cta').compareDocumentPosition(document.querySelector('.guidance-view .actions')) & Node.DOCUMENT_POSITION_FOLLOWING),
+            accordionVisible: !document.getElementById('safety-gate-guidance-accordion').hidden,
+            accordionLabel: document.getElementById('safety-gate-guidance-accordion-label').textContent,
+            accordionExpanded: document.getElementById('safety-gate-guidance-accordion-toggle').getAttribute('aria-expanded'),
+            accordionControls: document.getElementById('safety-gate-guidance-accordion-toggle').getAttribute('aria-controls'),
+            accordionContentHidden: document.getElementById('safety-gate-guidance-accordion-content').hidden,
+            accordionTouchHeight: document.getElementById('safety-gate-guidance-accordion-toggle').getBoundingClientRect().height,
+            accordionItemCount: document.querySelectorAll('#safety-gate-guidance-accordion-items li').length,
+            accordionBeforeBack: Boolean(document.getElementById('safety-gate-guidance-accordion').compareDocumentPosition(document.querySelector('.guidance-view .actions')) & Node.DOCUMENT_POSITION_FOLLOWING),
+            automaticCalorieOutput: /(?:^|\s)\d[\d.]*\s*kcal\b/i.test(view.innerText),
             backIsButton: document.getElementById('safety-gate-change').tagName === 'BUTTON',
             backLabel: document.getElementById('safety-gate-change').textContent.trim(),
             backHeight: document.getElementById('safety-gate-change').getBoundingClientRect().height
@@ -162,6 +196,21 @@ async function assertGuidanceBackReturnsToSelection(value) {
         };
     `);
     assert(cleanState.buttons === 5 && cleanState.radios === 0 && cleanState.selectedState === 0, `Rückkehr aus ${value} zeigt einen Auswahlzustand`);
+}
+
+async function assertGuidanceAccordionToggles(value) {
+    await evaluate(`document.getElementById('safety-gate-guidance-accordion-toggle').click(); return true;`);
+    await waitForCondition(
+        `document.getElementById('safety-gate-guidance-accordion-toggle').getAttribute('aria-expanded') === 'true' &&
+            !document.getElementById('safety-gate-guidance-accordion-content').hidden`,
+        `Accordion in ${value} öffnet nicht zugänglich`
+    );
+    await evaluate(`document.getElementById('safety-gate-guidance-accordion-toggle').click(); return true;`);
+    await waitForCondition(
+        `document.getElementById('safety-gate-guidance-accordion-toggle').getAttribute('aria-expanded') === 'false' &&
+            document.getElementById('safety-gate-guidance-accordion-content').hidden`,
+        `Accordion in ${value} schließt nicht zugänglich`
+    );
 }
 
 try {
@@ -354,13 +403,13 @@ try {
     await command('Page.bringToFront');
     await command('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
     await command('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
-    await waitForCondition(`!document.querySelector('.guidance-view').hidden`, 'Enter aktiviert den Schwangerschaftsbutton nicht');
+    await waitForCondition(`!document.querySelector('.guidance-view').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`, 'Enter aktiviert den Schwangerschaftsbutton nicht');
     await assertGuidanceBackReturnsToSelection('pregnant');
 
     await evaluate(`document.querySelector('[data-target-situation="exclusive"]').focus(); return true;`);
     await command('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: ' ', code: 'Space', windowsVirtualKeyCode: 32, nativeVirtualKeyCode: 32 });
     await command('Input.dispatchKeyEvent', { type: 'keyUp', key: ' ', code: 'Space', windowsVirtualKeyCode: 32, nativeVirtualKeyCode: 32 });
-    await waitForCondition(`!document.querySelector('.guidance-view').hidden`, 'Leertaste aktiviert den Vollstillbutton nicht');
+    await waitForCondition(`!document.querySelector('.guidance-view').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`, 'Leertaste aktiviert den Vollstillbutton nicht');
     await assertGuidanceBackReturnsToSelection('exclusive');
 
     await evaluate(`document.getElementById('safety-gate-back').click(); return true;`);
@@ -597,16 +646,7 @@ try {
     `);
     assert(challengeStructure.buttons === 8 && challengeStructure.radios === 0 && !challengeStructure.submit, 'Herausforderung verwendet nicht direkte Navigation');
     assert(challengeStructure.values.join(',') === 'hunger,cravings,irregular,family,stress,weekend,consistency,unsure', 'Herausforderungswerte oder Reihenfolge wurden verändert');
-    const blockedWithoutConfirmation = await evaluate(`
-        document.querySelector('[data-obstacle="unsure"]').click();
-        return {
-            resultHidden: document.getElementById('result').hidden,
-            error: document.querySelector('[data-error="generalConfirmation"]').textContent
-        };
-    `);
-    assert(blockedWithoutConfirmation.resultHidden && blockedWithoutConfirmation.error, 'Berechnung war ohne allgemeine Bestätigung möglich');
     await evaluate(`
-        document.querySelector('[name="generalConfirmation"]').click();
         document.querySelector('[data-obstacle="hunger"]').focus();
         return true;
     `);
@@ -663,10 +703,17 @@ try {
             ctaTitle: document.getElementById('cta-title').textContent.trim(),
             ctaCopy: document.getElementById('cta-copy').textContent.trim(),
             ctaLabel: document.getElementById('cta-button').textContent.trim(),
-            ctaHref: document.getElementById('cta-button').href
+            ctaHref: document.getElementById('cta-button').href,
+            coachImage: {
+                src: document.querySelector('.coaching-cta__image img').getAttribute('src'),
+                alt: document.querySelector('.coaching-cta__image img').alt,
+                loading: document.querySelector('.coaching-cta__image img').loading,
+                width: document.querySelector('.coaching-cta__image img').getAttribute('width'),
+                height: document.querySelector('.coaching-cta__image img').getAttribute('height')
+            }
         };
     `);
-    assert(resultHierarchy.detailTitles.join('|') === 'So entsteht dein Startwert|So testest du deinen Startwert', 'Die Kalorienkarte enthält nicht genau die zwei neuen Akkordeons');
+    assert(resultHierarchy.detailTitles.join('|') === 'Wie wurden meine Kalorien berechnet?|Woran erkenne ich, ob die Kalorien passen?', 'Die Kalorienkarte enthält nicht genau die zwei verständlichen Akkordeons');
     assert(resultHierarchy.detailsClosed, 'Die Akkordeons der Kalorienkarte sind nicht initial geschlossen');
     assert(resultHierarchy.order[0] === 'mission-result' && resultHierarchy.order[1].includes('protein-card') && resultHierarchy.order[2].includes('macro-details'), 'Die Ergebnishierarchie ist nicht Hebel, Protein, Nährwertdetails');
     assert(resultHierarchy.missionTitle === 'Nicht tiefer starten. Erst stabiler essen.', 'Die Hunger-Personalisierung zeigt die falsche Überschrift');
@@ -688,6 +735,14 @@ try {
     assert(resultHierarchy.ctaTitle === 'Eine Zahl ist ein Startpunkt. Dein Alltag entscheidet, ob sie funktioniert.', 'Der Coaching-Abschluss zeigt die falsche Überschrift');
     assert(resultHierarchy.ctaCopy.startsWith('Im NOURA Coaching übersetzen wir deine Orientierung'), 'Der Coaching-Abschluss zeigt den falschen Text');
     assert(resultHierarchy.ctaLabel === 'Meinen persönlichen Start besprechen' && resultHierarchy.ctaHref.includes('zeeg.me/nouraxbalance/kennenlernen'), 'Der Coaching-CTA ist nicht korrekt verknüpft');
+    assert(
+        resultHierarchy.coachImage.src === 'assets/noura-coach.webp' &&
+        resultHierarchy.coachImage.alt === 'Mukaddes Mandirali, Ernährungsberaterin und NOURA Coach' &&
+        resultHierarchy.coachImage.loading === 'lazy' &&
+        resultHierarchy.coachImage.width === '1800' &&
+        resultHierarchy.coachImage.height === '1200',
+        `Das Coaching-Foto ist nicht performant und zugänglich eingebunden: ${JSON.stringify(resultHierarchy.coachImage)}`
+    );
 
     const markerScenarios = [
         { low: 1800, start: 1850, high: 1900, expected: 0.5 },
@@ -699,9 +754,17 @@ try {
         assert(position === expected, `Marker-Test für ${low}/${start}/${high} ist fehlgeschlagen`);
     });
 
+    await evaluate(`document.querySelector('.result-card.cta').scrollIntoView({ block: 'center' }); return true;`);
+    await waitForCondition(
+        `document.querySelector('.coaching-cta__image img').complete &&
+            document.querySelector('.coaching-cta__image img').naturalWidth === 1800`,
+        'Das lazy geladene Coaching-Foto wurde nicht vollständig geladen'
+    );
+
     for (const viewport of [
         { width: 375, height: 812, mobile: true },
         { width: 430, height: 932, mobile: true },
+        { width: 768, height: 1024, mobile: false },
         { width: 1440, height: 900, mobile: false }
     ]) {
         await command('Emulation.setDeviceMetricsOverride', {
@@ -727,10 +790,68 @@ try {
                     ['metric', document.querySelector('.primary-metric > strong')],
                     ['range', document.querySelector('.calorie-range__visual')],
                     ...[...document.querySelectorAll('.basis-value strong')].map((element, index) => [\`basis-\${index}\`, element])
-                ].filter(([, element]) => element.scrollWidth > element.clientWidth + 1).map(([name]) => name)
+                ].filter(([, element]) => element.scrollWidth > element.clientWidth + 1).map(([name]) => name),
+                coaching: (() => {
+                    const card = document.querySelector('.result-card.cta').getBoundingClientRect();
+                    const imageWrap = document.querySelector('.coaching-cta__image').getBoundingClientRect();
+                    const image = document.querySelector('.coaching-cta__image img');
+                    const content = document.querySelector('.coaching-cta__content').getBoundingClientRect();
+                    const button = document.getElementById('cta-button').getBoundingClientRect();
+                    return {
+                        loaded: image.complete && image.naturalWidth === 1800,
+                        imageHeight: imageWrap.height,
+                        objectPosition: getComputedStyle(image).objectPosition,
+                        vertical: imageWrap.bottom <= content.top + 0.5,
+                        fullBleedImage: Math.abs(imageWrap.left - card.left) <= 1.5 &&
+                            Math.abs(imageWrap.right - card.right) <= 1.5,
+                        buttonInsideContent: button.left >= content.left && button.right <= content.right,
+                        imageFlush: Math.abs(imageWrap.right - card.right) <= 1.5 &&
+                            (innerWidth < 768 || Math.abs(imageWrap.bottom - card.bottom) <= 1.5)
+                    };
+                })()
             };
         `);
         assert(!responsiveResult.documentOverflow && !responsiveResult.bodyOverflow && !responsiveResult.clipped && !responsiveResult.metricWrapped && responsiveResult.clippedKeyValues.length === 0, `Ergebnis läuft bei ${viewport.width}px horizontal über oder schneidet Werte ab: ${JSON.stringify(responsiveResult)}`);
+        assert(responsiveResult.coaching.loaded && responsiveResult.coaching.buttonInsideContent && responsiveResult.coaching.imageFlush, `Coaching-Foto oder CTA ist bei ${viewport.width}px nicht sauber angeordnet: ${JSON.stringify(responsiveResult.coaching)}`);
+        if (viewport.width < 768) {
+            assert(
+                responsiveResult.coaching.vertical &&
+                responsiveResult.coaching.imageHeight >= 160 &&
+                responsiveResult.coaching.imageHeight <= 180 &&
+                responsiveResult.coaching.objectPosition === '72% 35%',
+                `Mobiles Coaching-Layout ist bei ${viewport.width}px nicht korrekt: ${JSON.stringify(responsiveResult.coaching)}`
+            );
+        } else {
+            assert(
+                responsiveResult.coaching.fullBleedImage &&
+                responsiveResult.coaching.objectPosition === '74% 40%',
+                `Desktop-Coaching-Split ist bei ${viewport.width}px nicht korrekt: ${JSON.stringify(responsiveResult.coaching)}`
+            );
+        }
+        if (process.env.CAPTURE_RESULT_SCREENSHOTS === '1') {
+            const clip = await evaluate(`
+                const rect = document.querySelector('.result-card.cta').getBoundingClientRect();
+                return {
+                    x: rect.left + scrollX,
+                    y: rect.top + scrollY,
+                    width: rect.width,
+                    height: rect.height,
+                    scale: 1
+                };
+            `);
+            const screenshot = await command('Page.captureScreenshot', {
+                format: 'png',
+                fromSurface: true,
+                captureBeyondViewport: true,
+                clip
+            });
+            const artifactDirectory = join(root, 'artifacts');
+            await mkdir(artifactDirectory, { recursive: true });
+            await writeFile(
+                join(artifactDirectory, `noura-coaching-cta-${viewport.width}x${viewport.height}.png`),
+                Buffer.from(screenshot.data, 'base64')
+            );
+        }
     }
     await command('Emulation.setDeviceMetricsOverride', {
         width: 1440,
@@ -742,47 +863,61 @@ try {
     await reload();
     state = await chooseTarget('pregnant');
     assert(state.guidance && state.visibleSteps === 0 && !state.result, 'Schwangerschaft erreicht nicht ausschließlich die Informationsansicht');
-    assert(state.title === 'Jetzt zählt gute Versorgung.', 'Falsche Schwangerschaftsüberschrift');
+    assert(state.title === 'Dein Bedarf verändert sich. Dein Fokus auch.', 'Falsche Schwangerschaftsüberschrift');
     const pregnancyPresentation = await readGuidancePresentation();
-    assert(pregnancyPresentation.renderer === 'renderGuidanceView', 'Schwangerschaft verwendet nicht die gemeinsame Renderfunktion');
-    assert(pregnancyPresentation.sectionTitle === 'Worauf du jetzt achten kannst', 'Zwischenüberschrift der Schwangerschaftsansicht fehlt');
-    assert(pregnancyPresentation.noticeVisible && pregnancyPresentation.noticeIcon, 'Hinweisbox der Schwangerschaftsansicht fehlt');
-    assert(pregnancyPresentation.itemCount === 3, 'Schwangerschaftsansicht zeigt nicht drei Icon-Zeilen');
-    assert(pregnancyPresentation.icons.join(',') === 'meal,leaf,conversation', 'Schwangerschaftsansicht zeigt falsche Icons');
-    assert(pregnancyPresentation.decorativeIconsHidden, 'Schwangerschaftsicons sind für Screenreader nicht verborgen');
+    assert(pregnancyPresentation.renderer === 'renderGuidanceView' && pregnancyPresentation.layout === 'core', 'Schwangerschaft verwendet nicht die gemeinsame Kernansicht');
+    assert(!pregnancyPresentation.sectionTitle && pregnancyPresentation.itemCount === 0, 'Schwangerschaft zeigt weiterhin eine dauerhafte Checkliste');
+    assert(pregnancyPresentation.noticeVisible && pregnancyPresentation.noticeTag === 'P' && pregnancyPresentation.noticeBackground === 'rgba(0, 0, 0, 0)' && !pregnancyPresentation.noticeIcon, 'Schwangerschaft zeigt den Sicherheitssatz nicht ohne Box');
+    assert(pregnancyPresentation.ctaVisible && !pregnancyPresentation.ctaEyebrow && !pregnancyPresentation.ctaTitle, 'Schwangerschafts-CTA enthält weiterhin eine konkurrierende Zwischenüberschrift');
+    assert(pregnancyPresentation.ctaLabel === 'Ernährung persönlich besprechen' && pregnancyPresentation.ctaHref.includes('zeeg.me/nouraxbalance/kennenlernen'), 'Schwangerschafts-CTA ist nicht korrekt verknüpft');
+    assert(pregnancyPresentation.ctaHeight >= 44 && pregnancyPresentation.ctaBeforeBack, 'Schwangerschafts-CTA ist nicht zugänglich oder steht nach der Zurück-Aktion');
+    assert(pregnancyPresentation.ctaDisplay.endsWith('flex') && pregnancyPresentation.ctaBackground !== 'rgba(0, 0, 0, 0)' && pregnancyPresentation.ctaPanelBackground === 'rgba(0, 0, 0, 0)', 'Schwangerschafts-CTA ist nicht ohne umschließende Box gestaltet');
+    assert(pregnancyPresentation.accordionVisible && pregnancyPresentation.accordionLabel === 'Was jetzt wichtig ist' && pregnancyPresentation.accordionExpanded === 'false' && pregnancyPresentation.accordionContentHidden, 'Schwangerschafts-Accordion ist nicht standardmäßig geschlossen');
+    assert(pregnancyPresentation.accordionControls === 'safety-gate-guidance-accordion-content' && pregnancyPresentation.accordionTouchHeight >= 44 && pregnancyPresentation.accordionItemCount === 3 && pregnancyPresentation.accordionBeforeBack, 'Schwangerschafts-Accordion ist nicht zugänglich oder unvollständig');
+    assert(!pregnancyPresentation.automaticCalorieOutput, 'Schwangerschaft zeigt eine automatische Kalorienzahl');
     assert(pregnancyPresentation.backLabel.includes('Zurück zur Auswahl'), 'Zurück-Button der Schwangerschaftsansicht ist falsch beschriftet');
     assert(pregnancyPresentation.backIsButton && pregnancyPresentation.backHeight >= 44, 'Zurück-Button der Schwangerschaftsansicht ist nicht zugänglich');
     assert(!pregnancyPresentation.oldCopyVisible, 'Schwangerschaftsansicht rendert alte Textblöcke');
+    await assertGuidanceAccordionToggles('pregnant');
     await assertGuidanceBackReturnsToSelection('pregnant');
 
     await reload();
     state = await chooseTarget('exclusive');
     assert(state.guidance && state.visibleSteps === 0 && !state.result, 'Vollstillpfad erreicht eine Berechnung');
     const exclusivePresentation = await readGuidancePresentation();
-    assert(exclusivePresentation.renderer === 'renderGuidanceView', 'Vollstillansicht verwendet nicht die gemeinsame Renderfunktion');
+    assert(exclusivePresentation.renderer === 'renderGuidanceView' && exclusivePresentation.layout === 'core', 'Vollstillansicht verwendet nicht die gemeinsame Kernansicht');
     assert(exclusivePresentation.title === 'Dein Körper versorgt gerade nicht nur dich.', 'Falsche Vollstillüberschrift');
-    assert(exclusivePresentation.sectionTitle === 'Worauf du jetzt achten kannst', 'Zwischenüberschrift der Vollstillansicht fehlt');
-    assert(exclusivePresentation.itemCount === 3, 'Vollstillansicht zeigt nicht drei Icon-Zeilen');
-    assert(exclusivePresentation.icons.join(',') === 'meal,hydration,body-signal', 'Vollstillansicht zeigt falsche Icons');
-    assert(exclusivePresentation.noticeVisible && exclusivePresentation.noticeIcon, 'Hinweisbox der Vollstillansicht fehlt');
-    assert(exclusivePresentation.emphasizedConclusion === 2, 'Abschlusshinweis der Vollstillansicht ist falsch hervorgehoben');
+    assert(!exclusivePresentation.sectionTitle && exclusivePresentation.itemCount === 0, 'Vollstillansicht zeigt weiterhin eine dauerhafte Checkliste');
+    assert(exclusivePresentation.noticeVisible && exclusivePresentation.noticeTag === 'P' && exclusivePresentation.noticeBackground === 'rgba(0, 0, 0, 0)' && !exclusivePresentation.noticeIcon, 'Vollstillansicht zeigt den Sicherheitssatz nicht ohne Box');
+    assert(!exclusivePresentation.ctaTitle, 'Vollstill-CTA enthält weiterhin eine konkurrierende Zwischenüberschrift');
+    assert(exclusivePresentation.ctaVisible && !exclusivePresentation.ctaEyebrow && exclusivePresentation.ctaLabel === 'Stillzeit persönlich besprechen', 'Vollstill-CTA fehlt oder ist falsch');
+    assert(exclusivePresentation.ctaHref.includes('zeeg.me/nouraxbalance/kennenlernen') && exclusivePresentation.ctaHeight >= 44 && exclusivePresentation.ctaBeforeBack, 'Vollstill-CTA ist nicht korrekt oder nicht zugänglich');
+    assert(exclusivePresentation.ctaDisplay.endsWith('flex') && exclusivePresentation.ctaBackground !== 'rgba(0, 0, 0, 0)' && exclusivePresentation.ctaPanelBackground === 'rgba(0, 0, 0, 0)', 'Vollstill-CTA ist nicht ohne umschließende Box gestaltet');
+    assert(exclusivePresentation.accordionVisible && exclusivePresentation.accordionExpanded === 'false' && exclusivePresentation.accordionContentHidden && exclusivePresentation.accordionItemCount === 3 && exclusivePresentation.accordionTouchHeight >= 44, 'Vollstill-Accordion ist nicht standardmäßig geschlossen oder zugänglich');
+    assert(!exclusivePresentation.automaticCalorieOutput, 'Vollstillansicht zeigt eine automatische Kalorienzahl');
     assert(exclusivePresentation.backIsButton && exclusivePresentation.backHeight >= 44, 'Zurück-Button der Vollstillansicht ist nicht zugänglich');
     assert(!exclusivePresentation.oldCopyVisible, 'Vollstillansicht rendert alte Textblöcke');
+    await assertGuidanceAccordionToggles('exclusive');
     await assertGuidanceBackReturnsToSelection('exclusive');
 
     await reload();
     state = await chooseTarget('partial');
     assert(state.guidance && state.visibleSteps === 0 && !state.result, 'Teilstillpfad erreicht eine Berechnung');
     const partialPresentation = await readGuidancePresentation();
-    assert(partialPresentation.renderer === 'renderGuidanceView', 'Teilstillansicht verwendet nicht die gemeinsame Renderfunktion');
-    assert(partialPresentation.title === 'Beim Teilstillen ist dein Bedarf besonders individuell.', 'Falsche Teilstillüberschrift');
-    assert(partialPresentation.intro.includes('Deshalb gibt dir NOURA hier bewusst keine feste Abnehmzahl.'), 'Falsche Teilstilleinleitung');
-    assert(partialPresentation.sectionTitle === 'Worauf du jetzt achten kannst', 'Zwischenüberschrift der Teilstillansicht fehlt');
-    assert(!partialPresentation.noticeVisible && !partialPresentation.noticeText, 'Teilstillansicht rendert einen leeren Hinweisblock');
-    assert(partialPresentation.itemCount === 3, 'Teilstillansicht zeigt nicht drei Icon-Zeilen');
-    assert(partialPresentation.icons.join(',') === 'meal,body-signal,adjust', 'Teilstillansicht zeigt falsche Icons');
+    assert(partialPresentation.renderer === 'renderGuidanceView' && partialPresentation.layout === 'core', 'Teilstillansicht verwendet nicht die gemeinsame Kernansicht');
+    assert(partialPresentation.title === 'Teilstillen ist individuell.', 'Falsche Teilstillüberschrift');
+    assert(partialPresentation.intro.startsWith('Wie viel zusätzliche Energie du brauchst, hängt davon ab'), 'Falsche Teilstilleinleitung');
+    assert(!partialPresentation.sectionTitle && partialPresentation.itemCount === 0, 'Teilstillansicht zeigt weiterhin eine dauerhafte Checkliste');
+    assert(partialPresentation.noticeVisible && partialPresentation.noticeTag === 'P' && partialPresentation.noticeBackground === 'rgba(0, 0, 0, 0)' && !partialPresentation.noticeIcon && partialPresentation.noticeText.includes('keine pauschale Abnehmkalorienzahl'), 'Teilstillansicht zeigt den Sicherheitssatz nicht ohne Box');
+    assert(!partialPresentation.ctaTitle, 'Teilstill-CTA enthält weiterhin eine konkurrierende Zwischenüberschrift');
+    assert(partialPresentation.ctaVisible && partialPresentation.ctaLabel === 'Stillzeit persönlich besprechen', 'Teilstill-CTA fehlt oder ist falsch');
+    assert(partialPresentation.ctaHref.includes('zeeg.me/nouraxbalance/kennenlernen') && partialPresentation.ctaHeight >= 44 && partialPresentation.ctaBeforeBack, 'Teilstill-CTA ist nicht korrekt oder nicht zugänglich');
+    assert(partialPresentation.ctaDisplay.endsWith('flex') && partialPresentation.ctaBackground !== 'rgba(0, 0, 0, 0)' && partialPresentation.ctaPanelBackground === 'rgba(0, 0, 0, 0)', 'Teilstill-CTA ist nicht ohne umschließende Box gestaltet');
+    assert(partialPresentation.accordionVisible && partialPresentation.accordionExpanded === 'false' && partialPresentation.accordionContentHidden && partialPresentation.accordionItemCount === 3 && partialPresentation.accordionTouchHeight >= 44, 'Teilstill-Accordion ist nicht standardmäßig geschlossen oder zugänglich');
+    assert(!partialPresentation.automaticCalorieOutput, 'Teilstillansicht zeigt eine automatische Kalorienzahl');
     assert(partialPresentation.backIsButton && partialPresentation.backHeight >= 44, 'Zurück-Button der Teilstillansicht ist nicht zugänglich');
     assert(!partialPresentation.oldCopyVisible, 'Teilstillansicht rendert alte Textblöcke');
+    await assertGuidanceAccordionToggles('partial');
     await assertGuidanceBackReturnsToSelection('partial');
 
     await reload();
@@ -815,16 +950,20 @@ try {
     `);
     assert(state.continueEnabled, 'Postpartum-Auswahl aktiviert Weiter nicht');
     assert(state.title === 'Dein Körper darf gerade regenerieren.' && state.visibleSteps === 0 && !state.result, 'Früher Postpartum-Pfad erreicht eine Berechnung');
+    await waitForCondition(
+        `!document.querySelector('.guidance-view').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`,
+        'Frühe Postpartum-Ansicht wurde nicht vollständig eingeblendet'
+    );
     const earlyPostpartumPresentation = await readGuidancePresentation();
-    assert(earlyPostpartumPresentation.renderer === 'renderGuidanceView', 'Postpartum-Ansicht verwendet nicht die gemeinsame Renderfunktion');
+    assert(earlyPostpartumPresentation.renderer === 'renderGuidanceView' && earlyPostpartumPresentation.layout === 'core', 'Postpartum-Ansicht verwendet nicht die gemeinsame Kernansicht');
     assert(earlyPostpartumPresentation.title === 'Dein Körper darf gerade regenerieren.', 'Falsche Postpartum-Überschrift');
-    assert(earlyPostpartumPresentation.sectionTitle === 'Was jetzt wichtiger ist', 'Zwischenüberschrift der frühen Postpartum-Ansicht fehlt');
-    assert(!earlyPostpartumPresentation.noticeVisible && !earlyPostpartumPresentation.noticeText, 'Frühe Postpartum-Ansicht enthält eine zusätzliche Hinweisbox');
-    assert(earlyPostpartumPresentation.itemCount === 3, 'Frühe Postpartum-Ansicht zeigt nicht drei Icon-Zeilen');
-    assert(earlyPostpartumPresentation.icons.join(',') === 'meal,recovery,scale-wave', 'Postpartum-Ansicht zeigt falsche Icons');
-    assert(earlyPostpartumPresentation.emphasizedConclusion === 2, 'Abschlusshinweis der frühen Postpartum-Ansicht ist falsch hervorgehoben');
+    assert(!earlyPostpartumPresentation.sectionTitle && earlyPostpartumPresentation.itemCount === 0, 'Frühe Postpartum-Ansicht zeigt weiterhin die alte Icon-Liste');
+    assert(earlyPostpartumPresentation.noticeVisible && earlyPostpartumPresentation.noticeBackground === 'rgba(0, 0, 0, 0)', 'Frühe Postpartum-Ansicht zeigt den Sicherheitssatz nicht ohne Box');
+    assert(!earlyPostpartumPresentation.ctaVisible, 'Frühe Postpartum-Ansicht ergänzt einen neuen Coaching-Pfad');
+    assert(earlyPostpartumPresentation.accordionVisible && earlyPostpartumPresentation.accordionExpanded === 'false' && earlyPostpartumPresentation.accordionContentHidden && earlyPostpartumPresentation.accordionItemCount === 3 && earlyPostpartumPresentation.accordionTouchHeight >= 44, 'Postpartum-Accordion ist nicht standardmäßig geschlossen oder zugänglich');
     assert(earlyPostpartumPresentation.backIsButton && earlyPostpartumPresentation.backHeight >= 44, 'Zurück-Button der frühen Postpartum-Ansicht ist nicht zugänglich');
     assert(!earlyPostpartumPresentation.oldCopyVisible, 'Postpartum-Ansicht rendert alte Textblöcke');
+    await assertGuidanceAccordionToggles('postpartum');
     await assertGuidanceBackReturnsToSelection('postpartum');
 
     await reload();
@@ -832,11 +971,26 @@ try {
     state = await evaluate(`
         document.querySelector('[name="postpartumTiming"][value="over6"]').click();
         document.getElementById('postpartum-timing-continue').click();
+        return true;
+    `);
+    await waitForCondition(
+        `!document.querySelector('.safety-gate__readiness').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`,
+        'Postpartum-Bereitschaftsansicht wurde nicht vollständig eingeblendet'
+    );
+    state = await evaluate(`
         const readiness = !document.querySelector('.safety-gate__readiness').hidden;
         document.getElementById('postpartum-readiness-continue').click();
-        return { readiness, step1: !document.querySelector('[data-step="1"]').hidden };
+        return { readiness };
     `);
-    assert(state.readiness && state.step1, 'Postpartum ab sechs Wochen erreicht den Standardrechner nicht über die Bereitschaftsansicht');
+    await waitForCondition(`!document.querySelector('.safety-gate__confirmation').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`, 'Postpartum-Bereitschaft führte nicht zur allgemeinen Bestätigung');
+    await evaluate(`
+        const confirmation = document.querySelector('[name="generalConfirmation"]');
+        if (!confirmation.checked) confirmation.click();
+        document.getElementById('general-confirmation-continue').click();
+        return true;
+    `);
+    await waitForCondition(`!document.querySelector('[data-step="1"]').hidden`, 'Postpartum ab sechs Wochen erreichte nach Bestätigung nicht den Standardrechner');
+    assert(state.readiness, 'Postpartum ab sechs Wochen zeigte die Bereitschaftsansicht nicht');
 
     await reload();
     await chooseTarget('standard');
@@ -960,7 +1114,7 @@ try {
                     return true;
                 `);
                 await waitForCondition(
-                    `!document.querySelector('.guidance-view').hidden`,
+                    `!document.querySelector('.guidance-view').hidden && !document.getElementById('safety-gate').classList.contains('is-gate-transitioning')`,
                     `Postpartum-Ansicht wurde bei ${width}px nicht sichtbar`
                 );
             }

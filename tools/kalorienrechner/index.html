@@ -8,7 +8,7 @@
     <title>NOURA – Kalorienorientierung</title>
     <link rel="icon" type="image/svg+xml" href="assets/noura-mark.svg">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-    <link rel="stylesheet" href="calculator.css">
+    <link rel="stylesheet" href="calculator.css?v=20260727-19">
 </head>
 <body>
     <div class="dawn-scene" aria-hidden="true">
@@ -88,6 +88,29 @@
                     </div>
                 </div>
 
+                <div class="safety-gate__confirmation form-step" hidden>
+                    <span class="eyebrow">Kurz vorab</span>
+                    <h2 id="general-confirmation-heading" tabindex="-1">Allgemeine Orientierung</h2>
+                    <fieldset aria-labelledby="general-confirmation-heading">
+                        <legend class="sr-only">Nutzungshinweis bestätigen</legend>
+                        <div class="choice-list">
+                            <label class="choice">
+                                <input type="checkbox" name="generalConfirmation" value="yes">
+                                <span>
+                                    <strong>Ich habe verstanden, wofür dieser Rechner gedacht ist.</strong>
+                                    <small>Dieser Rechner bietet eine allgemeine Orientierung für Erwachsene. Er berücksichtigt keine Erkrankungen, Medikamente oder therapeutischen Ernährungsanforderungen.</small>
+                                </span>
+                            </label>
+                        </div>
+                        <p class="fine-print">Wenn Erkrankungen, Medikamente, eine Essstörung oder ungeklärte Beschwerden deine Ernährung oder Gewichtsentwicklung beeinflussen, lass dein persönliches Ziel fachlich einordnen.</p>
+                        <span class="field-error" data-error="generalConfirmation"></span>
+                    </fieldset>
+                    <div class="actions">
+                        <button class="button-secondary-back" type="button" id="general-confirmation-back"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                        <button class="primary" type="button" id="general-confirmation-continue" disabled>Weiter</button>
+                    </div>
+                </div>
+
                 <div class="safety-gate__timing form-step" hidden>
                     <span class="eyebrow">Deine Erholung</span>
                     <h2 id="postpartum-timing-heading" tabindex="-1">Wie lange ist die Geburt ungefähr her?</h2>
@@ -119,10 +142,28 @@
                     <span class="guidance-view__eyebrow eyebrow" id="safety-gate-guidance-eyebrow"></span>
                     <h2 class="guidance-view__title" id="safety-gate-guidance-title" tabindex="-1"></h2>
                     <p class="guidance-view__intro" id="safety-gate-guidance-copy"></p>
-                    <div class="guidance-view__notice" id="safety-gate-guidance-notice" hidden></div>
+                    <p class="guidance-view__notice" id="safety-gate-guidance-notice" hidden></p>
                     <h3 class="guidance-view__section-title" id="safety-gate-guidance-section-title" hidden></h3>
                     <ul class="guidance-view__items" id="safety-gate-guidance-points" hidden></ul>
                     <p class="guidance-view__closing" id="safety-gate-guidance-conclusion"></p>
+                    <div class="guidance-view__cta" id="safety-gate-guidance-cta" hidden>
+                        <span class="guidance-view__cta-eyebrow eyebrow" id="safety-gate-guidance-cta-eyebrow" hidden></span>
+                        <h3 id="safety-gate-guidance-cta-title"></h3>
+                        <p id="safety-gate-guidance-cta-copy" hidden></p>
+                        <a class="guidance-view__cta-button" id="safety-gate-guidance-cta-button" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">
+                            <span id="safety-gate-guidance-cta-label"></span>
+                            <span class="guidance-view__cta-chevron" aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                    <section class="guidance-view__accordion" id="safety-gate-guidance-accordion" hidden>
+                        <button type="button" id="safety-gate-guidance-accordion-toggle" aria-expanded="false" aria-controls="safety-gate-guidance-accordion-content">
+                            <span id="safety-gate-guidance-accordion-label"></span>
+                            <span class="guidance-view__accordion-chevron" aria-hidden="true"></span>
+                        </button>
+                        <div id="safety-gate-guidance-accordion-content" hidden>
+                            <ul id="safety-gate-guidance-accordion-items"></ul>
+                        </div>
+                    </section>
                     <div class="actions">
                         <button class="button-secondary-back" type="button" id="safety-gate-change">
                             <span aria-hidden="true">←</span>
@@ -260,20 +301,6 @@
                 <span class="eyebrow">Dein Alltag im Fokus</span>
                 <h2>Wo kippt dein Plan meistens?</h2>
                 <p>Ich suche mit dir nicht nach Schuld, sondern nach dem wahrscheinlich sinnvollsten ersten Hebel.</p>
-                <fieldset>
-                    <legend>Allgemeine Orientierung</legend>
-                    <div class="choice-list">
-                        <label class="choice">
-                            <input type="checkbox" name="generalConfirmation" value="yes">
-                            <span>
-                                <strong>Ich habe verstanden, wofür dieser Rechner gedacht ist.</strong>
-                                <small>Dieser Rechner bietet eine allgemeine Orientierung für Erwachsene. Er berücksichtigt keine Erkrankungen, Medikamente oder therapeutischen Ernährungsanforderungen.</small>
-                            </span>
-                        </label>
-                    </div>
-                    <p class="fine-print">Wenn Erkrankungen, Medikamente, eine Essstörung oder ungeklärte Beschwerden deine Ernährung oder Gewichtsentwicklung beeinflussen, lass dein persönliches Ziel fachlich einordnen.</p>
-                    <span class="field-error" data-error="generalConfirmation"></span>
-                </fieldset>
                 <div class="direct-choice-list challenge-step__choices" aria-label="Größte aktuelle Herausforderung">
                     <button class="direct-choice" type="button" data-obstacle="hunger"><span><strong>Ich habe ständig Hunger</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
                     <button class="direct-choice" type="button" data-obstacle="cravings"><span><strong>Abends kommt starker Essdrang</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
@@ -304,7 +331,6 @@
                         <strong><span id="start-result-number"></span><span class="metric-unit">kcal</span></strong>
                     </div>
                     <span class="metric-period">pro Tag</span>
-                    <p class="metric-note">Ein Ausgangspunkt, keine tägliche Treffpflicht.</p>
 
                     <div class="calorie-range" id="calorie-range">
                         <span class="calorie-range__label">Dein flexibler Tageskorridor</span>
@@ -319,47 +345,37 @@
                                 <span id="calorie-range-high"></span>
                             </div>
                         </div>
-                        <p>Betrachte diesen Bereich als flexiblen Rahmen, nicht als tägliche Vorgabe.</p>
+                        <p>Einzelne Tage können abweichen. Entscheidend ist dein Durchschnitt.</p>
                         <p class="sr-only" id="calorie-range-description"></p>
                     </div>
                 </div>
 
-                <div class="compact-derivation">
-                    <div class="basis-value">
-                        <span class="basis-value__icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none"><path d="M19.5 15.2A8 8 0 0 1 8.8 4.5 8 8 0 1 0 19.5 15.2Z"/></svg>
-                        </span>
-                        <small>Ruhebedarf</small>
-                        <strong id="resting-result"></strong>
-                    </div>
-                    <div class="basis-value">
-                        <span class="basis-value__icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16M7 7h10M5 7l-3 6h6L5 7Zm14 0-3 6h6l-3-6ZM8 20h8"/></svg>
-                        </span>
-                        <small id="maintenance-label">Gewicht halten</small>
-                        <strong id="maintenance-result"></strong>
-                    </div>
-                </div>
                 <div class="activity-summary deficit-result">
                     <span>Berücksichtigt</span>
                     <div class="activity-chips" id="activity-summary" aria-label="In der Schätzung berücksichtigt"></div>
                 </div>
 
                 <details class="calibration-details deficit-result">
-                    <summary>So entsteht dein Startwert</summary>
+                    <summary>Wie wurden meine Kalorien berechnet?</summary>
                     <div class="calibration-details-content">
+                        <div class="calibration-basis">
+                            <p>Geschätzter Ruhebedarf: <strong id="resting-result"></strong></p>
+                            <p>Geschätzte <span id="maintenance-label">Erhaltung</span>: <strong id="maintenance-result"></strong></p>
+                        </div>
                         <p><strong>1. Ruhebedarf:</strong> Zuerst schätzt NOURA, wie viel Energie dein Körper in vollständiger Ruhe benötigt.</p>
                         <p><strong>2. Dein tatsächlicher Alltag:</strong> Danach fließen Alltag, Schritte und Training ein. Ein überwiegend sitzender Alltag ist dabei nicht dasselbe wie vollständige Bewegungslosigkeit – auch Aufstehen, kurze Wege und alltägliche Aufgaben benötigen Energie.</p>
-                        <p><strong>3. Vorsichtiger Startpunkt:</strong> Aus dem geschätzten Erhaltungsbereich wird ein moderates Defizit abgeleitet. So entsteht eine Orientierung, die du anhand von Hunger, Energie, Wohlbefinden und deiner Entwicklung überprüfen kannst.</p>
+                        <p><strong>3. Moderater Startpunkt:</strong> Dein Startwert liegt 15 % unter der Mitte deiner geschätzten Erhaltung. Das ist ein moderater Einstieg, der Raum für sättigende und alltagstaugliche Mahlzeiten lässt.</p>
                         <p>Alle Werte bleiben Schätzungen für Erwachsene und ersetzen keine medizinische oder ernährungstherapeutische Einordnung.</p>
                     </div>
                 </details>
 
                 <details class="calibration-details deficit-result">
-                    <summary>So testest du deinen Startwert</summary>
+                    <summary>Woran erkenne ich, ob die Kalorien passen?</summary>
                     <div class="calibration-details-content">
                         <p>Teste deinen Startwert drei bis vier Wochen und vergleiche Wochendurchschnitte beziehungsweise deinen gleitenden Gewichtstrend.</p>
-                        <p>Beobachte dabei Hunger, Energie, Training und Wohlbefinden. Passe den Startwert erst danach bei Bedarf vorsichtig um 100–150 kcal an.</p>
+                        <p>Wenn nach mehreren Wochen kein klarer Trend erkennbar ist, prüfe zunächst deine Angaben, Portionsgrößen, Wochenstruktur und mögliche Gewichtsschwankungen.</p>
+                        <p>Beobachte außerdem Hunger, Energie, Training und Wohlbefinden. Wenn es für dich passt, kann etwas mehr Bewegung im Alltag sinnvoller sein, als die Kalorien direkt weiter zu senken.</p>
+                        <p>Erst danach kannst du den Startwert bei Bedarf vorsichtig um 100–150 kcal anpassen.</p>
                     </div>
                 </details>
             </div>
@@ -426,11 +442,23 @@
             </div>
 
             <div class="result-card cta">
-                <span class="eyebrow" id="cta-eyebrow">Persönliche Begleitung</span>
-                <h3 id="cta-title">Eine Zahl ist ein Startpunkt. Dein Alltag entscheidet, ob sie funktioniert.</h3>
-                <p id="cta-copy">Im NOURA Coaching übersetzen wir deine Orientierung in Mahlzeiten, Familienessen und Strategien, die zu deinem tatsächlichen Alltag passen.</p>
-                <a class="secondary" id="cta-button" href="https://zeeg.me/nouraxbalance/kennenlernen" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Meinen persönlichen Start besprechen</a>
-                <p class="external-note">Externe Terminbuchung über Zeeg. Bitte übermittle dort keine Diagnosen, Befunde oder anderen nicht erforderlichen Gesundheitsdaten.</p>
+                <div class="coaching-cta__image">
+                    <img
+                        src="assets/noura-coach.webp"
+                        width="1800"
+                        height="1200"
+                        loading="lazy"
+                        decoding="async"
+                        alt="Mukaddes Mandirali, Ernährungsberaterin und NOURA Coach"
+                    >
+                </div>
+                <div class="coaching-cta__content">
+                    <span class="eyebrow" id="cta-eyebrow">Persönliche Begleitung</span>
+                    <h3 id="cta-title">Eine Zahl ist ein Startpunkt. Dein Alltag entscheidet, ob sie funktioniert.</h3>
+                    <p id="cta-copy">Im NOURA Coaching übersetzen wir deine Orientierung in Mahlzeiten, Familienessen und Strategien, die zu deinem tatsächlichen Alltag passen.</p>
+                    <a class="secondary" id="cta-button" href="https://zeeg.me/nouraxbalance/kennenlernen" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Meinen persönlichen Start besprechen</a>
+                    <p class="external-note">Externe Terminbuchung über Zeeg. Bitte übermittle dort keine Diagnosen, Befunde oder anderen nicht erforderlichen Gesundheitsdaten.</p>
+                </div>
             </div>
 
             <button class="text-button" type="button" id="restart">Neu berechnen</button>
@@ -458,12 +486,16 @@
         const resultSection = document.getElementById('result');
         const safetyGate = document.getElementById('safety-gate');
         const safetyGateQuestion = safetyGate.querySelector('.safety-gate__question');
+        const safetyGateConfirmation = safetyGate.querySelector('.safety-gate__confirmation');
         const safetyGateTiming = safetyGate.querySelector('.safety-gate__timing');
         const safetyGateReadiness = safetyGate.querySelector('.safety-gate__readiness');
         const safetyGateGuidance = safetyGate.querySelector('.guidance-view');
+        const generalConfirmationContinue = document.getElementById('general-confirmation-continue');
         const postpartumTimingError = document.getElementById('postpartum-timing-error');
         const postpartumTimingContinue = document.getElementById('postpartum-timing-continue');
         let guidanceReturnTarget = 'selection';
+        let confirmationReturnTarget = 'selection';
+        let gateTransitioning = false;
         let currentStep = 0;
         let directNavigationLocked = false;
         const directAnswers = {
@@ -611,6 +643,9 @@
             if (event.target.name === 'generalConfirmation' && event.target.checked) {
                 document.querySelector('[data-error="generalConfirmation"]').textContent = '';
             }
+            if (event.target.name === 'generalConfirmation') {
+                generalConfirmationContinue.disabled = !event.target.checked;
+            }
             updateProgressiveFields();
             updateFormActions();
         });
@@ -647,13 +682,55 @@
             }
         }
 
-        function showGateView(view) {
-            [safetyGateQuestion, safetyGateTiming, safetyGateReadiness, safetyGateGuidance]
+        function showGateView(view, focusHeading = true) {
+            [safetyGateQuestion, safetyGateConfirmation, safetyGateTiming, safetyGateReadiness, safetyGateGuidance]
                 .forEach(node => { node.hidden = node !== view; });
+            if (view === safetyGateConfirmation) {
+                generalConfirmationContinue.disabled = selectedValue('generalConfirmation') !== 'yes';
+            }
             if (view === safetyGateTiming) {
                 postpartumTimingContinue.disabled = !selectedValue('postpartumTiming');
             }
-            view.querySelector('h2')?.focus({ preventScroll: true });
+            if (focusHeading) view.querySelector('h2')?.focus({ preventScroll: true });
+        }
+
+        async function transitionGateView(view) {
+            if (gateTransitioning) return;
+            if (reduceMotion.matches || safetyGate.hidden) {
+                showGateView(view);
+                return;
+            }
+
+            gateTransitioning = true;
+            safetyGate.classList.add('is-gate-transitioning');
+            const exitAnimation = safetyGate.animate([
+                { opacity: 1, transform: 'translate3d(0, 0, 0)' },
+                { opacity: 0, transform: 'translate3d(-36px, 0, 0)' }
+            ], {
+                duration: 210,
+                easing: 'cubic-bezier(.4, 0, 1, 1)',
+                fill: 'forwards'
+            });
+
+            try {
+                await exitAnimation.finished;
+                exitAnimation.cancel();
+                showGateView(view, false);
+                const enterAnimation = safetyGate.animate([
+                    { opacity: 0, transform: 'translate3d(32px, 0, 0)' },
+                    { opacity: 1, transform: 'translate3d(0, 0, 0)' }
+                ], {
+                    duration: 330,
+                    easing: 'cubic-bezier(.22, 1, .36, 1)',
+                    fill: 'both'
+                });
+                await enterAnimation.finished;
+                enterAnimation.cancel();
+                view.querySelector('h2')?.focus({ preventScroll: true });
+            } finally {
+                safetyGate.classList.remove('is-gate-transitioning');
+                gateTransitioning = false;
+            }
         }
 
         function showSafetyGate() {
@@ -663,6 +740,11 @@
             showGateView(safetyGateQuestion);
             progressElement.hidden = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showGeneralConfirmation(returnTarget = 'selection') {
+            confirmationReturnTarget = returnTarget;
+            transitionGateView(safetyGateConfirmation);
         }
 
         function enterStandardCalculator() {
@@ -687,115 +769,111 @@
             adjust: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M7 14v6"/></svg>'
         });
 
+        const COACHING_URL = 'https://zeeg.me/nouraxbalance/kennenlernen';
+
         const GUIDANCE_VIEWS = Object.freeze({
             pregnant: {
+                layout: 'core',
                 eyebrow: 'Deine Schwangerschaft',
-                title: 'Jetzt zählt gute Versorgung.',
-                intro: 'In der Schwangerschaft verändert sich dein Gewicht nicht nur durch Körperfett, sondern auch durch dein Baby, die Plazenta, Fruchtwasser, zusätzliches Blut und weiteres Gewebe.',
-                notice: 'NOURA berechnet während der Schwangerschaft bewusst kein Abnahmeziel, weil eine passende Gewichtsentwicklung individuell ist. Eine fachliche Begleitung kann helfen, den persönlichen Verlauf einzuordnen.',
-                sectionTitle: 'Worauf du jetzt achten kannst',
-                items: [
-                    {
-                        icon: 'meal',
-                        title: 'Regelmäßig und ausgewogen essen',
-                        text: 'Orientiere dich an sättigenden, nährstoffreichen Mahlzeiten.'
-                    },
-                    {
-                        icon: 'leaf',
-                        title: 'Nährstoffversorgung priorisieren',
-                        text: 'Achte besonders auf Lebensmittelqualität statt auf möglichst wenige Kalorien.'
-                    },
-                    {
-                        icon: 'conversation',
-                        title: 'Entwicklung begleiten lassen',
-                        text: 'Besprich deine Gewichtsentwicklung bei Bedarf mit deiner Hebamme oder ärztlichen Betreuung.'
-                    }
-                ],
-                closingText: 'Während der Schwangerschaft steht üblicherweise eine gute Versorgung statt einer gezielten Gewichtsabnahme im Vordergrund.',
+                title: 'Dein Bedarf verändert sich. Dein Fokus auch.',
+                intro: 'In der Schwangerschaft geht es nicht um ein Kaloriendefizit, sondern darum, dich und dein Baby zuverlässig zu versorgen.',
+                notice: 'NOURA berechnet deshalb keine Abnehmkalorienzahl.',
+                emphasizedNoticeText: ['keine Abnehmkalorienzahl'],
+                sectionTitle: '',
+                items: [],
+                closingText: '',
+                cta: {
+                    eyebrow: '',
+                    title: '',
+                    text: '',
+                    label: 'Ernährung persönlich besprechen'
+                },
+                accordion: {
+                    label: 'Was jetzt wichtig ist',
+                    items: [
+                        'Plane nährstoffreiche und regelmäßige Mahlzeiten.',
+                        'Beobachte deine Gewichtsentwicklung gemeinsam mit deiner Hebamme oder ärztlichen Betreuung.',
+                        'Die Ernährungsbegleitung ersetzt keine medizinische Behandlung und ist kein Abnehmprogramm während der Schwangerschaft.'
+                    ]
+                },
                 backLabel: 'Zurück zur Auswahl',
                 backAction: 'selection',
                 visualVariant: 'sage'
             },
             exclusive: {
+                layout: 'core',
                 eyebrow: 'Deine Stillzeit',
                 title: 'Dein Körper versorgt gerade nicht nur dich.',
-                intro: 'Beim vollständigen Stillen kann sich dein Energiebedarf erhöhen. Wie viel zusätzliche Energie zu dir passt, ist individuell und kann sich im Verlauf der Stillzeit verändern.',
-                notice: 'Deshalb gibt dir NOURA während des vollständigen Stillens bewusst keine feste Abnehmzahl. Im Mittelpunkt stehen jetzt deine Versorgung, deine Energie und dein Stillverlauf.',
-                sectionTitle: 'Worauf du jetzt achten kannst',
-                items: [
-                    {
-                        icon: 'meal',
-                        title: 'Regelmäßig und sättigend essen',
-                        text: 'Plane verlässliche Mahlzeiten, die zu deinem Alltag passen.'
-                    },
-                    {
-                        icon: 'hydration',
-                        title: 'Gut versorgt bleiben',
-                        text: 'Achte auf ausreichend Flüssigkeit, Protein und nährstoffreiche Lebensmittel.'
-                    },
-                    {
-                        icon: 'body-signal',
-                        title: 'Deinen Verlauf beobachten',
-                        text: 'Achte auf Hunger, Energie, Wohlbefinden und deinen Stillverlauf.'
-                    }
-                ],
-                closingText: 'Du verlierst sehr schnell Gewicht, fühlst dich dauerhaft erschöpft oder bist unsicher? Dann hol dir Unterstützung bei deiner Hebamme, ärztlichen Betreuung oder einer qualifizierten Ernährungsfachkraft.',
-                emphasizedClosingText: ['sehr schnell Gewicht', 'dauerhaft erschöpft'],
+                intro: 'Beim vollständigen Stillen kann dein Energiebedarf erhöht sein. Wie viel du persönlich brauchst, hängt von deinem Alltag, deiner Erholung und deinem Stillverlauf ab.',
+                notice: 'NOURA zeigt dir deshalb keine pauschale Abnehmkalorienzahl.',
+                emphasizedNoticeText: ['keine pauschale Abnehmkalorienzahl'],
+                sectionTitle: '',
+                items: [],
+                closingText: '',
+                cta: {
+                    eyebrow: '',
+                    title: '',
+                    text: '',
+                    label: 'Stillzeit persönlich besprechen',
+                },
+                accordion: {
+                    label: 'Was jetzt wichtig ist',
+                    items: [
+                        'Plane regelmäßige, sättigende und nährstoffreiche Mahlzeiten.',
+                        'Beobachte Hunger, Energie, Wohlbefinden und Stillverlauf.',
+                        'Bei Stillproblemen oder gesundheitlichen Beschwerden bitte zusätzlich eine Hebamme oder ärztliche Betreuung einbeziehen.'
+                    ]
+                },
                 backLabel: 'Zurück zur Auswahl',
                 backAction: 'selection',
                 visualVariant: 'sage'
             },
             partial: {
+                layout: 'core',
                 eyebrow: 'Deine Stillzeit',
-                title: 'Beim Teilstillen ist dein Bedarf besonders individuell.',
-                intro: 'Wie viel zusätzliche Energie du brauchst, hängt unter anderem davon ab, wie häufig und in welchem Umfang du stillst. Deshalb gibt dir NOURA hier bewusst keine feste Abnehmzahl.',
-                sectionTitle: 'Worauf du jetzt achten kannst',
-                items: [
-                    {
-                        icon: 'meal',
-                        title: 'Regelmäßig essen',
-                        text: 'Plane sättigende Mahlzeiten, die zu deinem Alltag passen.'
-                    },
-                    {
-                        icon: 'body-signal',
-                        title: 'Deine Signale beobachten',
-                        text: 'Achte auf Hunger, Energie, Wohlbefinden und deinen Stillverlauf.'
-                    },
-                    {
-                        icon: 'adjust',
-                        title: 'Flexibel reagieren',
-                        text: 'Passe deine Ernährung nicht nach einzelnen Tagen, sondern anhand deiner Entwicklung an.'
-                    }
-                ],
-                closingText: 'Wenn du gezielt abnehmen möchtest oder unsicher bist, kann eine persönliche Ernährungsberatung dir helfen, einen passenden Startpunkt zu finden.',
+                title: 'Teilstillen ist individuell.',
+                intro: 'Wie viel zusätzliche Energie du brauchst, hängt davon ab, wie häufig du stillst, wie dein Alltag aussieht und wie sich dein Stillverlauf entwickelt.',
+                notice: 'NOURA zeigt dir deshalb keine pauschale Abnehmkalorienzahl.',
+                emphasizedNoticeText: ['keine pauschale Abnehmkalorienzahl'],
+                sectionTitle: '',
+                items: [],
+                closingText: '',
+                cta: {
+                    eyebrow: '',
+                    title: '',
+                    text: '',
+                    label: 'Stillzeit persönlich besprechen',
+                },
+                accordion: {
+                    label: 'Was jetzt wichtig ist',
+                    items: [
+                        'Vermeide starke Einschränkungen und achte auf eine ausreichende Versorgung.',
+                        'Beobachte Hunger, Energie und Veränderungen deines Stillverlaufs.',
+                        'Bei Stillproblemen oder gesundheitlichen Beschwerden bitte zusätzlich eine Hebamme oder ärztliche Betreuung einbeziehen.'
+                    ]
+                },
                 backLabel: 'Zurück zur Auswahl',
                 backAction: 'selection',
                 visualVariant: 'sage'
             },
             earlyPostpartum: {
+                layout: 'core',
                 eyebrow: 'Deine Erholung',
                 title: 'Dein Körper darf gerade regenerieren.',
-                intro: 'In den ersten Wochen nach der Geburt können Wundheilung, Rückbildung und Flüssigkeitsverschiebungen deinen Körper und dein Gewicht beeinflussen. Deshalb gibt dir NOURA aktuell noch keine Abnehmzahl.',
-                sectionTitle: 'Was jetzt wichtiger ist',
-                items: [
-                    {
-                        icon: 'meal',
-                        title: 'Regelmäßig essen',
-                        text: 'Verlässliche Mahlzeiten unterstützen dich im oft unruhigen Alltag.'
-                    },
-                    {
-                        icon: 'recovery',
-                        title: 'Regeneration unterstützen',
-                        text: 'Plane Protein, nährstoffreiche Lebensmittel und ausreichend Flüssigkeit ein.'
-                    },
-                    {
-                        icon: 'scale-wave',
-                        title: 'Gewicht noch nicht überbewerten',
-                        text: 'Flüssigkeit und körperliche Veränderungen können die Waage vorübergehend merklich beeinflussen.'
-                    }
-                ],
-                closingText: 'Wenn du dich später ausreichend erholt fühlst, kannst du NOURA erneut nutzen. Nach einem Kaiserschnitt, bei Komplikationen oder Beschwerden besprich den passenden Zeitpunkt bitte mit deiner ärztlichen Betreuung oder Hebamme.',
-                emphasizedClosingText: ['Kaiserschnitt', 'Komplikationen oder Beschwerden'],
+                intro: 'In den ersten Wochen nach der Geburt können Wundheilung, Rückbildung und Flüssigkeitsverschiebungen deinen Körper und dein Gewicht beeinflussen.',
+                notice: 'NOURA gibt dir deshalb aktuell keine Abnehmzahl.',
+                emphasizedNoticeText: ['keine Abnehmzahl'],
+                sectionTitle: '',
+                items: [],
+                closingText: '',
+                accordion: {
+                    label: 'Was jetzt wichtig ist',
+                    items: [
+                        'Regelmäßige Mahlzeiten, Protein, nährstoffreiche Lebensmittel und ausreichend Flüssigkeit können deine Regeneration unterstützen.',
+                        'Flüssigkeit und körperliche Veränderungen können die Waage vorübergehend merklich beeinflussen.',
+                        'Wenn du dich später ausreichend erholt fühlst, kannst du NOURA erneut nutzen. Nach einem Kaiserschnitt, bei Komplikationen oder Beschwerden besprich den passenden Zeitpunkt bitte mit deiner ärztlichen Betreuung oder Hebamme.'
+                    ]
+                },
                 backLabel: 'Zurück zur Auswahl',
                 backAction: 'selection',
                 visualVariant: 'terracotta'
@@ -832,22 +910,14 @@
             guidanceReturnTarget = config.backAction;
             safetyGateGuidance.dataset.guidanceRenderer = 'renderGuidanceView';
             safetyGateGuidance.dataset.visualVariant = config.visualVariant;
+            safetyGateGuidance.dataset.layout = config.layout || 'detailed';
             setText('safety-gate-guidance-eyebrow', config.eyebrow);
             setText('safety-gate-guidance-title', config.title);
             setText('safety-gate-guidance-copy', config.intro);
 
             const notice = document.getElementById('safety-gate-guidance-notice');
             notice.hidden = !config.notice;
-            if (config.notice) {
-                const icon = document.createElement('span');
-                icon.className = 'guidance-view__notice-icon';
-                icon.innerHTML = GUIDANCE_ICONS.guidance;
-                const copy = document.createElement('span');
-                copy.textContent = config.notice;
-                notice.replaceChildren(icon, copy);
-            } else {
-                notice.replaceChildren();
-            }
+            appendTextWithEmphasis(notice, config.notice || '', config.emphasizedNoticeText);
 
             const sectionTitle = document.getElementById('safety-gate-guidance-section-title');
             sectionTitle.hidden = !config.sectionTitle;
@@ -870,13 +940,53 @@
                 const text = document.createElement('span');
                 text.className = 'guidance-item__text';
                 text.textContent = itemConfig.text;
-                content.append(title, text);
+                content.append(title);
+                if (itemConfig.text) content.append(text);
                 item.append(icon, content);
                 return item;
             }));
 
             const closing = document.getElementById('safety-gate-guidance-conclusion');
             appendTextWithEmphasis(closing, config.closingText, config.emphasizedClosingText);
+
+            const cta = document.getElementById('safety-gate-guidance-cta');
+            const ctaEyebrow = document.getElementById('safety-gate-guidance-cta-eyebrow');
+            const ctaTitle = document.getElementById('safety-gate-guidance-cta-title');
+            const ctaCopy = document.getElementById('safety-gate-guidance-cta-copy');
+            cta.hidden = !config.cta;
+            if (config.cta) {
+                ctaEyebrow.hidden = !config.cta.eyebrow;
+                ctaTitle.hidden = !config.cta.title;
+                ctaCopy.hidden = !config.cta.text;
+                setText('safety-gate-guidance-cta-eyebrow', config.cta.eyebrow || '');
+                setText('safety-gate-guidance-cta-title', config.cta.title);
+                setText('safety-gate-guidance-cta-copy', config.cta.text || '');
+                setText('safety-gate-guidance-cta-label', config.cta.label);
+                document.getElementById('safety-gate-guidance-cta-button').href = COACHING_URL;
+            } else {
+                ctaEyebrow.hidden = true;
+                ctaTitle.hidden = true;
+                ctaCopy.hidden = true;
+                setText('safety-gate-guidance-cta-eyebrow', '');
+                setText('safety-gate-guidance-cta-title', '');
+                setText('safety-gate-guidance-cta-copy', '');
+                setText('safety-gate-guidance-cta-label', '');
+                document.getElementById('safety-gate-guidance-cta-button').removeAttribute('href');
+            }
+
+            const accordion = document.getElementById('safety-gate-guidance-accordion');
+            const accordionToggle = document.getElementById('safety-gate-guidance-accordion-toggle');
+            const accordionContent = document.getElementById('safety-gate-guidance-accordion-content');
+            const accordionItems = document.getElementById('safety-gate-guidance-accordion-items');
+            accordion.hidden = !config.accordion;
+            accordionToggle.setAttribute('aria-expanded', 'false');
+            accordionContent.hidden = true;
+            setText('safety-gate-guidance-accordion-label', config.accordion?.label || '');
+            accordionItems.replaceChildren(...(config.accordion?.items || []).map(copy => {
+                const item = document.createElement('li');
+                item.textContent = copy;
+                return item;
+            }));
 
             const back = document.getElementById('safety-gate-change');
             back.className = 'button-secondary-back';
@@ -887,26 +997,35 @@
             back.firstElementChild.setAttribute('aria-hidden', 'true');
         }
 
-        function renderGateGuidance(type, returnTarget = 'selection') {
+        document.getElementById('safety-gate-guidance-accordion-toggle').addEventListener('click', event => {
+            const toggle = event.currentTarget;
+            const content = document.getElementById(toggle.getAttribute('aria-controls'));
+            const expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', String(!expanded));
+            content.hidden = expanded;
+        });
+
+        function renderGateGuidance(type, returnTarget = 'selection', animateTransition = false) {
             const config = GUIDANCE_VIEWS[type] || { ...UNDER_18_GUIDANCE, backAction: returnTarget };
             steps.forEach(step => { step.hidden = true; });
             safetyGate.hidden = false;
             progressElement.hidden = true;
             renderGuidanceView(config);
-            showGateView(safetyGateGuidance);
+            if (animateTransition) transitionGateView(safetyGateGuidance);
+            else showGateView(safetyGateGuidance);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function openTargetSituation(selection) {
             if (selection === 'standard') {
-                enterStandardCalculator();
+                showGeneralConfirmation('selection');
                 return;
             }
             if (selection === 'postpartum') {
-                showGateView(safetyGateTiming);
+                transitionGateView(safetyGateTiming);
                 return;
             }
-            renderGateGuidance(selection);
+            renderGateGuidance(selection, 'selection', true);
         }
 
         function continuePostpartumTiming() {
@@ -918,10 +1037,10 @@
                 return;
             }
             if (timing === 'under6') {
-                renderGateGuidance('earlyPostpartum');
+                renderGateGuidance('earlyPostpartum', 'selection', true);
                 return;
             }
-            showGateView(safetyGateReadiness);
+            transitionGateView(safetyGateReadiness);
         }
 
         function clearErrors() {
@@ -944,7 +1063,7 @@
                 2: ['dailyActivity'],
                 3: [],
                 4: ['trainingSessions'],
-                5: ['obstacle', 'generalConfirmation']
+                5: ['obstacle']
             };
             if (currentStep === 3) {
                 requiredByStep[3].push(data.exactSteps ? 'exactSteps' : 'stepBand');
@@ -1034,7 +1153,15 @@
             });
         });
         postpartumTimingContinue.addEventListener('click', continuePostpartumTiming);
-        document.getElementById('postpartum-readiness-continue').addEventListener('click', enterStandardCalculator);
+        document.getElementById('postpartum-readiness-continue').addEventListener('click', () => showGeneralConfirmation('readiness'));
+        generalConfirmationContinue.addEventListener('click', () => {
+            if (selectedValue('generalConfirmation') !== 'yes') {
+                document.querySelector('[data-error="generalConfirmation"]').textContent = 'Bitte bestätige den Hinweis, um fortzufahren.';
+                form.elements.generalConfirmation.focus();
+                return;
+            }
+            enterStandardCalculator();
+        });
         safetyGate.addEventListener('change', event => {
             if (event.target.name === 'postpartumTiming') {
                 postpartumTimingError.textContent = '';
@@ -1048,6 +1175,9 @@
         });
         document.getElementById('postpartum-timing-back').addEventListener('click', () => showGateView(safetyGateQuestion));
         document.getElementById('postpartum-readiness-back').addEventListener('click', () => showGateView(safetyGateTiming));
+        document.getElementById('general-confirmation-back').addEventListener('click', () => {
+            showGateView(confirmationReturnTarget === 'readiness' ? safetyGateReadiness : safetyGateQuestion);
+        });
         document.getElementById('safety-gate-change').addEventListener('click', () => {
             if (guidanceReturnTarget === 'age') {
                 safetyGate.hidden = true;
@@ -1091,7 +1221,7 @@
             if (showsEnergy) {
                 setText('resting-result', formatKcal(result.resting));
                 setText('maintenance-result', formatRange(result.maintenance));
-                setText('maintenance-label', breastfeedingMode ? 'Grundbedarf im Alltag' : 'Gewicht halten');
+                setText('maintenance-label', breastfeedingMode ? 'Grundbedarf im Alltag' : 'Erhaltung');
             }
 
             if (guidanceMode) {
@@ -1198,6 +1328,7 @@
             if (!safetyGate.hidden) {
                 if (!safetyGateTiming.hidden) document.getElementById('postpartum-timing-continue').click();
                 else if (!safetyGateReadiness.hidden) document.getElementById('postpartum-readiness-continue').click();
+                else if (!safetyGateConfirmation.hidden) generalConfirmationContinue.click();
                 return;
             }
             if (currentStep < steps.length - 1) {
@@ -1230,7 +1361,7 @@
             document.querySelector('.breastfeeding-basis').hidden = true;
             document.querySelector('.breastfeeding-focus').hidden = true;
             document.querySelector('.result-overview').hidden = false;
-            document.getElementById('maintenance-label').textContent = 'Gewicht halten';
+            document.getElementById('maintenance-label').textContent = 'Erhaltung';
             document.getElementById('mission-result').hidden = false;
             document.querySelector('#special-result .eyebrow').textContent = 'Deine Lebensphase';
             clearErrors();

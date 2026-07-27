@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import {
     BASIS_ACTIVITY_RANGES,
     calculateDailyTrainingRange,
@@ -63,7 +64,11 @@ assert.equal(result.mode, RESULT_MODES.STANDARD);
 assert.ok(result.resting > 1400 && result.resting < 1800);
 assert.ok(result.maintenance.low < result.maintenance.high);
 assert.ok(result.loss.low < result.loss.high);
-assert.ok(result.loss.low > result.resting, 'The moderate range stays above estimated resting expenditure');
+assert.equal(
+    result.targetCalories,
+    roundTo(((result.maintenance.low + result.maintenance.high) / 2) * 0.85, 50),
+    'The standard start value remains 15% below maintenance midpoint without a BMR cap'
+);
 assert.ok(result.protein.low < result.protein.target);
 assert.ok(result.protein.target < result.protein.high);
 assert.ok(result.fat.target >= result.targetCalories * 0.25 / 9 - 5);
@@ -368,5 +373,18 @@ const invalid = calculateOrientation({ ...baseInput, age: 17, heightCm: 0 });
 assert.equal(invalid.ok, false);
 assert.ok(invalid.errors.age);
 assert.ok(invalid.errors.heightCm);
+
+const uiSource = await readFile(new URL('./index.html', import.meta.url), 'utf8');
+const calculationSource = await readFile(new URL('./calculator.mjs', import.meta.url), 'utf8');
+for (const forbidden of [
+    /Cortisol/i,
+    /Hormonreparatur/i,
+    /Stoffwechselsch(?:aden|ädigung)/i,
+    /Reverse[- ]Diet/i,
+    /Wochenkalorienbudget/i
+]) {
+    assert(!forbidden.test(uiSource) && !forbidden.test(calculationSource), `Unzulässige Produktbotschaft gefunden: ${forbidden}`);
+}
+assert(!/targetCalories\s*=\s*Math\.max/i.test(calculationSource), 'Eine BMR-Hard-Cap ist im Berechnungskern vorhanden');
 
 console.log('NOURA calculator tests passed');
