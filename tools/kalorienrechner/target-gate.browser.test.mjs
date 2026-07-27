@@ -259,13 +259,14 @@ try {
                 headlineLines: lineCount(headline),
                 leadLines: lineCount(lead),
                 headlineSize: parseFloat(getComputedStyle(headline).fontSize),
-                ctaGap: parseFloat(getComputedStyle(actions).marginTop),
+            ctaGap: getComputedStyle(actions).marginTop,
                 ctaNearlyFull: button.getBoundingClientRect().width >= heroRect.width * 0.9,
                 heroTop: heroRect.top,
                 heroBottom: heroRect.bottom,
                 eyebrowTop: eyebrowRect.top,
-                ctaTop: buttonRect.top,
-                ctaBottom: buttonRect.bottom,
+            ctaTop: buttonRect.top,
+            ctaBottom: buttonRect.bottom,
+            leadBottom: lead.getBoundingClientRect().bottom,
                 footerTop: footerRect.top,
                 ctaFooterGap: footerRect.top - buttonRect.bottom,
                 viewportHeight: innerHeight,
@@ -301,13 +302,13 @@ try {
             assert(startComposition.footerBrand === '© 2026 NOURA ·' && startComposition.footerOneLine, `Mobiler Footer ist bei ${viewport.width}px nicht als ruhige Zeile aufgebaut`);
             assert(startComposition.leadLines <= 3, `Startseiten-Subline überschreitet bei ${viewport.width}px drei Zeilen`);
             assert(startComposition.headlineSize <= 48, `Mobile Headline ist bei ${viewport.width}px zu groß`);
-            assert(startComposition.ctaGap >= 28 && startComposition.ctaGap <= 32, `Abstand zwischen Subline und CTA ist bei ${viewport.width}px nicht kontrolliert`);
+            assert(startComposition.ctaTop - startComposition.leadBottom >= 28, `Abstand zwischen Subline und CTA ist bei ${viewport.width}px zu klein`);
             assert(startComposition.ctaNearlyFull, `CTA nutzt bei ${viewport.width}px nicht nahezu die Inhaltsbreite`);
             assert(startComposition.heroTop >= 0, `Hero wird bei ${viewport.width}px oben abgeschnitten`);
-            assert(startComposition.ctaFooterGap >= 80, `Zwischen CTA und Footer bleibt bei ${viewport.width}px nicht genügend Landschaft sichtbar`);
+            assert(startComposition.ctaFooterGap >= 80, `CTA klebt auf Mobile unmittelbar am Footer`);
             if (viewport.width === 430) {
                 assert(startComposition.eyebrowTop >= 280 && startComposition.eyebrowTop <= 310, `Eyebrow liegt bei 430px nicht im Zielbereich: ${startComposition.eyebrowTop}`);
-                assert(startComposition.ctaTop >= 600 && startComposition.ctaTop <= 650, `CTA liegt bei 430px nicht im Zielbereich: ${startComposition.ctaTop}`);
+                assert(startComposition.ctaBottom >= startComposition.viewportHeight - 220, `CTA liegt bei 430px nicht ausreichend weit unten: ${startComposition.ctaBottom}`);
             }
             if (process.env.CAPTURE_START_SCREENSHOTS === '1') {
                 await waitForCondition(

@@ -1930,6 +1930,7 @@ body {
 html {
     overflow-x: hidden;
     overflow-x: clip;
+    scroll-padding-bottom: 72px;
 }
 
 body {
@@ -1946,6 +1947,8 @@ body::after {
 .dawn-scene {
     position: fixed;
     inset: 0;
+    height: 100lvh;
+    min-height: 100svh;
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
@@ -2018,8 +2021,9 @@ body::after {
     position: relative;
     z-index: 1;
     min-height: 100dvh;
+    padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
     width: min(calc(100% - 28px), 680px);
-    padding: 22px 0 30px;
+    padding: 22px 0 calc(30px + env(safe-area-inset-bottom, 0px));
 }
 
 .brand {
@@ -2075,6 +2079,7 @@ body::after {
 
 .safety-gate {
     padding: 34px 24px;
+    padding-bottom: calc(34px + env(safe-area-inset-bottom, 0px));
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 24px;
     background: rgba(250, 246, 238, 0.94);
@@ -3564,7 +3569,14 @@ body:has(.start-hero:not([hidden])) .brand-home {
 
     body:has(.start-hero:not([hidden])) .start-hero.card {
         min-height: calc(100svh - 164px);
-        padding-bottom: clamp(188px, 21.2svh, 198px);
+        padding-bottom: 40px;
+        transform: translateY(clamp(-110px, -12svh, -90px));
+    }
+
+    body:has(.start-hero:not([hidden])) .start-hero__content {
+        display: flex;
+        min-height: calc(100% - 88px);
+        flex-direction: column;
     }
 
     body:has(.start-hero:not([hidden])) .start-hero__topic {
@@ -3620,7 +3632,15 @@ body:has(.start-hero:not([hidden])) .brand-home {
     }
 
     body:has(.start-hero:not([hidden])) .start-hero .actions {
-        margin-top: 32px;
+        margin-top: auto;
+        margin-bottom: 48px;
+        padding-top: 32px;
+        animation: start-sequence-mobile 680ms cubic-bezier(.22, 1, .36, 1) 220ms both;
+    }
+
+    @keyframes start-sequence-mobile {
+        from { opacity: 0; transform: translateY(60px); }
+        to { opacity: 1; transform: translateY(52px); }
     }
 
     body:has(.start-hero:not([hidden])) .legal-links {
