@@ -1,0 +1,11 @@
+{
+  "name": "noura-kalorienrechner",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:architecture && npm run test:engine && npm run test:browser",
+    "test:architecture": "node style-architecture.test.mjs",
+    "test:engine": "node calculator.test.mjs && node engine.audit.test.mjs && node weekly-planner.test.mjs",
+    "test:browser": "node target-gate.browser.test.mjs"
+  }
+}

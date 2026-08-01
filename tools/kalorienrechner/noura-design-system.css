@@ -1,0 +1,1542 @@
+/*
+ * NOURA Design System
+ * Global visual contract for current and future product modules.
+ * Feature styles own layout; this layer owns color, type, spacing and depth.
+ */
+
+:root {
+    /* Color */
+    --noura-color-canvas: #f3f0eb;
+    --noura-color-canvas-warm: #f8f5f0;
+    --noura-color-surface: #fcfaf7;
+    --noura-color-surface-raised: #ffffff;
+    --noura-color-surface-subtle: #f3efe9;
+    --noura-color-surface-interactive: #fdfcf9;
+    --noura-color-text: #1f211f;
+    --noura-color-text-muted: #555a56;
+    --noura-color-text-soft: #747872;
+    --noura-color-text-inverse: #fffdf8;
+    --noura-color-accent: #925126;
+    --noura-color-accent-hover: #783f1e;
+    --noura-color-accent-soft: #f1e4d8;
+    --noura-color-positive: #668f57;
+    --noura-color-positive-soft: #e5edde;
+    --noura-color-caution: #ddaa3d;
+    --noura-color-caution-soft: #fbefd2;
+    --noura-color-border: rgba(31, 33, 31, 0.12);
+    --noura-color-border-strong: rgba(31, 33, 31, 0.22);
+    --noura-color-focus: #925126;
+    --noura-color-error: #a4473a;
+    --noura-color-error-soft: #f6e5e1;
+
+    /* Type */
+    --noura-font-display: "NOURA Inter", "Inter", "Manrope", Arial, sans-serif;
+    --noura-font-body: "NOURA Inter", "Inter", Arial, sans-serif;
+    --noura-font-size-xs: 0.75rem;
+    --noura-font-size-sm: 0.875rem;
+    --noura-font-size-md: 1rem;
+    --noura-font-size-lg: 1.125rem;
+    --noura-font-size-xl: clamp(1.375rem, 3vw, 1.625rem);
+    --noura-font-size-2xl: clamp(1.875rem, 5vw, 2.5rem);
+    --noura-font-size-hero: clamp(2.75rem, 8vw, 4.5rem);
+    --noura-line-tight: 1.12;
+    --noura-line-body: 1.6;
+
+    /* Spacing: the only layout increments for shared components */
+    --noura-space-0-5: 0.25rem; /* 4 */
+    --noura-space-1: 0.5rem;  /* 8 */
+    --noura-space-1-5: 0.75rem; /* 12 */
+    --noura-space-2: 1rem;    /* 16 */
+    --noura-space-3: 1.5rem;  /* 24 */
+    --noura-space-4: 2rem;    /* 32 */
+    --noura-space-5: 3rem;    /* 48 */
+    --noura-space-6: 4rem;    /* 64 */
+    --noura-space-8: 6rem;    /* 96 */
+
+    /* Shape and depth */
+    --noura-radius-xs: 0.375rem;
+    --noura-radius-sm: 0.625rem;
+    --noura-radius-control: 0.875rem;
+    --noura-radius-card: 1.25rem;
+    --noura-radius-section: 1.75rem;
+    --noura-radius-pill: 999px;
+    --noura-shadow-card: 0 20px 52px -34px rgba(22, 28, 25, 0.42);
+    --noura-shadow-card-hover: 0 24px 60px -34px rgba(22, 28, 25, 0.52);
+    --noura-shadow-nested: 0 10px 28px -24px rgba(22, 28, 25, 0.34);
+    --noura-shadow-floating: 0 24px 64px -32px rgba(22, 28, 25, 0.54);
+    --noura-shadow-control: 0 1px 2px rgba(22, 28, 25, 0.05);
+    --noura-shadow-focus: 0 0 0 3px rgba(157, 90, 50, 0.24);
+    --noura-duration-press: 120ms;
+    --noura-duration-control: 180ms;
+    --noura-duration-panel: 260ms;
+    --noura-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --noura-surface-blur: 20px;
+    --noura-control-height: 3.25rem;
+    --noura-touch-target: 3.5rem;
+    --noura-touch-target-large: 4rem;
+    --noura-content-width: 45rem;
+    --noura-content-width-wide: 58rem;
+    --noura-content-width-app: 90rem;
+    --noura-measure-reading: 38rem;
+    --noura-measure-compact: 28rem;
+
+    /* Backwards-compatible aliases used by existing modules */
+    --charcoal: var(--noura-color-text);
+    --muted: var(--noura-color-text-muted);
+    --terracotta: var(--noura-color-accent);
+    --gold: var(--noura-color-accent);
+    --gold-hover: var(--noura-color-accent-hover);
+    --line: var(--noura-color-border);
+}
+
+html {
+    color-scheme: light;
+    background: var(--noura-color-canvas);
+}
+
+body {
+    background: linear-gradient(155deg, var(--noura-color-canvas-warm), var(--noura-color-canvas));
+    color: var(--noura-color-text);
+    font-family: var(--noura-font-body);
+    font-size: var(--noura-font-size-md);
+    line-height: var(--noura-line-body);
+}
+
+/* Product migration layer: shared rhythm and interaction states. */
+button,
+input,
+select,
+textarea {
+    font-family: var(--noura-font-body);
+}
+
+button,
+a,
+input,
+select,
+textarea,
+.card,
+.form-choice,
+.direct-choice,
+.situation-option {
+    transition:
+        color var(--noura-duration-control) var(--noura-ease-standard),
+        background-color var(--noura-duration-control) var(--noura-ease-standard),
+        border-color var(--noura-duration-control) var(--noura-ease-standard),
+        box-shadow var(--noura-duration-control) var(--noura-ease-standard),
+        transform var(--noura-duration-press) var(--noura-ease-standard);
+}
+
+.step:not(.start-hero),
+.safety-gate,
+.result-overview,
+.weekly-planner__step {
+    background: color-mix(in srgb, var(--noura-color-surface) 96%, transparent);
+    border-color: var(--noura-color-border);
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+p,
+legend,
+label {
+    color: var(--noura-color-text);
+}
+
+h1,
+h2,
+h3 {
+    text-wrap: balance;
+}
+
+h1 + p,
+h2 + p,
+h3 + p,
+.guidance-view__intro,
+.weekly-planner__principle {
+    max-width: var(--noura-measure-reading);
+}
+
+h1 {
+    font-family: var(--noura-font-display);
+    font-size: var(--noura-font-size-2xl);
+    font-weight: 500;
+    line-height: var(--noura-line-tight);
+    letter-spacing: -0.025em;
+}
+
+h2 {
+    font-family: var(--noura-font-display);
+    font-size: var(--noura-font-size-xl);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+}
+
+h3 {
+    font-size: var(--noura-font-size-lg);
+    font-weight: 650;
+    line-height: 1.3;
+}
+
+p,
+.lead,
+.fine-print,
+.choice small,
+.direct-choice small,
+.situation-option small {
+    color: var(--noura-color-text-muted);
+}
+
+.lead {
+    font-size: var(--noura-font-size-md);
+    line-height: var(--noura-line-body);
+}
+
+.fine-print,
+.metric-note,
+.calculation-note {
+    color: var(--noura-color-text-soft);
+    font-size: var(--noura-font-size-xs);
+    line-height: 1.55;
+}
+
+.eyebrow,
+.weekly-planner__step-label {
+    color: var(--noura-color-accent);
+    font-size: var(--noura-font-size-xs);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+/* Atmospheric imagery is always subordinate to content. */
+.dawn-image {
+    filter: blur(10px) saturate(72%) brightness(78%);
+}
+
+.dawn-scene::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: linear-gradient(155deg, rgba(245, 242, 236, 0.7), rgba(238, 240, 236, 0.58));
+    pointer-events: none;
+}
+
+.dawn-mist-layer {
+    opacity: 0.1;
+}
+
+.dawn-fog-layer {
+    opacity: 0.22;
+}
+
+body:has(.start-hero:not([hidden])) .dawn-scene::before {
+    background:
+        linear-gradient(90deg, rgba(5, 12, 9, 0.58) 0%, rgba(5, 12, 9, 0.48) 56%, rgba(5, 12, 9, 0.4) 100%),
+        rgba(0, 0, 0, 0.46);
+}
+
+body:has(.start-hero:not([hidden])) .dawn-image {
+    filter: blur(10px) saturate(78%) brightness(82%);
+}
+
+body:has(.start-hero:not([hidden])) .dawn-mist-layer {
+    opacity: 0.08;
+}
+
+body:has(.start-hero:not([hidden])) .dawn-fog-layer {
+    opacity: 0.18;
+}
+
+body:has(.start-hero:not([hidden])) .brand-wordmark {
+    color: rgba(255, 253, 248, 0.92);
+    filter: drop-shadow(0 1px 10px rgba(0, 0, 0, 0.42));
+}
+
+.start-hero h1 {
+    color: var(--noura-color-text-inverse);
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.72);
+}
+
+.start-hero .lead,
+.start-hero__topic,
+.start-hero__microcopy,
+.start-hero__notes,
+body:has(.start-hero:not([hidden])) .brand-mark,
+body:has(.start-hero:not([hidden])) .brand-signature small,
+body:has(.start-hero:not([hidden])) .legal-links a {
+    color: var(--noura-color-text-inverse);
+    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.78);
+}
+
+.start-hero .lead {
+    font-size: var(--noura-font-size-lg);
+    font-weight: 500;
+}
+
+/* Shared layout rhythm */
+.page-shell {
+    gap: 0;
+    width: min(calc(100% - var(--noura-space-2)), var(--noura-content-width));
+    padding-top: var(--noura-space-3);
+    padding-bottom: var(--noura-space-5);
+}
+
+.progress {
+    margin-bottom: var(--noura-space-2);
+}
+
+.fields,
+.choice-list,
+.direct-choice-list,
+.situation-options {
+    gap: var(--noura-space-1);
+}
+
+.fields,
+.weekly-planner__selects {
+    margin-top: var(--noura-space-3);
+}
+
+fieldset,
+.actions {
+    margin-top: var(--noura-space-3);
+}
+
+.actions {
+    gap: var(--noura-space-2);
+}
+
+.results,
+#standard-results,
+.weekly-plan-days {
+    gap: var(--noura-space-2);
+}
+
+/* Surface hierarchy: panel -> nested information -> interactive control. */
+.card:not(.start-hero),
+.result-card,
+.weekly-planner__step {
+    border: 1px solid var(--noura-color-border);
+    border-radius: var(--noura-radius-card);
+    background: color-mix(in srgb, var(--noura-color-surface) 95%, transparent);
+    box-shadow: var(--noura-shadow-card);
+    backdrop-filter: blur(var(--noura-surface-blur)) saturate(106%);
+    -webkit-backdrop-filter: blur(var(--noura-surface-blur)) saturate(106%);
+}
+
+.card .result-card,
+.weekly-planner__budget > div,
+.weekly-plan-day,
+.protein-anchor-grid > div,
+.macro {
+    border: 1px solid var(--noura-color-border);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-surface-raised);
+    box-shadow: var(--noura-shadow-nested);
+}
+
+.card:not(.start-hero),
+.result-card,
+.weekly-planner__step {
+    padding: clamp(var(--noura-space-3), 5vw, var(--noura-space-4));
+}
+
+.result-card::before,
+.card:not(.start-hero)::before {
+    border-radius: inherit;
+}
+
+.results,
+.weekly-planner {
+    width: min(100%, var(--noura-content-width-wide));
+    margin-inline: auto;
+}
+
+.weekly-planner__header,
+.weekly-planner__step {
+    isolation: isolate;
+}
+
+.weekly-planner__header {
+    display: grid;
+    gap: var(--noura-space-1);
+}
+
+.weekly-planner__header > *,
+.weekly-planner__step > * {
+    min-width: 0;
+}
+
+.weekly-planner__step > h2,
+.card:not(.start-hero) > h2,
+.result-card > h2,
+.result-card > h3 {
+    max-width: var(--noura-measure-reading);
+}
+
+.weekly-planner__budget {
+    align-items: stretch;
+}
+
+.weekly-planner__budget > div {
+    display: grid;
+    align-content: start;
+}
+
+.weekly-planner__budget strong,
+.metric-value,
+.primary-metric strong {
+    font-variant-numeric: tabular-nums;
+}
+
+.result-card.cta {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: linear-gradient(145deg, #2b312e, #202522);
+    box-shadow: var(--noura-shadow-card);
+}
+
+.result-card.cta h3,
+.result-card.cta p {
+    color: var(--noura-color-text-inverse);
+}
+
+/* Inputs and selectable rows share shape, border and focus behavior. */
+.body-data-step__input input,
+.number-field,
+.weekly-planner__selects select,
+.form-choice,
+.direct-choice,
+.situation-option {
+    border: 1px solid var(--noura-color-border);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-surface-interactive);
+    color: var(--noura-color-text);
+    box-shadow: var(--noura-shadow-control);
+}
+
+.body-data-step__input input,
+.number-field,
+.weekly-planner__selects select {
+    min-height: var(--noura-control-height);
+}
+
+.form-choice {
+    min-height: var(--noura-touch-target);
+    padding: var(--noura-space-2);
+}
+
+.direct-choice,
+.situation-option {
+    min-height: var(--noura-touch-target-large);
+    padding: var(--noura-space-2);
+}
+
+.form-choice:hover,
+.direct-choice:hover,
+.situation-option:hover {
+    border-color: var(--noura-color-border-strong);
+    background: var(--noura-color-surface-subtle);
+}
+
+.form-choice:has(input:checked) {
+    border-color: var(--noura-color-border-strong);
+    background: var(--noura-color-surface-subtle);
+}
+
+.body-data-step__input input:focus,
+.number-field:focus-within,
+.weekly-planner__selects select:focus-visible,
+.form-choice:has(input:focus-visible),
+.direct-choice:focus-visible,
+.situation-option:focus-visible {
+    border-color: var(--noura-color-focus);
+    outline: none;
+    box-shadow: var(--noura-shadow-focus);
+}
+
+input::placeholder {
+    color: #6b746f;
+    opacity: 1;
+}
+
+.field-error {
+    color: var(--noura-color-error);
+}
+
+/* Buttons */
+.primary,
+.secondary,
+.button-secondary-back,
+.text-button,
+.guidance-view__cta-button {
+    min-height: var(--noura-control-height);
+    border-radius: var(--noura-radius-control);
+    font-family: var(--noura-font-body);
+    font-weight: 700;
+}
+
+.primary,
+.secondary,
+.guidance-view__cta-button {
+    padding: 0 var(--noura-space-3);
+}
+
+.primary {
+    background: var(--noura-color-accent);
+    color: var(--noura-color-text-inverse);
+    box-shadow: 0 12px 24px -14px rgba(117, 64, 36, 0.72);
+}
+
+.primary:hover {
+    background: var(--noura-color-accent-hover);
+}
+
+.secondary {
+    background: var(--noura-color-text);
+    color: var(--noura-color-text-inverse);
+}
+
+.button-secondary-back,
+.text-button {
+    color: var(--noura-color-text-muted);
+}
+
+.actions > .primary {
+    justify-content: center;
+}
+
+.primary:focus-visible,
+.secondary:focus-visible,
+.button-secondary-back:focus-visible,
+.text-button:focus-visible,
+.guidance-view__cta-button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+    outline: 3px solid var(--noura-color-focus);
+    outline-offset: 3px;
+}
+
+/* Secondary information stays legible while remaining subordinate. */
+.progress-copy,
+.weekly-planner__budget span,
+.weekly-planner__principle,
+.weekly-planner__storage-note,
+.weekly-plan-day dt,
+.legal-links a {
+    color: var(--noura-color-text-muted);
+}
+
+.weekly-plan-status,
+.activity-chip {
+    font-weight: 700;
+}
+
+.legal-links,
+.legal-links__items,
+.legal-links a {
+    font-size: var(--noura-font-size-xs);
+    line-height: 1.35;
+}
+
+@media (max-width: 899px) {
+    body:has(.start-hero:not([hidden])) .start-hero.card {
+        transform: translateY(calc(clamp(-125px, -14svh, -105px) - var(--noura-space-1)));
+    }
+
+    body:has(.start-hero:not([hidden])) .start-hero__content::before {
+        background: radial-gradient(
+            ellipse at 35% 52%,
+            rgba(5, 12, 9, 0.62) 0%,
+            rgba(5, 12, 9, 0.4) 52%,
+            rgba(5, 12, 9, 0) 80%
+        );
+        filter: blur(20px);
+    }
+}
+
+@media (min-width: 640px) {
+    .page-shell {
+        width: min(calc(100% - var(--noura-space-6)), var(--noura-content-width));
+        padding-top: var(--noura-space-4);
+        padding-bottom: var(--noura-space-6);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* ========================================================================== 
+   NOURA product skin
+   Final migration layer for calculator, guidance, results and weekly planner.
+   ========================================================================== */
+
+body:not(.ds-body) {
+    --noura-product-gutter: clamp(1rem, 4vw, 3rem);
+    min-width: 20rem;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.78), transparent 34rem),
+        linear-gradient(155deg, var(--noura-color-canvas-warm), var(--noura-color-canvas));
+}
+
+body:not(.ds-body) .page-shell {
+    width: min(calc(100% - (2 * var(--noura-product-gutter))), var(--noura-content-width));
+    padding-top: clamp(1rem, 3vw, 2rem);
+    padding-bottom: max(var(--noura-space-5), env(safe-area-inset-bottom));
+}
+
+body:not(.ds-body):has(.results:not([hidden])),
+body:not(.ds-body):has(.weekly-planner:not([hidden])) {
+    background:
+        radial-gradient(circle at 88% 6%, rgba(146, 81, 38, 0.07), transparent 28rem),
+        linear-gradient(155deg, var(--noura-color-canvas-warm), var(--noura-color-canvas));
+}
+
+body:not(.ds-body):has(.results:not([hidden])) .page-shell,
+body:not(.ds-body):has(.weekly-planner:not([hidden])) .page-shell {
+    width: min(calc(100% - (2 * var(--noura-product-gutter))), var(--noura-content-width-wide));
+}
+
+body:not(.ds-body) .brand {
+    min-height: 3rem;
+    margin-bottom: var(--noura-space-3);
+}
+
+body:not(.ds-body) .brand-wordmark {
+    color: var(--noura-color-accent);
+}
+
+body:not(.ds-body) .progress {
+    display: grid;
+    grid-template-columns: auto minmax(5rem, 1fr);
+    gap: var(--noura-space-2);
+    align-items: center;
+    margin: 0 0 var(--noura-space-2);
+}
+
+body:not(.ds-body) .progress-copy {
+    color: var(--noura-color-text-muted);
+    font-size: var(--noura-font-size-xs);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-shadow: none;
+}
+
+body:not(.ds-body) .progress-track {
+    height: 0.375rem;
+    overflow: hidden;
+    border-radius: var(--noura-radius-pill);
+    background: color-mix(in srgb, var(--noura-color-text) 9%, transparent);
+}
+
+body:not(.ds-body) .progress-track > span {
+    border-radius: inherit;
+    background: var(--noura-color-accent);
+}
+
+body:not(.ds-body) .step:not(.start-hero),
+body:not(.ds-body) .safety-gate,
+body:not(.ds-body) .result-card,
+body:not(.ds-body) .result-overview,
+body:not(.ds-body) .weekly-planner__step {
+    border: 1px solid var(--noura-color-border);
+    border-radius: var(--noura-radius-card);
+    background: color-mix(in srgb, var(--noura-color-surface) 97%, transparent);
+    box-shadow: var(--noura-shadow-card);
+    backdrop-filter: blur(var(--noura-surface-blur)) saturate(104%);
+    -webkit-backdrop-filter: blur(var(--noura-surface-blur)) saturate(104%);
+}
+
+body:not(.ds-body) .step:not(.start-hero),
+body:not(.ds-body) .safety-gate,
+body:not(.ds-body) .weekly-planner__step {
+    padding: clamp(var(--noura-space-3), 5vw, var(--noura-space-4));
+}
+
+body:not(.ds-body) .step:not(.start-hero) > h2,
+body:not(.ds-body) .safety-gate h2,
+body:not(.ds-body) .weekly-planner__step h2 {
+    max-width: 34rem;
+    margin: var(--noura-space-1) 0 0;
+    color: var(--noura-color-text);
+    font-size: clamp(1.75rem, 5vw, 2.35rem);
+    font-weight: 520;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+}
+
+body:not(.ds-body) .step:not(.start-hero) > h2 + p,
+body:not(.ds-body) .safety-gate h2 + p,
+body:not(.ds-body) .weekly-planner__step h2 + p {
+    margin-top: var(--noura-space-1);
+    color: var(--noura-color-text-muted);
+    line-height: 1.6;
+}
+
+body:not(.ds-body) .eyebrow,
+body:not(.ds-body) .weekly-planner__step-label {
+    display: block;
+    margin: 0;
+    color: var(--noura-color-accent);
+    font-size: var(--noura-font-size-xs);
+    font-weight: 750;
+    letter-spacing: 0.1em;
+}
+
+body:not(.ds-body) .fields,
+body:not(.ds-body) .choice-list,
+body:not(.ds-body) .direct-choice-list,
+body:not(.ds-body) .situation-options,
+body:not(.ds-body) .weekly-planner__selects {
+    gap: var(--noura-space-1);
+}
+
+body:not(.ds-body) .body-data-step__privacy,
+body:not(.ds-body) .direct-choice-note,
+body:not(.ds-body) .fine-print,
+body:not(.ds-body) .weekly-planner__principle,
+body:not(.ds-body) .weekly-planner__storage-note {
+    color: var(--noura-color-text-soft);
+}
+
+body:not(.ds-body) .body-data-step__privacy-icon,
+body:not(.ds-body) .situation-option__icon {
+    color: var(--noura-color-positive);
+    background: var(--noura-color-positive-soft);
+}
+
+body:not(.ds-body) .body-data-step__input,
+body:not(.ds-body) .number-field,
+body:not(.ds-body) .weekly-planner__selects select {
+    min-height: var(--noura-control-height);
+    border: 1px solid var(--noura-color-border);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-surface-raised);
+    box-shadow: var(--noura-shadow-control);
+}
+
+body:not(.ds-body) .body-data-step__input:focus-within,
+body:not(.ds-body) .number-field:focus-within,
+body:not(.ds-body) .weekly-planner__selects select:focus-visible {
+    border-color: var(--noura-color-focus);
+    outline: none;
+    background: var(--noura-color-surface-raised);
+    box-shadow: var(--noura-shadow-focus);
+}
+
+body:not(.ds-body) .body-data-step__input input,
+body:not(.ds-body) .number-field input {
+    color: var(--noura-color-text);
+}
+
+body:not(.ds-body) .body-data-step__input > span,
+body:not(.ds-body) .number-field > span {
+    color: var(--noura-color-text-soft);
+}
+
+body:not(.ds-body) .situation-option,
+body:not(.ds-body) .direct-choice,
+body:not(.ds-body) .step .form-choice,
+body:not(.ds-body) .safety-gate .form-choice,
+body:not(.ds-body) .weekly-planner .form-choice {
+    min-height: var(--noura-touch-target-large);
+    border: 1px solid var(--noura-color-border);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-surface-raised);
+    color: var(--noura-color-text);
+    box-shadow: var(--noura-shadow-control);
+}
+
+body:not(.ds-body) .situation-option:hover,
+body:not(.ds-body) .direct-choice:hover,
+body:not(.ds-body) .form-choice:hover {
+    border-color: var(--noura-color-border-strong);
+    background: color-mix(in srgb, var(--noura-color-accent-soft) 28%, var(--noura-color-surface-raised));
+}
+
+body:not(.ds-body) .situation-option:active,
+body:not(.ds-body) .direct-choice:active,
+body:not(.ds-body) .form-choice:has(input:checked) {
+    border-color: var(--noura-color-accent);
+    background: color-mix(in srgb, var(--noura-color-accent-soft) 56%, var(--noura-color-surface-raised));
+}
+
+body:not(.ds-body) .situation-option:focus-visible,
+body:not(.ds-body) .direct-choice:focus-visible,
+body:not(.ds-body) .form-choice:has(input:focus-visible) {
+    border-color: var(--noura-color-focus);
+    outline: none;
+    box-shadow: var(--noura-shadow-focus);
+}
+
+body:not(.ds-body) .situation-option__content strong,
+body:not(.ds-body) .direct-choice strong,
+body:not(.ds-body) .form-choice strong {
+    color: var(--noura-color-text);
+    font-weight: 650;
+}
+
+body:not(.ds-body) .situation-option__content small,
+body:not(.ds-body) .direct-choice small,
+body:not(.ds-body) .form-choice small {
+    color: var(--noura-color-text-muted);
+}
+
+body:not(.ds-body) .situation-option__chevron,
+body:not(.ds-body) .direct-choice__chevron {
+    color: var(--noura-color-text-soft);
+}
+
+body:not(.ds-body) .form-choice__indicator {
+    border-color: var(--noura-color-border-strong);
+    background: var(--noura-color-surface-raised);
+}
+
+body:not(.ds-body) .form-choice__indicator::after {
+    background: var(--noura-color-accent);
+}
+
+body:not(.ds-body) .form-choice:has(input:checked) .form-choice__indicator {
+    border-color: var(--noura-color-accent);
+}
+
+body:not(.ds-body) .form-step__separator {
+    color: var(--noura-color-text-soft);
+}
+
+body:not(.ds-body) .form-step__separator::before,
+body:not(.ds-body) .form-step__separator::after {
+    background: var(--noura-color-border);
+}
+
+body:not(.ds-body) .primary,
+body:not(.ds-body) .secondary,
+body:not(.ds-body) .guidance-view__cta-button {
+    min-height: var(--noura-control-height);
+    border-radius: var(--noura-radius-control);
+    font-size: var(--noura-font-size-sm);
+    font-weight: 700;
+}
+
+body:not(.ds-body) .primary {
+    border: 1px solid transparent;
+    background: var(--noura-color-accent);
+    color: var(--noura-color-text-inverse);
+    box-shadow: 0 12px 26px -16px rgba(120, 63, 30, 0.8);
+}
+
+body:not(.ds-body) .primary:hover:not(:disabled) {
+    background: var(--noura-color-accent-hover);
+    transform: translateY(-1px);
+}
+
+body:not(.ds-body) .primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+body:not(.ds-body) .primary:disabled {
+    background: var(--noura-color-surface-subtle);
+    color: var(--noura-color-text-soft);
+    box-shadow: none;
+    opacity: 0.72;
+}
+
+body:not(.ds-body) .secondary {
+    border: 1px solid var(--noura-color-border);
+    background: var(--noura-color-surface-raised);
+    color: var(--noura-color-text);
+    box-shadow: var(--noura-shadow-control);
+}
+
+body:not(.ds-body) .secondary:hover {
+    border-color: var(--noura-color-border-strong);
+    background: var(--noura-color-surface-subtle);
+}
+
+body:not(.ds-body) .button-secondary-back,
+body:not(.ds-body) .text-button {
+    min-height: var(--noura-touch-target);
+    color: var(--noura-color-text-muted);
+    font-size: var(--noura-font-size-sm);
+    font-weight: 650;
+}
+
+body:not(.ds-body) .button-secondary-back:hover,
+body:not(.ds-body) .text-button:hover {
+    color: var(--noura-color-accent);
+}
+
+body:not(.ds-body) .actions {
+    gap: var(--noura-space-2);
+    margin-top: var(--noura-space-3);
+}
+
+/* Guidance */
+body:not(.ds-body) .guidance-view {
+    max-width: var(--noura-measure-reading);
+}
+
+body:not(.ds-body) .guidance-view__accordion {
+    border-color: var(--noura-color-border);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-surface-subtle);
+}
+
+/* Results */
+body:not(.ds-body) .results,
+body:not(.ds-body) #standard-results {
+    gap: var(--noura-space-2);
+}
+
+body:not(.ds-body) .results .result-card,
+body:not(.ds-body) .results > .card {
+    padding: clamp(var(--noura-space-3), 5vw, var(--noura-space-4));
+}
+
+body:not(.ds-body) .results .start-result-card {
+    overflow: hidden;
+    border-color: color-mix(in srgb, var(--noura-color-accent) 20%, var(--noura-color-border));
+    background:
+        radial-gradient(circle at 80% 12%, rgba(146, 81, 38, 0.08), transparent 18rem),
+        var(--noura-color-surface);
+}
+
+body:not(.ds-body) .results .primary-metric strong {
+    color: var(--noura-color-text);
+    font-family: var(--noura-font-display);
+    font-size: clamp(3.5rem, 12vw, 6.5rem);
+    font-weight: 480;
+    letter-spacing: -0.065em;
+}
+
+body:not(.ds-body) .results .metric-unit,
+body:not(.ds-body) .results .metric-period {
+    color: var(--noura-color-text-muted);
+}
+
+body:not(.ds-body) .calorie-range,
+body:not(.ds-body) .calibration-details-content,
+body:not(.ds-body) .reflection,
+body:not(.ds-body) .protein-anchor-grid > div,
+body:not(.ds-body) .macro,
+body:not(.ds-body) .start-value-test__state {
+    border-color: var(--noura-color-border);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-surface-raised);
+    box-shadow: var(--noura-shadow-nested);
+}
+
+body:not(.ds-body) .activity-chip {
+    border-color: var(--noura-color-border);
+    border-radius: var(--noura-radius-pill);
+    background: var(--noura-color-surface-subtle);
+    color: var(--noura-color-text-muted);
+}
+
+body:not(.ds-body) .results .result-card.cta {
+    padding: 0;
+    overflow: hidden;
+    border-color: rgba(255, 255, 255, 0.12);
+    background: linear-gradient(145deg, #42362d, #222925);
+    box-shadow: var(--noura-shadow-floating);
+}
+
+body:not(.ds-body) .results .result-card.cta .secondary {
+    border-color: transparent;
+    background: var(--noura-color-text-inverse);
+    color: var(--noura-color-text);
+}
+
+body:not(.ds-body) .field-error {
+    color: var(--noura-color-error);
+}
+
+/* Weekly planner */
+body:not(.ds-body) .weekly-planner {
+    gap: var(--noura-space-3);
+}
+
+body:not(.ds-body) .weekly-planner__header {
+    gap: var(--noura-space-1);
+    padding: var(--noura-space-2) 0 var(--noura-space-1);
+}
+
+body:not(.ds-body) .weekly-planner__header h1 {
+    max-width: 42rem;
+    margin: var(--noura-space-1) 0 0;
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: -0.045em;
+}
+
+body:not(.ds-body) .weekly-planner__budget {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--noura-space-2);
+}
+
+body:not(.ds-body) .weekly-planner__budget > div {
+    gap: var(--noura-space-1);
+    min-height: 8.5rem;
+    padding: var(--noura-space-3);
+    border: 1px solid var(--noura-color-border);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-surface-raised);
+    box-shadow: var(--noura-shadow-nested);
+}
+
+body:not(.ds-body) .weekly-planner__budget span {
+    color: var(--noura-color-text-muted);
+    font-size: var(--noura-font-size-xs);
+    font-weight: 650;
+}
+
+body:not(.ds-body) .weekly-planner__budget strong {
+    color: var(--noura-color-text);
+    font-size: clamp(1.45rem, 4vw, 2rem);
+    font-weight: 550;
+    letter-spacing: -0.035em;
+}
+
+body:not(.ds-body) .weekly-planner__budget > div:last-child strong,
+body:not(.ds-body) .weekly-plan-status--good,
+body:not(.ds-body) .weekly-plan-status--wide {
+    color: var(--noura-color-positive);
+}
+
+body:not(.ds-body) .weekly-plan-days {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--noura-space-2);
+}
+
+body:not(.ds-body) .weekly-plan-day {
+    padding: var(--noura-space-2);
+    border: 1px solid var(--noura-color-border);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-surface-raised);
+    box-shadow: var(--noura-shadow-nested);
+}
+
+body:not(.ds-body) .weekly-plan-day h3 {
+    color: var(--noura-color-text);
+}
+
+body:not(.ds-body) .weekly-plan-day dt {
+    color: var(--noura-color-text-soft);
+}
+
+body:not(.ds-body) .weekly-plan-day dd {
+    color: var(--noura-color-text);
+}
+
+body:not(.ds-body) .legal-links {
+    color: var(--noura-color-text-soft);
+}
+
+body:not(.ds-body) .legal-links a {
+    color: inherit;
+}
+
+body:not(.ds-body) .legal-links a:hover,
+body:not(.ds-body) .legal-links a:focus-visible {
+    color: var(--noura-color-accent);
+}
+
+@media (max-width: 639px) {
+    body:not(.ds-body) {
+        --noura-product-gutter: 0.875rem;
+    }
+
+    body:not(.ds-body) .page-shell,
+    body:not(.ds-body):has(.results:not([hidden])) .page-shell,
+    body:not(.ds-body):has(.weekly-planner:not([hidden])) .page-shell {
+        width: calc(100% - (2 * var(--noura-product-gutter)));
+    }
+
+    body:not(.ds-body) .step:not(.start-hero),
+    body:not(.ds-body) .safety-gate,
+    body:not(.ds-body) .weekly-planner__step,
+    body:not(.ds-body) .results .result-card,
+    body:not(.ds-body) .results > .card {
+        padding: var(--noura-space-3);
+        border-radius: var(--noura-radius-card);
+    }
+
+    body:not(.ds-body) .results .result-card.cta {
+        padding: 0;
+    }
+
+    body:not(.ds-body) .actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    body:not(.ds-body) .actions .primary {
+        order: -1;
+        width: 100%;
+    }
+
+    body:not(.ds-body) .weekly-planner__budget,
+    body:not(.ds-body) .weekly-plan-days {
+        grid-template-columns: 1fr;
+    }
+
+    body:not(.ds-body) .weekly-planner__budget > div {
+        min-height: 0;
+    }
+
+    body:not(.ds-body) .results .primary-metric strong {
+        font-size: clamp(3.25rem, 18vw, 5.25rem);
+    }
+}
+
+@media (min-width: 768px) {
+    body:not(.ds-body) .body-data-step .fields {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    body:not(.ds-body) .weekly-plan-days {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1040px) {
+    body:not(.ds-body) .weekly-plan-days {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* ========================================================================== 
+   Editorial product composition
+   Brings the calculator screens to the visual quality of the showcase while
+   preserving the existing semantic flow and calculator behaviour.
+   ========================================================================== */
+
+body:not(.ds-body) .page-shell {
+    width: min(calc(100% - 2rem), 74rem);
+}
+
+body:not(.ds-body) .brand {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4.5rem;
+    margin: 0;
+    padding-inline: clamp(0.25rem, 2vw, 1rem);
+}
+
+body:not(.ds-body) .brand::after {
+    color: var(--noura-color-text-soft);
+    content: "MINDFUL NUTRITION";
+    font-size: 0.625rem;
+    font-weight: 750;
+    letter-spacing: 0.16em;
+}
+
+/* Start: a contained editorial hero instead of a floating form card. */
+body:not(.ds-body):has(.start-hero:not([hidden])) {
+    background: var(--noura-color-canvas);
+}
+
+body:not(.ds-body):has(.start-hero:not([hidden])) .page-shell {
+    width: min(calc(100% - 2rem), 74rem);
+    padding-top: 0;
+}
+
+body:not(.ds-body):has(.start-hero:not([hidden])) .brand {
+    height: 5rem;
+    color: var(--noura-color-text);
+}
+
+body:not(.ds-body):has(.start-hero:not([hidden])) .brand::after {
+    color: var(--noura-color-text-muted);
+}
+
+body:not(.ds-body):has(.start-hero:not([hidden])) .brand-wordmark {
+    color: var(--noura-color-accent);
+    filter: none;
+}
+
+body:not(.ds-body):has(.start-hero:not([hidden])) .brand-wordmark svg {
+    width: 7.75rem;
+    height: auto;
+}
+
+body:not(.ds-body):has(.start-hero:not([hidden])) .dawn-mist-layer,
+body:not(.ds-body):has(.start-hero:not([hidden])) .dawn-fog-layer,
+body:not(.ds-body):has(.start-hero:not([hidden])) .dawn-scene {
+    display: none;
+}
+
+body:not(.ds-body) .start-hero.card {
+    position: relative;
+    display: grid;
+    min-height: clamp(34rem, 72vh, 43rem);
+    align-items: center;
+    margin: 0;
+    padding: clamp(2rem, 7vw, 5rem);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--noura-radius-section);
+    background:
+        linear-gradient(90deg, rgba(31, 27, 23, 0.94) 0%, rgba(38, 32, 27, 0.82) 48%, rgba(38, 32, 27, 0.2) 76%),
+        url("assets/hero-section.png") center / cover no-repeat;
+    box-shadow: var(--noura-shadow-floating);
+    transform: none;
+}
+
+body:not(.ds-body) .start-hero.card::before {
+    position: absolute;
+    inset: auto -8rem -12rem auto;
+    display: block;
+    width: 30rem;
+    height: 30rem;
+    border-radius: 50%;
+    background: rgba(230, 195, 153, 0.1);
+    content: "";
+    filter: blur(3rem);
+    pointer-events: none;
+}
+
+body:not(.ds-body) .start-hero__content {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 50rem);
+    padding: 0;
+}
+
+body:not(.ds-body) .start-hero__content::before {
+    display: none;
+}
+
+body:not(.ds-body) .start-hero__topic {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin: 0 0 var(--noura-space-3);
+    color: #ead0b9;
+    font-size: var(--noura-font-size-xs);
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+body:not(.ds-body) .start-hero__topic::before {
+    width: 1.75rem;
+    height: 1px;
+    background: currentColor;
+    content: "";
+    opacity: 0.72;
+}
+
+body:not(.ds-body) .start-hero h1 {
+    max-width: 50rem;
+    margin: 0;
+    color: var(--noura-color-text-inverse);
+    font-size: clamp(3.6rem, 8vw, 6.4rem);
+    font-weight: 470;
+    letter-spacing: -0.065em;
+    line-height: 0.95;
+    text-shadow: 0 2px 2rem rgba(0, 0, 0, 0.18);
+}
+
+body:not(.ds-body) .start-hero h1 br {
+    display: none;
+}
+
+body:not(.ds-body) .start-hero .lead {
+    max-width: 35rem;
+    margin: var(--noura-space-3) 0 0;
+    color: rgba(255, 253, 248, 0.78);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 430;
+    line-height: 1.65;
+    text-shadow: none;
+}
+
+body:not(.ds-body) .start-hero .actions {
+    justify-content: flex-start;
+    margin-top: var(--noura-space-4);
+}
+
+body:not(.ds-body) .start-hero .primary {
+    width: auto;
+    min-width: 14rem;
+    min-height: 3.5rem;
+    justify-content: space-between;
+    padding-inline: var(--noura-space-3);
+    border-radius: var(--noura-radius-control);
+    background: var(--noura-color-text-inverse);
+    color: var(--noura-color-text);
+    box-shadow: 0 1rem 2rem -1.25rem rgba(0, 0, 0, 0.75);
+}
+
+body:not(.ds-body) .start-hero .primary:hover,
+body:not(.ds-body) .start-hero .primary:focus-visible {
+    background: #ffffff;
+    color: var(--noura-color-accent);
+}
+
+body:not(.ds-body):has(.start-hero:not([hidden])) .legal-links {
+    position: static;
+    width: 100%;
+    margin: var(--noura-space-3) 0 0;
+    padding: var(--noura-space-2) var(--noura-space-1);
+    color: var(--noura-color-text-soft);
+    text-shadow: none;
+}
+
+/* Calculator: contextual editorial panel + focused working surface. */
+@media (min-width: 900px) {
+    body:not(.ds-body):has(form > .step:not(.start-hero):not([hidden])),
+    body:not(.ds-body):has(form > .safety-gate:not([hidden])) {
+        background:
+            radial-gradient(circle at 86% 14%, rgba(146, 81, 38, 0.08), transparent 24rem),
+            linear-gradient(155deg, var(--noura-color-canvas-warm), var(--noura-color-canvas));
+    }
+
+    body:not(.ds-body):has(form > .step:not(.start-hero):not([hidden])) .page-shell,
+    body:not(.ds-body):has(form > .safety-gate:not([hidden])) .page-shell {
+        width: min(calc(100% - 3rem), 74rem);
+    }
+
+    body:not(.ds-body):has(form > .step:not(.start-hero):not([hidden])) .progress,
+    body:not(.ds-body):has(form > .safety-gate:not([hidden])) .progress {
+        width: calc(58% - var(--noura-space-2));
+        margin-left: auto;
+    }
+
+    body:not(.ds-body) #calculator-form:has(> .step:not(.start-hero):not([hidden])),
+    body:not(.ds-body) #calculator-form:has(> .safety-gate:not([hidden])) {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(18rem, 0.72fr) minmax(30rem, 1fr);
+        gap: var(--noura-space-3);
+        align-items: start;
+        min-height: 39rem;
+    }
+
+    body:not(.ds-body) #calculator-form:has(> .step:not(.start-hero):not([hidden]))::before,
+    body:not(.ds-body) #calculator-form:has(> .safety-gate:not([hidden]))::before {
+        grid-column: 1;
+        grid-row: 1;
+        height: 39rem;
+        min-height: 39rem;
+        max-height: 39rem;
+        align-self: start;
+        padding: clamp(2rem, 4vw, 3.5rem);
+        border-radius: var(--noura-radius-section);
+        background:
+            linear-gradient(180deg, rgba(31, 29, 25, 0.08), rgba(31, 29, 25, 0.78)),
+            url("assets/hero-section.png") 62% center / cover no-repeat;
+        box-shadow: var(--noura-shadow-card);
+        color: var(--noura-color-text-inverse);
+        content: "EINE RUHIGE ORIENTIERUNG\A\AZahlen geben dir einen Startpunkt. Dein Alltag gibt ihnen Bedeutung.";
+        font-size: clamp(1.6rem, 3vw, 2.5rem);
+        font-weight: 500;
+        letter-spacing: -0.035em;
+        line-height: 1.18;
+        white-space: pre-line;
+    }
+
+    body:not(.ds-body) #calculator-form > .step:not(.start-hero):not([hidden]),
+    body:not(.ds-body) #calculator-form > .safety-gate:not([hidden]) {
+        grid-column: 2;
+        grid-row: 1;
+        width: 100%;
+        min-height: 39rem;
+        margin: 0;
+        align-content: center;
+        padding: clamp(2.25rem, 4.5vw, 4rem);
+        border-radius: var(--noura-radius-section);
+    }
+
+    body:not(.ds-body) #calculator-form > .direct-step:not([hidden]),
+    body:not(.ds-body) #calculator-form > .safety-gate:not([hidden]) {
+        align-content: start;
+    }
+}
+
+/* Result: editorial header, metric moment and modular content grid. */
+body:not(.ds-body):has(.results:not([hidden])) .brand,
+body:not(.ds-body):has(.weekly-planner:not([hidden])) .brand {
+    border-bottom: 1px solid var(--noura-color-border);
+    margin-bottom: var(--noura-space-5);
+}
+
+body:not(.ds-body) .results {
+    position: relative;
+    width: 100%;
+}
+
+body:not(.ds-body) .results > .start-result-card {
+    min-height: 35rem;
+    display: grid;
+    align-content: center;
+    padding: clamp(2.5rem, 7vw, 5rem);
+    border-radius: var(--noura-radius-section);
+    background:
+        radial-gradient(circle at 82% 22%, rgba(146, 81, 38, 0.13), transparent 20rem),
+        linear-gradient(145deg, #fffdf9, var(--noura-color-surface-subtle));
+}
+
+body:not(.ds-body) .results .calorie-result-title {
+    max-width: 40rem;
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    letter-spacing: -0.05em;
+}
+
+body:not(.ds-body) .results > .result-overview {
+    margin-block: var(--noura-space-5) var(--noura-space-2);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+body:not(.ds-body) .results > .result-overview h2 {
+    max-width: 46rem;
+    margin-top: var(--noura-space-1);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: -0.045em;
+}
+
+body:not(.ds-body) .results > .result-overview p {
+    max-width: 44rem;
+    font-size: var(--noura-font-size-lg);
+}
+
+@media (min-width: 820px) {
+    body:not(.ds-body) .results #standard-results {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--noura-space-2);
+    }
+
+    body:not(.ds-body) .results #standard-results > :first-child,
+    body:not(.ds-body) .results #standard-results > details {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Planner: a genuine page section rather than another modal-like card. */
+body:not(.ds-body) .weekly-planner__header {
+    margin-bottom: var(--noura-space-3);
+}
+
+body:not(.ds-body) .weekly-planner__header > p {
+    max-width: 42rem;
+    font-size: var(--noura-font-size-lg);
+}
+
+body:not(.ds-body) .weekly-planner__step {
+    min-height: 30rem;
+    padding: clamp(2rem, 6vw, 4rem);
+    border-radius: var(--noura-radius-section);
+}
+
+body:not(.ds-body) .weekly-planner__overview {
+    min-height: auto;
+}
+
+@media (max-width: 899px) {
+    body:not(.ds-body):has(.start-hero:not([hidden])) .brand {
+        min-height: 4rem;
+        padding-inline: 0.1875rem !important;
+    }
+
+    body:not(.ds-body) .brand::after {
+        font-size: 0.55rem;
+    }
+
+    body:not(.ds-body):has(.start-hero:not([hidden])) .page-shell {
+        width: min(calc(100% - 1rem), 74rem);
+    }
+
+    body:not(.ds-body):has(.start-hero:not([hidden])) .brand-wordmark svg {
+        width: 7rem;
+    }
+
+    body:not(.ds-body):has(.start-hero:not([hidden])) .brand-wordmark {
+        transform: none;
+    }
+
+    body:not(.ds-body):has(.start-hero:not([hidden])) .start-hero.card {
+        min-height: calc(100svh - 8.5rem);
+        padding: clamp(1.5rem, 8vw, 3rem);
+        border-radius: var(--noura-radius-card);
+        background:
+            linear-gradient(180deg, rgba(31, 27, 23, 0.2) 0%, rgba(31, 27, 23, 0.82) 58%, rgba(31, 27, 23, 0.96) 100%),
+            url("assets/hero-section.png") 62% center / cover no-repeat;
+        align-items: center;
+    }
+
+    body:not(.ds-body):has(.start-hero:not([hidden])) .start-hero__content {
+        display: block;
+        width: 100%;
+        min-height: 0;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        transform: none;
+    }
+
+    body:not(.ds-body) .start-hero h1 {
+        font-size: clamp(2.75rem, 12.3vw, 3rem);
+        line-height: 0.98;
+    }
+
+    body:not(.ds-body) .start-hero .primary {
+        width: 100%;
+    }
+
+    body:not(.ds-body):has(.start-hero:not([hidden])) .legal-links {
+        padding-inline: 0.5rem;
+    }
+
+    body:not(.ds-body) .results > .start-result-card,
+    body:not(.ds-body) .weekly-planner__step {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 520px) {
+    body:not(.ds-body) .brand::after {
+        content: "MINDFUL";
+    }
+
+    body:not(.ds-body) .start-hero.card {
+        min-height: calc(100svh - 7.75rem);
+    }
+
+    body:not(.ds-body) .start-hero__topic {
+        margin-bottom: var(--noura-space-2);
+    }
+
+    body:not(.ds-body) .start-hero .lead {
+        margin-top: var(--noura-space-2);
+        font-size: 0.95rem;
+    }
+
+    body:not(.ds-body):has(.start-hero:not([hidden])) .start-hero .actions {
+        margin-top: var(--noura-space-3);
+        padding: 0;
+    }
+}

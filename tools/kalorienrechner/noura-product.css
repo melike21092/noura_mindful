@@ -1,0 +1,217 @@
+/*
+ * NOURA product stylesheet entrypoint.
+ *
+ * Dependency direction is explicit:
+ *   1. legacy feature layout (temporary compatibility layer)
+ *   2. NOURA system contract and current product composition
+ *
+ * New product pages load this file only. The design-system showcase continues
+ * to load the system source directly and therefore never depends on legacy
+ * calculator styling.
+ *
+ * The existing sources intentionally remain unlayered in phase 1. Browser
+ * regression checks exposed selector-specificity dependencies that must be
+ * migrated component by component instead of being reordered wholesale.
+ */
+@import url("calculator.css?v=20260801-25");
+@import url("noura-design-system.css?v=20260801-5");
+
+/* Phase 2: atmospheric entry -> focused product workspace. */
+.noura-product {
+    --noura-shell-width: 74rem;
+    --noura-work-width: var(--noura-content-width);
+    --noura-hero-overlay: linear-gradient(90deg, color-mix(in srgb, var(--noura-color-text) 94%, transparent) 0%, color-mix(in srgb, var(--noura-color-text) 82%, transparent) 48%, color-mix(in srgb, var(--noura-color-text) 20%, transparent) 76%);
+    --noura-action-on-image-bg: var(--noura-color-text-inverse);
+    --noura-action-on-image-text: var(--noura-color-text);
+}
+
+.noura-product .page-shell,
+.noura-product:has(.start-hero:not([hidden])) .page-shell,
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .page-shell,
+.noura-product:has(form > .safety-gate:not([hidden])) .page-shell {
+    width: min(calc(100% - 2rem), var(--noura-shell-width));
+}
+
+.noura-product .brand,
+.noura-product:has(.start-hero:not([hidden])) .brand { min-height: 5rem; }
+
+.noura-product .brand::after {
+    display: none;
+    content: none;
+}
+
+.noura-product .start-hero.card {
+    min-height: clamp(32rem, 68vh, 39rem);
+    padding: clamp(var(--noura-space-4), 7vw, var(--noura-space-6));
+    background: var(--noura-hero-overlay), url("assets/hero-section.png") 62% center / cover no-repeat;
+}
+
+.noura-product .start-hero__content { width: min(100%, var(--noura-measure-reading)); }
+
+.noura-product .start-hero h1 {
+    max-width: var(--noura-measure-reading);
+    font-size: var(--noura-font-size-hero);
+    line-height: 1.02;
+    letter-spacing: -0.055em;
+}
+
+.noura-product .start-hero .lead { max-width: 34rem; }
+.noura-product .start-hero .primary {
+    background: var(--noura-action-on-image-bg);
+    color: var(--noura-action-on-image-text);
+}
+
+.noura-product:has(form > .step:not(.start-hero):not([hidden])),
+.noura-product:has(form > .safety-gate:not([hidden])) {
+    background: linear-gradient(155deg, var(--noura-color-canvas-warm), var(--noura-color-canvas));
+}
+
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .dawn-mist-layer,
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .dawn-fog-layer,
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .dawn-scene,
+.noura-product:has(form > .safety-gate:not([hidden])) .dawn-mist-layer,
+.noura-product:has(form > .safety-gate:not([hidden])) .dawn-fog-layer,
+.noura-product:has(form > .safety-gate:not([hidden])) .dawn-scene { display: none; }
+
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .progress,
+.noura-product:has(form > .safety-gate:not([hidden])) .progress {
+    width: min(100%, var(--noura-work-width));
+    margin-right: auto;
+    margin-left: auto;
+}
+
+body.noura-product #calculator-form:has(> .step:not(.start-hero):not([hidden])),
+body.noura-product #calculator-form:has(> .safety-gate:not([hidden])) {
+    display: block;
+    min-height: 0;
+}
+
+body.noura-product #calculator-form:has(> .step:not(.start-hero):not([hidden]))::before,
+body.noura-product #calculator-form:has(> .safety-gate:not([hidden]))::before {
+    display: none;
+    content: none;
+}
+
+body.noura-product #calculator-form > .step:not(.start-hero):not([hidden]),
+body.noura-product #calculator-form > .safety-gate:not([hidden]) {
+    width: min(100%, var(--noura-work-width));
+    min-height: 0;
+    margin-right: auto;
+    margin-left: auto;
+    padding: clamp(var(--noura-space-3), 5vw, var(--noura-space-4));
+    border-radius: var(--noura-radius-card);
+}
+
+.noura-product #calculator-form h2[tabindex="-1"]:focus { outline: none; }
+
+@media (max-width: 899px) {
+    .noura-product { --noura-shell-width: var(--noura-content-width); }
+
+    .noura-product .page-shell,
+    .noura-product:has(.start-hero:not([hidden])) .page-shell,
+    .noura-product:has(form > .step:not(.start-hero):not([hidden])) .page-shell,
+    .noura-product:has(form > .safety-gate:not([hidden])) .page-shell {
+        width: min(calc(100% - 1rem), var(--noura-shell-width));
+    }
+
+    .noura-product .start-hero.card {
+        min-height: calc(100svh - 8.5rem);
+        padding: clamp(var(--noura-space-3), 8vw, var(--noura-space-5));
+        background: linear-gradient(180deg, color-mix(in srgb, var(--noura-color-text) 20%, transparent) 0%, color-mix(in srgb, var(--noura-color-text) 82%, transparent) 58%, color-mix(in srgb, var(--noura-color-text) 96%, transparent) 100%), url("assets/hero-section.png") 62% center / cover no-repeat;
+    }
+
+    .noura-product .start-hero h1 {
+        font-size: clamp(2.75rem, 12.3vw, 3rem);
+        line-height: 0.98;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .noura-product .page-shell,
+    .noura-product .start-hero,
+    .noura-product #calculator-form {
+        scroll-behavior: auto;
+        transition: none;
+    }
+}
+
+/* Phase 2 refinement: less decoration, clearer orientation. */
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .brand,
+.noura-product:has(form > .safety-gate:not([hidden])) .brand {
+    width: min(100%, var(--noura-work-width));
+    min-height: var(--noura-space-6);
+    margin-right: auto;
+    margin-left: auto;
+    padding-inline: 0;
+}
+
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .brand-home,
+.noura-product:has(form > .safety-gate:not([hidden])) .brand-home {
+    width: var(--noura-touch-target);
+    height: var(--noura-touch-target);
+    border-radius: var(--noura-radius-sm);
+    color: var(--noura-color-accent);
+}
+
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .brand-home:hover,
+.noura-product:has(form > .safety-gate:not([hidden])) .brand-home:hover {
+    background: var(--noura-color-accent-soft);
+}
+
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .brand-home svg,
+.noura-product:has(form > .safety-gate:not([hidden])) .brand-home svg {
+    width: var(--noura-space-4);
+    height: var(--noura-space-4);
+}
+
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .progress,
+.noura-product:has(form > .safety-gate:not([hidden])) .progress {
+    gap: var(--noura-space-1-5);
+    margin-bottom: var(--noura-space-2);
+    padding-inline: var(--noura-space-1);
+}
+
+.noura-product:has(form > .step:not(.start-hero):not([hidden])) .progress-track,
+.noura-product:has(form > .safety-gate:not([hidden])) .progress-track {
+    height: var(--noura-space-0-5);
+}
+
+body.noura-product #calculator-form > .step:not(.start-hero):not([hidden]),
+body.noura-product #calculator-form > .safety-gate:not([hidden]) {
+    border-color: var(--noura-color-border);
+    background: var(--noura-color-surface);
+    box-shadow: var(--noura-shadow-card);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+body.noura-product #calculator-form > .step:not(.start-hero):not([hidden]) > h2,
+body.noura-product #calculator-form > .safety-gate:not([hidden]) h2 {
+    max-width: var(--noura-measure-compact);
+    color: var(--noura-color-text);
+    font-size: var(--noura-font-size-2xl);
+    font-weight: 560;
+    line-height: var(--noura-line-tight);
+    letter-spacing: -0.04em;
+}
+
+body.noura-product #calculator-form .situation-option,
+body.noura-product #calculator-form .direct-choice,
+body.noura-product #calculator-form .form-choice {
+    border-color: var(--noura-color-border);
+    background: var(--noura-color-surface-interactive);
+    box-shadow: var(--noura-shadow-control);
+    cursor: pointer;
+}
+
+body.noura-product #calculator-form .situation-option:hover,
+body.noura-product #calculator-form .direct-choice:hover,
+body.noura-product #calculator-form .form-choice:hover {
+    border-color: var(--noura-color-border-strong);
+    background: var(--noura-color-surface-raised);
+}
+
+body.noura-product #calculator-form .situation-option__chevron,
+body.noura-product #calculator-form .direct-choice__chevron {
+    color: var(--noura-color-accent);
+}

@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import {
-    BASIS_ACTIVITY_RANGES,
+    BASE_ACTIVITY_FACTORS,
+    calculateAdditionalStepCalories,
     calculateDailyTrainingRange,
     calculateOrientation,
     determineResultMode,
@@ -19,6 +20,7 @@ const baseInput = {
     age: 34,
     heightCm: 165,
     weightKg: 82.5,
+    sex: 'female',
     dailyActivity: 'sedentary',
     stepBand: 'from4000to7000',
     exactSteps: '',
@@ -52,11 +54,8 @@ assert.deepEqual(
     { low: 0, high: 0 },
     'No training adds no training energy'
 );
-assert.deepEqual(
-    BASIS_ACTIVITY_RANGES.sedentary.from7000to10000,
-    { min: 1.45, max: 1.5 },
-    'The sedentary 7,000–10,000 step basis excludes structured training'
-);
+assert.equal(BASE_ACTIVITY_FACTORS.sedentary, 1.35);
+assert.equal(BASE_ACTIVITY_FACTORS.mixed, 1.45);
 assert.equal(determineResultMode(baseInput), RESULT_MODES.STANDARD);
 
 const result = calculateOrientation(baseInput);
@@ -66,12 +65,12 @@ assert.ok(result.resting > 1400 && result.resting < 1800);
 assert.ok(result.maintenance.low < result.maintenance.high);
 assert.ok(result.loss.low < result.loss.high);
 const rawResting = (10 * baseInput.weightKg) + (6.25 * baseInput.heightCm) - (5 * baseInput.age) - 161;
-const rawActivity = BASIS_ACTIVITY_RANGES[baseInput.dailyActivity][getStepBand(baseInput.stepBand, baseInput.exactSteps)];
-const rawMaintenanceLow = rawResting * rawActivity.min;
-const rawMaintenanceHigh = rawResting * rawActivity.max;
+const rawEverydayBase = rawResting * BASE_ACTIVITY_FACTORS[baseInput.dailyActivity];
+const rawSteps = calculateAdditionalStepCalories(baseInput.weightKg, baseInput.stepBand, baseInput.exactSteps).calories;
+const rawMaintenanceMidpoint = rawEverydayBase + rawSteps;
 assert.equal(
     result.targetCalories,
-    roundTo(((rawMaintenanceLow + rawMaintenanceHigh) / 2) * 0.85, 50),
+    roundTo(rawMaintenanceMidpoint * 0.85, 50),
     'The 15% start value uses the unrounded maintenance midpoint'
 );
 assert.equal(roundTo(1624.999, 50), 1600, 'Values just below a 50 kcal midpoint round down');
@@ -98,76 +97,54 @@ const displayedEnergy =
     (result.carbs.target * 4);
 assert.ok(Math.abs(displayedEnergy - result.targetCalories) <= 35, 'Rounded macros remain close to target calories');
 
-const moderateActivityCase = calculateOrientation({
-    ...baseInput,
-    age: 33,
-    heightCm: 165,
-    weightKg: 69.5,
-    dailyActivity: 'sedentary',
-    stepBand: 'from7000to10000',
-    exactSteps: 8000,
-    trainingSessions: 3,
-    trainingType: 'strength',
-    trainingMinutes: 65
-});
-assert.equal(moderateActivityCase.resting, 1400);
-assert.deepEqual(moderateActivityCase.maintenance, { low: 2100, high: 2250 });
-assert.equal(moderateActivityCase.targetCalories, 1850);
-assert.deepEqual(moderateActivityCase.loss, { low: 1800, high: 1900 });
-assert.deepEqual(
-    moderateActivityCase.activity.trainingDaily,
-    { low: 81, high: 161 },
-    'Training uses net MET energy and is distributed across seven days'
-);
-assert.equal(moderateActivityCase.activity.stepBand, 'from7000to10000');
+const referenceCases = {
+    A: calculateOrientation({ ...baseInput, sex: 'female', age: 30, heightCm: 171, weightKg: 80, exactSteps: 6000, trainingSessions: 0 }),
+    B: calculateOrientation({ ...baseInput, sex: 'female', age: 34, heightCm: 165, weightKg: 69, exactSteps: 10000, trainingSessions: 3, trainingType: 'strength', trainingMinutes: 60 }),
+    C: calculateOrientation({ ...baseInput, sex: 'male', age: 38, heightCm: 188, weightKg: 88, exactSteps: 5500, trainingSessions: 2, trainingType: 'strength', trainingMinutes: 60 })
+};
 
-const householdGymCase = calculateOrientation({
-    ...baseInput,
-    age: 33,
-    heightCm: 165,
-    weightKg: 69.5,
-    dailyActivity: 'mixed',
-    exactSteps: 9000,
-    trainingSessions: 3,
-    trainingType: 'mixed',
-    trainingMinutes: 60
-});
-assert.deepEqual(householdGymCase.maintenance, { low: 2100, high: 2350 });
-assert.equal(householdGymCase.targetCalories, 1900);
-assert.deepEqual(
-    householdGymCase.loss,
-    { low: 1850, high: 1950 },
-    'Household movement and 8,000–10,000 steps are not counted like a highly active occupation'
-);
-
-const sameCaseWithoutTraining = calculateOrientation({
-    ...baseInput,
-    age: 33,
-    heightCm: 165,
-    weightKg: 69.5,
-    dailyActivity: 'sedentary',
-    exactSteps: 8000,
-    trainingSessions: 0
-});
-assert.deepEqual(
-    sameCaseWithoutTraining.maintenance,
-    { low: 2050, high: 2100 },
-    'Steps affect the shared basis once; structured training is absent'
-);
-
-for (const [dailyActivity, stepRanges] of Object.entries(BASIS_ACTIVITY_RANGES)) {
-    for (const stepBand of Object.keys(stepRanges)) {
-        const matrixCase = calculateOrientation({
-            ...baseInput,
-            dailyActivity,
-            stepBand,
-            exactSteps: '',
-            trainingSessions: 0
-        });
-        assert.equal(matrixCase.ok, true, `${dailyActivity}/${stepBand} is calculable`);
-        assert.equal(matrixCase.activity.stepBand, stepBand);
+for (const [name, caseResult] of Object.entries(referenceCases)) {
+    assert.equal(caseResult.ok, true, `${name} is calculable`);
+    assert.ok(caseResult.maintenance.low >= 1500 && caseResult.maintenance.high <= 3000, `${name} has a plausible conservative maintenance range`);
+    assert.ok(caseResult.targetCalories >= 1300 && caseResult.targetCalories <= 2500, `${name} has a plausible start value`);
+    for (const key of ['restingEnergy', 'baseActivityFactor', 'everydayBase', 'additionalStepCalories', 'averageDailyTrainingCalories', 'maintenance', 'weightLossStart']) {
+        assert.notEqual(caseResult.breakdown[key], undefined, `${name} exposes ${key}`);
     }
 }
+
+const fewerSteps = calculateOrientation({ ...baseInput, exactSteps: 3000 });
+const moreSteps = calculateOrientation({ ...baseInput, exactSteps: 9000 });
+assert.ok(moreSteps.breakdown.additionalStepCalories > fewerSteps.breakdown.additionalStepCalories, 'More steps increase energy needs');
+assert.equal(fewerSteps.breakdown.additionalStepCalories, 0, 'Included steps create no surcharge');
+assert.equal(calculateAdditionalStepCalories(70, 'under4000', 1000).calories, 0, 'Step surcharge is never negative');
+assert.equal(
+    calculateAdditionalStepCalories(70, 'over10000', 50000).additionalSteps,
+    17000,
+    'Step surcharge is capped at 17,000 additional steps'
+);
+
+const noTraining = calculateOrientation({ ...baseInput, exactSteps: 8000, trainingSessions: 0 });
+const withTraining = calculateOrientation({ ...baseInput, exactSteps: 8000, trainingSessions: 3, trainingType: 'strength', trainingMinutes: 60 });
+assert.ok(withTraining.breakdown.averageDailyTrainingCalories > 0, 'Training adds daily energy');
+assert.ok(withTraining.targetCalories > noTraining.targetCalories, 'Training increases energy needs');
+assert.equal(
+    withTraining.breakdown.everydayBase,
+    noTraining.breakdown.everydayBase,
+    'Training does not alter or duplicate the everyday base'
+);
+assert.equal(
+    withTraining.breakdown.additionalStepCalories,
+    noTraining.breakdown.additionalStepCalories,
+    'Training does not alter or duplicate step energy'
+);
+
+const female = calculateOrientation({ ...baseInput, sex: 'female' });
+const male = calculateOrientation({ ...baseInput, sex: 'male' });
+assert.equal(male.breakdown.restingEnergy - female.breakdown.restingEnergy, 166, 'Mifflin constants differ by 166 kcal');
+
+const sedentary = calculateOrientation({ ...baseInput, dailyActivity: 'sedentary' });
+const mixed = calculateOrientation({ ...baseInput, dailyActivity: 'mixed' });
+assert.ok(sedentary.breakdown.everydayBase <= mixed.breakdown.everydayBase, 'Sedentary does not exceed mixed');
 
 const incompleteTraining = calculateOrientation({
     ...baseInput,

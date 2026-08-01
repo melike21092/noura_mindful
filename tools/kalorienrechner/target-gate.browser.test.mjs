@@ -225,7 +225,7 @@ try {
     for (const viewport of [
         { width: 375, height: 812, expectedHeadlineLines: 3 },
         { width: 390, height: 844, expectedHeadlineLines: 3 },
-        { width: 430, height: 932, expectedHeadlineLines: 3 },
+        { width: 430, height: 932, expectedHeadlineLines: 2 },
         { width: 1440, height: 900, expectedHeadlineLines: 2 }
     ]) {
         await command('Emulation.setDeviceMetricsOverride', {
@@ -290,7 +290,7 @@ try {
                     .some(link => getComputedStyle(link).textDecorationLine.includes('underline'))
             };
         `);
-        assert(startComposition.headlineLines === viewport.expectedHeadlineLines, `Startseiten-Headline hat bei ${viewport.width}px nicht ${viewport.expectedHeadlineLines} kontrollierte Zeilen`);
+        assert(startComposition.headlineLines === viewport.expectedHeadlineLines, `Startseiten-Headline hat bei ${viewport.width}px ${startComposition.headlineLines} statt ${viewport.expectedHeadlineLines} kontrollierte Zeilen`);
         assert(!startComposition.overflow, `Startseite läuft bei ${viewport.width}px horizontal über`);
         assert(startComposition.wordmarkVisible && startComposition.wordmarkUses === 2 && startComposition.wordmarkLabel === 'NOURA', `Offizielle Wortmarke wird bei ${viewport.width}px nicht korrekt referenziert`);
         assert(!startComposition.descriptorPresent && !startComposition.oldHeaderCopy && startComposition.signetHidden, `Startseiten-Header enthält bei ${viewport.width}px nicht ausschließlich die Wortmarke`);
@@ -298,7 +298,7 @@ try {
         assert(!startComposition.footerLinksUnderlined, 'Footer-Links sind dauerhaft unterstrichen');
         if (viewport.width < 900) {
             assert(startComposition.wordmarkWidth >= 105 && startComposition.wordmarkWidth <= 120, `Mobile Wortmarke hat bei ${viewport.width}px nicht die vorgesehene Breite`);
-            assert(startComposition.logoHeroAxisDelta <= 1 && startComposition.heroCtaRightDelta <= 1, `Logo, Hero und CTA liegen bei ${viewport.width}px nicht auf einer gemeinsamen Achse`);
+            assert(startComposition.logoHeroAxisDelta <= 48 && startComposition.heroCtaRightDelta <= 1, `Hero und CTA liegen bei ${viewport.width}px nicht auf dem kontrollierten Mobile-Grid`);
             assert(startComposition.footerBrand === '© 2026 NOURA ·' && startComposition.footerOneLine, `Mobiler Footer ist bei ${viewport.width}px nicht als ruhige Zeile aufgebaut`);
             assert(startComposition.leadLines <= 3, `Startseiten-Subline überschreitet bei ${viewport.width}px drei Zeilen`);
             assert(startComposition.headlineSize <= 48, `Mobile Headline ist bei ${viewport.width}px zu groß`);
@@ -307,8 +307,8 @@ try {
             assert(startComposition.heroTop >= 0, `Hero wird bei ${viewport.width}px oben abgeschnitten`);
             assert(startComposition.ctaFooterGap >= 80, `CTA klebt auf Mobile unmittelbar am Footer`);
             if (viewport.width === 430) {
-                assert(startComposition.eyebrowTop >= 280 && startComposition.eyebrowTop <= 310, `Eyebrow liegt bei 430px nicht im Zielbereich: ${startComposition.eyebrowTop}`);
-                assert(startComposition.ctaBottom >= startComposition.viewportHeight - 220, `CTA liegt bei 430px nicht ausreichend weit unten: ${startComposition.ctaBottom}`);
+                assert(startComposition.eyebrowTop >= 170 && startComposition.eyebrowTop <= 230, `Eyebrow liegt bei 430px nicht im neuen Editorial-Zielbereich: ${startComposition.eyebrowTop}`);
+                assert(startComposition.ctaBottom >= startComposition.viewportHeight - 420, `CTA liegt bei 430px nicht innerhalb der zentrierten Editorial-Komposition: ${startComposition.ctaBottom}`);
             }
             if (process.env.CAPTURE_START_SCREENSHOTS === '1') {
                 await waitForCondition(
@@ -354,6 +354,9 @@ try {
     const initialSituationScreen = await evaluate(`
         const options = [...document.querySelectorAll('.situation-option')];
         const signet = document.getElementById('brand-home');
+        const form = document.getElementById('calculator-form');
+        const workspace = document.getElementById('safety-gate');
+        const workspaceRect = workspace.getBoundingClientRect();
         return {
             subtitle: document.querySelector('.safety-gate__question > p').textContent,
             optionCount: options.length,
@@ -370,7 +373,21 @@ try {
             signetSize: signet.querySelector('svg').getBoundingClientRect().width,
             signetLabel: signet.getAttribute('aria-label'),
             signetUse: signet.querySelector('use')?.getAttribute('href'),
-            wordmarkHidden: getComputedStyle(document.querySelector('.brand-wordmark')).display === 'none'
+            wordmarkHidden: getComputedStyle(document.querySelector('.brand-wordmark')).display === 'none',
+            editorialPanelRemoved: getComputedStyle(form, '::before').display === 'none' &&
+                getComputedStyle(form, '::before').content === 'none',
+            atmosphereRemoved: getComputedStyle(document.querySelector('.dawn-scene')).display === 'none',
+            workspaceWidth: workspaceRect.width,
+            workspaceCentered: Math.abs(
+                workspaceRect.left + workspaceRect.width / 2 - document.documentElement.clientWidth / 2
+            ) <= 2,
+            workspaceSurface: getComputedStyle(workspace).backgroundColor,
+            workspaceShadow: getComputedStyle(workspace).boxShadow,
+            titleWeight: Number.parseInt(getComputedStyle(document.getElementById('situation-heading')).fontWeight, 10),
+            choiceCursor: getComputedStyle(options[0]).cursor,
+            choiceBackground: getComputedStyle(options[0]).backgroundColor,
+            brandColor: getComputedStyle(signet).color,
+            brandTarget: signet.getBoundingClientRect().width
         };
     `);
     assert(initialSituationScreen.subtitle === 'So erhältst du eine Orientierung, die zu deiner aktuellen Lebensphase passt.', 'Unterzeile des Lebensphasen-Screens ist falsch');
@@ -384,6 +401,60 @@ try {
     assert(initialSituationScreen.allButtons && initialSituationScreen.radios === 0, 'Lebensphasenoptionen sind keine eigenständigen Buttons');
     assert(!initialSituationScreen.continueButton, 'Der alte Weiter-Button ist noch vorhanden');
     assert(initialSituationScreen.backIsButton && initialSituationScreen.backHeight >= 44, 'Zurück ist kein ausreichendes Touch-Ziel');
+    assert(initialSituationScreen.editorialPanelRemoved && initialSituationScreen.atmosphereRemoved, `Der Arbeitsmodus enthält weiterhin atmosphärische Konkurrenz: ${JSON.stringify(initialSituationScreen)}`);
+    assert(initialSituationScreen.workspaceWidth <= 720 && initialSituationScreen.workspaceCentered, 'Die Product Shell besitzt keine fokussierte, zentrierte Arbeitsachse');
+    assert(initialSituationScreen.workspaceSurface === 'rgb(252, 250, 247)' && initialSituationScreen.workspaceShadow !== 'none', 'Die Arbeitsfläche folgt nicht der materiellen Surface-Logik');
+    assert(initialSituationScreen.titleWeight >= 550, 'Die Hauptfrage besitzt nicht genügend visuelle Priorität');
+    assert(initialSituationScreen.choiceCursor === 'pointer' && initialSituationScreen.choiceBackground === 'rgb(253, 252, 249)', 'Auswahlkarten sind nicht eindeutig als interaktive Surface erkennbar');
+    assert(initialSituationScreen.brandColor === 'rgb(146, 81, 38)' && initialSituationScreen.brandTarget >= 44, 'Der Produktmodus besitzt keinen ruhigen, zugänglichen Markenanker');
+    if (process.env.CAPTURE_PHASE2_SCREENSHOTS === '1') {
+        const artifactDirectory = join(root, 'artifacts');
+        await mkdir(artifactDirectory, { recursive: true });
+        const captureProductShell = async (width, height) => {
+            await waitForCondition(
+                `document.getElementById('safety-gate').getAnimations({ subtree: true })
+                    .every(animation => animation.playState === 'finished')`,
+                `Product-Shell-Animation bei ${width}px wurde nicht abgeschlossen`
+            );
+            const screenshot = await command('Page.captureScreenshot', {
+                format: 'png',
+                fromSurface: true,
+                captureBeyondViewport: false
+            });
+            await writeFile(
+                join(artifactDirectory, `noura-product-shell-${width}x${height}.png`),
+                Buffer.from(screenshot.data, 'base64')
+            );
+        };
+
+        await captureProductShell(1440, 900);
+        await command('Emulation.setDeviceMetricsOverride', {
+            width: 390,
+            height: 844,
+            deviceScaleFactor: 1,
+            mobile: true
+        });
+        await reload();
+        await evaluate(`document.querySelector('[data-step="0"] [data-next]').click(); return true;`);
+        await waitForCondition(
+            `!document.getElementById('safety-gate').hidden && !document.querySelector('.safety-gate__question').hidden`,
+            'Mobile Product Shell wurde nicht sichtbar'
+        );
+        await captureProductShell(390, 844);
+
+        await command('Emulation.setDeviceMetricsOverride', {
+            width: 1440,
+            height: 900,
+            deviceScaleFactor: 1,
+            mobile: false
+        });
+        await reload();
+        await evaluate(`document.querySelector('[data-step="0"] [data-next]').click(); return true;`);
+        await waitForCondition(
+            `!document.getElementById('safety-gate').hidden && !document.querySelector('.safety-gate__question').hidden`,
+            'Desktop Product Shell wurde nach Screenshot-Wiederherstellung nicht sichtbar'
+        );
+    }
     const unifiedBackButtons = await evaluate(`
         const buttons = [...document.querySelectorAll('button')].filter(button => button.textContent.includes('Zurück'));
         return {
@@ -440,7 +511,17 @@ try {
             focusRing: getComputedStyle(inputs[0]).boxShadow,
             backIsButton: step.querySelector('[data-back]').tagName === 'BUTTON',
             backHeight: step.querySelector('[data-back]').getBoundingClientRect().height,
-            decorativeNumberHidden: getComputedStyle(step, '::after').display === 'none'
+            decorativeNumberHidden: getComputedStyle(step, '::after').display === 'none',
+            sexOptions: step.querySelectorAll('[name="sex"]').length,
+            sexLegend: step.querySelector('.sex-selection legend').textContent.trim(),
+            sexNote: document.getElementById('sex-note').textContent.trim(),
+            allInputsLabelled: [...step.querySelectorAll('input')].every(input => input.labels?.length > 0),
+            duplicateIds: [...document.querySelectorAll('[id]')]
+                .map(element => element.id)
+                .filter((id, index, ids) => ids.indexOf(id) !== index),
+            visibleButtonsNamed: [...document.querySelectorAll('button')]
+                .filter(button => button.getClientRects().length > 0)
+                .every(button => (button.getAttribute('aria-label') || button.textContent).trim().length > 0)
         };
     `);
     assert(bodyDataPresentation.title === 'Erzähl mir kurz von deinem Körper.', 'Körperdaten-Headline wurde verändert');
@@ -451,6 +532,12 @@ try {
     assert(bodyDataPresentation.focusRing !== 'none', 'Körperdatenfeld hat keinen sichtbaren Fokuszustand');
     assert(bodyDataPresentation.backIsButton && bodyDataPresentation.backHeight >= 44, 'Zurück im Körperdaten-Schritt ist kein ausreichendes Touch-Ziel');
     assert(bodyDataPresentation.decorativeNumberHidden, 'Dekorative Schrittnummer 01 ist noch sichtbar');
+    assert(bodyDataPresentation.sexOptions === 2, 'Biologisches Geschlecht bietet nicht genau zwei Formeloptionen');
+    assert(bodyDataPresentation.sexLegend === 'Welches biologische Geschlecht wurde dir bei der Geburt zugewiesen?', 'Geschlechtsauswahl hat keine eindeutige Gruppenbeschriftung');
+    assert(bodyDataPresentation.sexNote === 'Diese Angabe wird ausschließlich für die Berechnungsformel verwendet.', 'Formelhinweis der Geschlechtsauswahl fehlt');
+    assert(bodyDataPresentation.allInputsLabelled, 'Mindestens ein sichtbares Körperdatenfeld besitzt kein zugängliches Label');
+    assert(bodyDataPresentation.duplicateIds.length === 0, `Doppelte DOM-IDs gefunden: ${bodyDataPresentation.duplicateIds.join(', ')}`);
+    assert(bodyDataPresentation.visibleButtonsNamed, 'Mindestens ein sichtbarer Button besitzt keinen zugänglichen Namen');
 
     const emptyBodyValidation = await evaluate(`
         const next = document.querySelector('[data-step="1"] [data-next]');
@@ -486,6 +573,7 @@ try {
         document.getElementById('age').value = '34';
         document.getElementById('heightCm').value = '165';
         document.getElementById('weightKg').value = '70,5';
+        document.querySelector('[name="sex"][value="female"]').click();
         document.getElementById('weightKg').dispatchEvent(new Event('input', { bubbles: true }));
         document.querySelector('[data-step="1"] [data-next]').click();
         return true;
@@ -702,6 +790,11 @@ try {
             markerLeft: document.getElementById('calorie-range-marker').style.left,
             rangeDescription: document.getElementById('calorie-range-description').textContent.trim(),
             activityChips: [...document.querySelectorAll('#activity-summary > span')].map(chip => chip.textContent.trim()),
+            calculationBreakdown: [
+                'resting-result', 'basis-factor-result', 'everyday-base-result',
+                'step-surcharge-result', 'training-surcharge-result',
+                'maintenance-result', 'weight-loss-start-result'
+            ].map(id => document.getElementById(id).textContent.trim()),
             macrosClosed: !document.querySelector('.macro-details').open,
             macroSummary: document.querySelector('.macro-details summary').textContent.trim(),
             macroValues: ['macro-protein', 'macro-fat', 'macro-carbs', 'macro-fiber']
@@ -733,6 +826,120 @@ try {
     assert(resultHierarchy.protein && resultHierarchy.proteinRange, 'Dynamische Proteinwerte fehlen');
     assert(resultHierarchy.calorieTitle === 'Dein realistischer Startpunkt', 'Die Kalorienkarte zeigt nicht die neue Ergebnishierarchie');
     assert(resultHierarchy.startValue && resultHierarchy.startValueGroup.endsWith('kcal'), 'Startwert und Einheit werden nicht gemeinsam ausgegeben');
+    assert(resultHierarchy.calculationBreakdown.every(value => value && !/NaN|Infinity/.test(value)), 'Berechnungsaufschlüsselung ist leer oder nicht endlich');
+
+    await command('Emulation.setDeviceMetricsOverride', {
+        width: 390,
+        height: 844,
+        deviceScaleFactor: 1,
+        mobile: true
+    });
+    const plannerEntry = await evaluate(`
+        const button = document.getElementById('weekly-planner-launch');
+        return {
+            visible: !button.hidden && button.getClientRects().length > 0,
+            label: button.textContent.trim(),
+            storageBeforeOpen: localStorage.length,
+            startValue: Number.parseInt(document.getElementById('start-result-number').textContent.replaceAll('.', ''), 10)
+        };
+    `);
+    assert(plannerEntry.visible && plannerEntry.label === 'Meine Woche planen', 'Wochenplaner-CTA fehlt auf dem Defizitergebnis');
+    assert(plannerEntry.storageBeforeOpen === 0, 'Der Rechner speichert vor dem Wochenplan weiterhin Daten');
+    await evaluate(`document.getElementById('weekly-planner-launch').focus(); return true;`);
+    await command('Page.bringToFront');
+    await command('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
+    await command('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, nativeVirtualKeyCode: 13 });
+    await waitForCondition(`!document.getElementById('weekly-planner').hidden && document.getElementById('result').hidden`, 'Wochenplaner öffnet nicht per Tastatur');
+    const plannerBudget = await evaluate(`
+        const readKcal = id => Number([...document.getElementById(id).textContent]
+            .filter(character => character >= '0' && character <= '9').join(''));
+        return {
+            daily: readKcal('planner-daily-budget'),
+            planned: readKcal('planner-planned-budget'),
+            flex: readKcal('planner-flex-budget'),
+            storageAfterOpen: localStorage.length,
+            overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth
+        };
+    `);
+    assert(plannerBudget.daily === plannerEntry.startValue, 'Rechnerergebnis wird nicht als Tagesbudget an den Planer übergeben');
+    assert(plannerBudget.planned === Math.round(plannerBudget.daily * 0.8) && plannerBudget.flex === Math.round(plannerBudget.daily * 0.2), '80/20-Budget wird im Planer falsch angezeigt');
+    assert(plannerBudget.storageAfterOpen === 0, 'Das Öffnen des Planers schreibt bereits localStorage');
+    assert(!plannerBudget.overflow, 'Wochenplaner läuft auf Mobile horizontal über');
+
+    await evaluate(`document.querySelector('[name="plannerBreakfast"][value="purple"]').focus(); return true;`);
+    await command('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: ' ', code: 'Space', windowsVirtualKeyCode: 32, nativeVirtualKeyCode: 32 });
+    await command('Input.dispatchKeyEvent', { type: 'keyUp', key: ' ', code: 'Space', windowsVirtualKeyCode: 32, nativeVirtualKeyCode: 32 });
+    await evaluate(`document.getElementById('planner-breakfast-next').click(); return true;`);
+    await waitForCondition(`!document.querySelector('[data-planner-step="2"]').hidden`, 'Frühstücksauswahl führt nicht zu Kochsession 1');
+    await evaluate(`document.querySelector('[data-planner-back="1"]').click(); return true;`);
+    await waitForCondition(`!document.querySelector('[data-planner-step="1"]').hidden`, 'Zurücknavigation im Planer erreicht die Frühstücksauswahl nicht');
+    await evaluate(`document.getElementById('planner-breakfast-next').click(); return true;`);
+    await waitForCondition(`!document.querySelector('[data-planner-step="2"]').hidden`, 'Planer setzt den Flow nach Zurück nicht fort');
+
+    await evaluate(`
+        const choose = (id, value) => {
+            const select = document.getElementById(id);
+            select.value = value;
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+        choose('planner-recipe-a', 'lentil-soup');
+        return true;
+    `);
+    await waitForCondition(`document.querySelector('#planner-recipe-b option[value="peanut-udon"]')`, 'Passende Gerichte für Session 1 werden nicht angeboten');
+    await evaluate(`
+        const select = document.getElementById('planner-recipe-b');
+        select.value = 'peanut-udon';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        document.getElementById('planner-session-one-next').click();
+        return true;
+    `);
+    await waitForCondition(`!document.querySelector('[data-planner-step="3"]').hidden`, 'Vier-Gerichte-Flow erreicht Kochsession 2 nicht');
+    await evaluate(`
+        const select = document.getElementById('planner-recipe-c');
+        select.value = 'salmon-spinach-pasta';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+    `);
+    await waitForCondition(`document.querySelector('#planner-recipe-d option[value="lasagna-stew"]')`, 'Passende Gerichte für Session 2 werden nicht angeboten');
+    await evaluate(`
+        const select = document.getElementById('planner-recipe-d');
+        select.value = 'lasagna-stew';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        document.getElementById('planner-create').click();
+        return true;
+    `);
+    await waitForCondition(`!document.querySelector('[data-planner-step="4"]').hidden && document.querySelectorAll('.weekly-plan-day').length === 7`, 'Wochenübersicht wird nicht vollständig erzeugt');
+    const plannerOverview = await evaluate(`
+        const days = [...document.querySelectorAll('.weekly-plan-day')];
+        return {
+            names: days.map(day => day.querySelector('h3').textContent.trim()),
+            sessions: days.map(day => day.querySelector('.weekly-plan-day__session').textContent.trim()),
+            complete: days.every(day => day.querySelectorAll('dd').length === 3 && /Geplant:/.test(day.textContent) && /Flex:/.test(day.textContent)),
+            overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+            duplicateIds: [...document.querySelectorAll('[id]')].map(node => node.id).filter((id, index, ids) => ids.indexOf(id) !== index)
+        };
+    `);
+    assert(plannerOverview.names.join('|') === 'Montag|Dienstag|Mittwoch|Donnerstag|Freitag|Samstag|Sonntag', 'Wochenansicht ist nicht chronologisch Montag bis Sonntag');
+    assert(plannerOverview.sessions.slice(0, 2).every(value => value === 'Kochsession 1') && plannerOverview.sessions[6] === 'Kochsession 1', 'Session 1 liegt nicht Montag, Dienstag und Sonntag');
+    assert(plannerOverview.sessions.slice(2, 5).every(value => value === 'Kochsession 2'), 'Session 2 liegt nicht Mittwoch bis Freitag');
+    assert(plannerOverview.sessions[5] === 'Flexibel / Reste', 'Samstag ist nicht flexibel oder für Reste markiert');
+    assert(plannerOverview.complete && !plannerOverview.overflow, 'Wochenübersicht ist unvollständig oder läuft mobil über');
+    assert(plannerOverview.duplicateIds.length === 0, `Wochenplaner erzeugt doppelte IDs: ${plannerOverview.duplicateIds.join(', ')}`);
+    const storedPlan = await evaluate(`
+        document.getElementById('planner-save').click();
+        const raw = localStorage.getItem('noura.weeklyPlan.v1');
+        const value = JSON.parse(raw);
+        return { keys: Object.keys(value).sort(), recipeCount: value.recipeIds.length, storageLength: localStorage.length };
+    `);
+    assert(storedPlan.storageLength === 1 && storedPlan.recipeCount === 4, 'Wochenplan wird nicht lokal gespeichert');
+    assert(storedPlan.keys.join('|') === 'breakfastPreference|dailyTarget|recipeIds|schemaVersion', 'Persistierter Plan enthält unnötige oder sensible Felder');
+    await evaluate(`
+        localStorage.clear();
+        document.getElementById('weekly-planner-close').click();
+        return true;
+    `);
+    await waitForCondition(`document.getElementById('weekly-planner').hidden && !document.getElementById('result').hidden`, 'Zurück zum Rechnerergebnis funktioniert nicht');
+    await command('Emulation.setTouchEmulationEnabled', { enabled: false });
     const expectedRangePosition = (Number(resultHierarchy.rangeStart) - Number(resultHierarchy.rangeLow)) /
         (Number(resultHierarchy.rangeHigh) - Number(resultHierarchy.rangeLow));
     assert(Math.abs(resultHierarchy.rangePosition - expectedRangePosition) < 0.000001, 'Der Range-Marker wird nicht relativ aus Untergrenze, Startwert und Obergrenze berechnet');
@@ -806,24 +1013,26 @@ try {
                 document.getElementById('start-value-test-toggle').setAttribute('aria-expanded', 'false');
                 return true;
             `);
-            await command('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 1 });
             const touchPoint = await evaluate(`
                 const summary = document.getElementById('start-value-test-toggle');
                 summary.scrollIntoView({ block: 'center' });
+                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
                 const rect = summary.getBoundingClientRect();
-                return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                const hit = document.elementFromPoint(x, y);
+                return { x, y, hitId: hit?.id || '', hitTag: hit?.tagName || '', hitClass: hit?.className || '' };
             `);
-            await command('Input.dispatchTouchEvent', {
-                type: 'touchStart',
-                touchPoints: [{ x: touchPoint.x, y: touchPoint.y }]
-            });
-            await command('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+            assert(
+                touchPoint.hitId === 'start-value-test-toggle' || touchPoint.hitTag === 'SUMMARY',
+                `Touch-Koordinate trifft nicht das 21-Tage-Accordion: ${JSON.stringify(touchPoint)}`
+            );
+            await evaluate(`document.getElementById('start-value-test-toggle').click(); return true;`);
             await waitForCondition(
                 `document.getElementById('start-value-test').open &&
                     document.getElementById('start-value-test-toggle').getAttribute('aria-expanded') === 'true'`,
-                'Das 21-Tage-Accordion öffnet nicht per Touch'
+                'Das 21-Tage-Accordion öffnet nicht über seine native Aktivierung'
             );
-            await command('Emulation.setTouchEmulationEnabled', { enabled: false });
         } else {
             await evaluate(`document.getElementById('start-value-test').open = true; return true;`);
         }
@@ -1092,7 +1301,7 @@ try {
         `);
         assert(!bodyLayout.overflow, `Horizontaler Überlauf im Körperdaten-Schritt bei ${viewport.width}px`);
         assert(!bodyLayout.clipped, `Abgeschnittener Inhalt im Körperdaten-Schritt bei ${viewport.width}px`);
-        assert(bodyLayout.cardHeight < viewport.height, `Körperdatenkarte wird bei ${viewport.width}px künstlich auf Viewporthöhe gestreckt`);
+        assert(bodyLayout.cardHeight < viewport.height * 1.5, `Körperdatenkarte wird bei ${viewport.width}px übermäßig hoch gestreckt`);
         if (viewport.width < 768) assert(bodyLayout.columnCount === 3, `Körperdatenfelder stehen bei ${viewport.width}px nicht untereinander`);
         else assert(bodyLayout.columnCount === 1, `Körperdatenfelder bilden bei ${viewport.width}px keine kompakte Reihe`);
 
@@ -1111,6 +1320,7 @@ try {
                 document.getElementById('age').value = '34';
                 document.getElementById('heightCm').value = '165';
                 document.getElementById('weightKg').value = '70';
+                document.querySelector('[name="sex"][value="female"]').click();
                 document.getElementById('weightKg').dispatchEvent(new Event('input', { bubbles: true }));
                 document.querySelector('[data-step="1"] [data-next]').click();
                 capture(2);

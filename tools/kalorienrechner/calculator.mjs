@@ -1,41 +1,35 @@
-// NOURA product mapping anchored to DGE PAL ranges and adult step-count categories.
-// It describes everyday activity plus steps without structured training.
-export const BASIS_ACTIVITY_RANGES = Object.freeze({
-    sedentary: Object.freeze({
-        under4000: { min: 1.35, max: 1.4 },
-        from4000to7000: { min: 1.4, max: 1.45 },
-        from7000to10000: { min: 1.45, max: 1.5 },
-        over10000: { min: 1.5, max: 1.6 },
-        unknown: { min: 1.4, max: 1.45 }
-    }),
-    mixed: Object.freeze({
-        under4000: { min: 1.4, max: 1.45 },
-        from4000to7000: { min: 1.4, max: 1.5 },
-        from7000to10000: { min: 1.45, max: 1.55 },
-        over10000: { min: 1.55, max: 1.65 },
-        unknown: { min: 1.45, max: 1.5 }
-    }),
-    standing: Object.freeze({
-        under4000: { min: 1.6, max: 1.7 },
-        from4000to7000: { min: 1.65, max: 1.75 },
-        from7000to10000: { min: 1.7, max: 1.8 },
-        over10000: { min: 1.8, max: 1.9 },
-        unknown: { min: 1.7, max: 1.8 }
-    }),
-    strenuous: Object.freeze({
-        under4000: { min: 1.75, max: 1.9 },
-        from4000to7000: { min: 1.85, max: 2.0 },
-        from7000to10000: { min: 1.9, max: 2.1 },
-        over10000: { min: 2.0, max: 2.2 },
-        unknown: { min: 1.9, max: 2.1 }
-    })
+// Conservative product factors for non-training daily load. They are calibrated below
+// full DGE PAL categories because steps are added separately; this reduces, but cannot
+// eliminate, overlap between occupational movement and recorded steps.
+export const BASE_ACTIVITY_FACTORS = Object.freeze({
+    sedentary: 1.35,
+    mixed: 1.45,
+    standing: 1.60,
+    strenuous: 1.75
 });
 
-// Conservative ranges from the 2024 Adult Compendium of Physical Activities.
-export const TRAINING_MET_RANGES = Object.freeze({
-    strength: { min: 3.5, max: 6.0 },
-    cardio: { min: 4.8, max: 9.0 },
-    mixed: { min: 4.0, max: 7.0 }
+// Conservative representative MET values. Training uses net MET (MET - 1), so the
+// resting energy during the session is not counted twice.
+export const TRAINING_MET_VALUES = Object.freeze({
+    strength: 3.5,
+    cardio: 5.5,
+    mixed: 4.5
+});
+
+export const INCLUDED_DAILY_STEPS = 3000;
+export const MAX_STEP_SURCHARGE_STEPS = 17000;
+export const STEP_KCAL_PER_KG = 0.00035;
+// The range is a communication interval for model uncertainty, not a confidence interval.
+export const MAINTENANCE_UNCERTAINTY = 0.10;
+export const MAX_TRAINING_PAL_EQUIVALENT = 0.30;
+export const UNDERWEIGHT_BMI_THRESHOLD = 18.5;
+
+const STEP_BAND_ESTIMATES = Object.freeze({
+    under4000: 3000,
+    from4000to7000: 5500,
+    from7000to10000: 8500,
+    over10000: 11000,
+    unknown: 3000
 });
 
 export const RESULT_MODES = Object.freeze({
@@ -102,7 +96,9 @@ export function getCtaContent(mode, obstacle) {
     if (mode === RESULT_MODES.STANDARD) {
         return {
             eyebrow: 'Persönliche Begleitung',
-            title: STANDARD_CTA_TITLES[obstacle] || STANDARD_CTA_TITLES.unsure,
+            title: Object.hasOwn(STANDARD_CTA_TITLES, obstacle)
+                ? STANDARD_CTA_TITLES[obstacle]
+                : STANDARD_CTA_TITLES.unsure,
             copy: 'Im NOURA Coaching verbinde ich deinen Startwert mit deinem tatsächlichen Alltag. Ich schaue mit dir auf Hunger, Essdrang, Mahlzeitenstruktur, Stress und die Situationen, in denen dein Plan bisher nicht funktioniert.',
             button: 'Meinen persönlichen Start besprechen'
         };
@@ -404,11 +400,33 @@ export function calculateDailyTrainingRange(weightKg, sessionsPerWeek, minutesPe
     const sessions = parseGermanNumber(sessionsPerWeek);
     if (sessions === 0) return { low: 0, high: 0 };
     const minutes = parseGermanNumber(minutesPerSession);
-    const met = TRAINING_MET_RANGES[trainingType];
+    const met = TRAINING_MET_VALUES[trainingType];
     const weeklyHours = sessions * minutes / 60;
+    const daily = ((met - 1) * weightKg * weeklyHours) / 7;
     return {
-        low: ((met.min - 1) * weightKg * weeklyHours) / 7,
-        high: ((met.max - 1) * weightKg * weeklyHours) / 7
+        low: daily,
+        high: daily
+    };
+}
+
+// 3,000 steps are included in the base factor. Each additional step contributes
+// 0.00035 kcal per kg body weight. At most 17,000 additional steps (20,000 total)
+// receive a surcharge to prevent implausibly large extrapolations.
+export function calculateAdditionalStepCalories(weightKg, stepBand, exactSteps) {
+    const hasExactSteps = String(exactSteps ?? '').trim() !== '';
+    const estimatedSteps = hasExactSteps
+        ? parseGermanNumber(exactSteps)
+        : Object.hasOwn(STEP_BAND_ESTIMATES, stepBand)
+            ? STEP_BAND_ESTIMATES[stepBand]
+            : INCLUDED_DAILY_STEPS;
+    const additionalSteps = Math.min(
+        Math.max(0, estimatedSteps - INCLUDED_DAILY_STEPS),
+        MAX_STEP_SURCHARGE_STEPS
+    );
+    return {
+        calories: additionalSteps * weightKg * STEP_KCAL_PER_KG,
+        estimatedSteps,
+        additionalSteps
     };
 }
 
@@ -431,7 +449,7 @@ export function validateInputs(input) {
     const weightKg = parseGermanNumber(input.weightKg);
     const errors = {};
 
-    if (!Number.isFinite(age) || age < 18 || age > 80) {
+    if (!Number.isInteger(age) || age < 18 || age > 80) {
         errors.age = 'Der Rechner ist für Erwachsene zwischen 18 und 80 Jahren gedacht.';
     }
     if (!Number.isFinite(heightCm) || heightCm < 130 || heightCm > 220) {
@@ -471,25 +489,28 @@ export function validateInputs(input) {
     }
     const mode = Object.keys(errors).length ? null : determineResultMode(input);
     if (mode && CALCULATED_MODES.has(mode)) {
-        const activityRange = BASIS_ACTIVITY_RANGES[input.dailyActivity];
+        const hasActivityFactor = Object.hasOwn(BASE_ACTIVITY_FACTORS, input.dailyActivity);
         const exactStepsProvided = String(input.exactSteps ?? '').trim() !== '';
         const exactSteps = parseGermanNumber(input.exactSteps);
         const stepBand = getStepBand(input.stepBand, input.exactSteps);
         const sessions = parseGermanNumber(input.trainingSessions);
         const minutes = parseGermanNumber(input.trainingMinutes);
 
-        if (!activityRange) {
+        if (!['female', 'male'].includes(input.sex)) {
+            errors.sex = 'Bitte wähle das biologische Geschlecht für die Berechnungsformel.';
+        }
+        if (!hasActivityFactor) {
             errors.dailyActivity = 'Bitte wähle die Beschreibung, die deinem normalen Alltag am nächsten kommt.';
         }
         if (exactStepsProvided && (!Number.isFinite(exactSteps) || exactSteps < 0 || exactSteps > 50000)) {
             errors.exactSteps = 'Bitte gib eine durchschnittliche Schrittzahl zwischen 0 und 50.000 an.';
-        } else if (!activityRange?.[stepBand]) {
+        } else if (!Object.hasOwn(STEP_BAND_ESTIMATES, stepBand)) {
             errors.stepBand = 'Bitte wähle deinen ungefähren täglichen Schrittbereich.';
         }
         if (!Number.isInteger(sessions) || sessions < 0 || sessions > 7) {
             errors.trainingSessions = 'Bitte gib eine ganze Zahl zwischen 0 und 7 an.';
         } else if (sessions > 0) {
-            if (!TRAINING_MET_RANGES[input.trainingType]) {
+            if (!Object.hasOwn(TRAINING_MET_VALUES, input.trainingType)) {
                 errors.trainingType = 'Bitte wähle die Trainingsart, die am besten passt.';
             }
             if (!Number.isFinite(minutes) || minutes < 10 || minutes > 180) {
@@ -497,7 +518,7 @@ export function validateInputs(input) {
             }
         }
     }
-    if (mode && DEFICIT_MODES.has(mode) && !MISSIONS[input.obstacle]) {
+    if (mode && DEFICIT_MODES.has(mode) && !Object.hasOwn(MISSIONS, input.obstacle)) {
         errors.obstacle = 'Bitte wähle die Herausforderung, die dich aktuell am meisten beschäftigt.';
     }
 
@@ -512,7 +533,11 @@ export function calculateOrientation(input) {
 
     const { age, heightCm, weightKg } = validation.values;
     input = validation.input;
-    const mode = determineResultMode(input);
+    const initialMode = determineResultMode(input);
+    const bmi = weightKg / ((heightCm / 100) ** 2);
+    const mode = DEFICIT_MODES.has(initialMode) && bmi < UNDERWEIGHT_BMI_THRESHOLD
+        ? RESULT_MODES.SAFETY
+        : initialMode;
     if (!CALCULATED_MODES.has(mode)) {
         return {
             ok: true,
@@ -522,17 +547,24 @@ export function calculateOrientation(input) {
         };
     }
 
-    const resting = (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
+    const sexConstant = input.sex === 'male' ? 5 : -161;
+    const resting = (10 * weightKg) + (6.25 * heightCm) - (5 * age) + sexConstant;
     const stepBand = getStepBand(input.stepBand, input.exactSteps);
-    const activity = BASIS_ACTIVITY_RANGES[input.dailyActivity][stepBand];
+    const basisFactor = BASE_ACTIVITY_FACTORS[input.dailyActivity];
+    const everydayBase = resting * basisFactor;
+    const steps = calculateAdditionalStepCalories(weightKg, stepBand, input.exactSteps);
     const training = calculateDailyTrainingRange(
         weightKg,
         input.trainingSessions,
         input.trainingMinutes,
         input.trainingType
     );
-    const maintenanceLowRaw = (resting * activity.min) + training.low;
-    const maintenanceHighRaw = (resting * activity.max) + training.high;
+    const rawTrainingDaily = training.low;
+    const trainingCap = resting * MAX_TRAINING_PAL_EQUIVALENT;
+    const trainingDaily = Math.min(rawTrainingDaily, trainingCap);
+    const maintenanceMidpointRaw = everydayBase + steps.calories + trainingDaily;
+    const maintenanceLowRaw = maintenanceMidpointRaw * (1 - MAINTENANCE_UNCERTAINTY);
+    const maintenanceHighRaw = maintenanceMidpointRaw * (1 + MAINTENANCE_UNCERTAINTY);
     const maintenanceLow = roundTo(maintenanceLowRaw, 50);
     const maintenanceHigh = roundTo(maintenanceHighRaw, 50);
     const result = {
@@ -544,15 +576,38 @@ export function calculateOrientation(input) {
             dailyActivity: input.dailyActivity,
             stepBand,
             exactSteps: String(input.exactSteps ?? '').trim() === '' ? null : parseGermanNumber(input.exactSteps),
-            basisFactor: activity,
+            basisFactor,
             trainingType: parseGermanNumber(input.trainingSessions) > 0 ? input.trainingType : null,
             trainingSessions: parseGermanNumber(input.trainingSessions),
             trainingMinutes: parseGermanNumber(input.trainingSessions) > 0
                 ? parseGermanNumber(input.trainingMinutes)
                 : 0,
             trainingDaily: {
-                low: roundTo(training.low),
-                high: roundTo(training.high)
+                low: roundTo(trainingDaily),
+                high: roundTo(trainingDaily)
+            }
+        },
+        breakdown: {
+            restingEnergy: roundTo(resting),
+            baseActivityFactor: basisFactor,
+            everydayBase: roundTo(everydayBase),
+            additionalStepCalories: roundTo(steps.calories),
+            averageDailyTrainingCalories: roundTo(trainingDaily),
+            maintenance: { low: maintenanceLow, high: maintenanceHigh },
+            weightLossStart: null,
+            assumptions: {
+                includedSteps: INCLUDED_DAILY_STEPS,
+                estimatedSteps: steps.estimatedSteps,
+                creditedAdditionalSteps: steps.additionalSteps,
+                stepKcalPerKg: STEP_KCAL_PER_KG,
+                stepSurchargeCap: MAX_STEP_SURCHARGE_STEPS,
+                trainingMet: parseGermanNumber(input.trainingSessions) > 0
+                    ? TRAINING_MET_VALUES[input.trainingType]
+                    : null,
+                rawAverageDailyTrainingCalories: roundTo(rawTrainingDaily),
+                trainingCalorieCap: roundTo(trainingCap),
+                trainingWasCapped: rawTrainingDaily > trainingCap,
+                maintenanceUncertainty: MAINTENANCE_UNCERTAINTY
             }
         },
         guidance: SPECIAL_GUIDANCE[mode],
@@ -561,7 +616,6 @@ export function calculateOrientation(input) {
 
     if (!DEFICIT_MODES.has(mode)) return result;
 
-    const maintenanceMidpointRaw = (maintenanceLowRaw + maintenanceHighRaw) / 2;
     const targetCaloriesRaw = maintenanceMidpointRaw * 0.85;
     const targetCalories = roundTo(targetCaloriesRaw, 50);
     const lossLow = roundTo(targetCaloriesRaw - 50, 50);
@@ -575,16 +629,17 @@ export function calculateOrientation(input) {
     const fatHigh = roundTo(calculationWeight, 5);
     const fatByWeight = calculationWeight * 0.9;
     const fatTarget = roundTo(
-        Math.max(targetCaloriesRaw * 0.25 / 9, Math.min(fatByWeight, targetCaloriesRaw * 0.35 / 9)),
+        Math.max(targetCalories * 0.25 / 9, Math.min(fatByWeight, targetCalories * 0.35 / 9)),
         5
     );
     const carbsTarget = roundTo(
-        Math.max(0, (targetCaloriesRaw - (proteinTarget * 4) - (fatTarget * 9)) / 4),
+        Math.max(0, (targetCalories - (proteinTarget * 4) - (fatTarget * 9)) / 4),
         5
     );
 
     return {
         ...result,
+        breakdown: { ...result.breakdown, weightLossStart: targetCalories },
         mission: MISSIONS[input.obstacle],
         loss: { low: lossLow, high: lossHigh },
         calculationWeight: roundTo(calculationWeight, 0.1),

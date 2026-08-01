@@ -8,9 +8,9 @@
     <title>NOURA – Kalorienorientierung</title>
     <link rel="icon" type="image/svg+xml" href="assets/noura-mark.svg">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-    <link rel="stylesheet" href="calculator.css?v=20260727-24">
+    <link rel="stylesheet" href="noura-product.css?v=20260801-1">
 </head>
-  <body>
+  <body class="noura-product">
     <video class="dawn-mist-layer" aria-hidden="true" autoplay muted loop playsinline preload="metadata">
       <source src="assets/321946_medium.mp4" type="video/mp4">
     </video>
@@ -212,6 +212,15 @@
                         <span class="field-error" data-error="weightKg"></span>
                     </div>
                 </div>
+                <fieldset class="sex-selection" aria-describedby="sex-note sex-error">
+                    <legend>Welches biologische Geschlecht wurde dir bei der Geburt zugewiesen?</legend>
+                    <div class="choice-list form-choice-list sex-selection__choices">
+                        <label class="choice form-choice"><input type="radio" name="sex" value="female"><span><strong>Weiblich</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="sex" value="male"><span><strong>Männlich</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                    </div>
+                    <p class="fine-print" id="sex-note">Diese Angabe wird ausschließlich für die Berechnungsformel verwendet.</p>
+                    <span class="field-error" id="sex-error" data-error="sex"></span>
+                </fieldset>
                 <div class="actions body-data-step__actions">
                     <button class="button-secondary-back" type="button" data-back><span aria-hidden="true">←</span><span>Zurück</span></button>
                     <button class="primary" type="button" data-next disabled>Weiter</button>
@@ -223,10 +232,10 @@
                 <h2 tabindex="-1">Wie sieht dein normaler Alltag aus?</h2>
                 <p>Denke an einen typischen Tag ohne Training. Wähle, was die meiste Zeit deines Tages beschreibt – nicht die aktivste Stunde.</p>
                 <div class="direct-choice-list" aria-label="Was passt am ehesten?">
-                    <button class="direct-choice" type="button" data-daily-activity="sedentary"><span><strong>Überwiegend sitzend</strong><small>Du sitzt den größten Teil des Tages. Normale Haushaltswege zählen noch dazu.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
-                    <button class="direct-choice" type="button" data-daily-activity="mixed"><span><strong>Teils sitzend, teils auf den Beinen</strong><small>Du verbringst täglich mehrere Stunden im Wechsel sitzend, stehend und gehend.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
-                    <button class="direct-choice" type="button" data-daily-activity="standing"><span><strong>Überwiegend auf den Beinen</strong><small>Du stehst oder gehst den Großteil des Tages, etwa im Verkauf, in der Pflege oder Gastronomie.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
-                    <button class="direct-choice" type="button" data-daily-activity="strenuous"><span><strong>Körperlich anstrengend</strong><small>Dein Alltag umfasst über mehrere Stunden schwere körperliche Arbeit, Tragen oder intensive Bewegung.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="sedentary"><span><strong>Überwiegend sitzend</strong><small>Du sitzt an einem typischen Tag insgesamt etwa 6 Stunden oder länger. Auch Homeoffice, Studium, Kinderbetreuung und normaler Haushalt gehören hierher, wenn du den Großteil des Tages sitzt.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="mixed"><span><strong>Teils sitzend, teils auf den Beinen</strong><small>Du verbringst an einem typischen Tag tatsächlich mehrere Stunden stehend oder gehend – nicht nur durch normale Haushaltswege oder kurze Unterbrechungen des Sitzens.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="standing"><span><strong>Überwiegend auf den Beinen</strong><small>Du bist an einem typischen Tag ungefähr 5 Stunden oder länger überwiegend stehend oder gehend, etwa in Verkauf, Pflege oder Gastronomie.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="strenuous"><span><strong>Körperlich anstrengend</strong><small>Du verrichtest über mehrere Stunden körperlich belastende Arbeit mit regelmäßigem Heben, Tragen oder intensiver Bewegung.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
                 </div>
                 <p class="direct-choice-note">Deine Schritte werden separat berücksichtigt. Wähle hier nur, wie du deinen Tag überwiegend verbringst.</p>
                 <div class="actions direct-step__actions">
@@ -365,7 +374,12 @@
                     <div class="calibration-details-content">
                         <div class="calibration-basis">
                             <p>Geschätzter Ruhebedarf: <strong id="resting-result"></strong></p>
+                            <p>Basisfaktor Alltag: <strong id="basis-factor-result"></strong></p>
+                            <p>Alltagsbasis: <strong id="everyday-base-result"></strong></p>
+                            <p>Schrittaufschlag: <strong id="step-surcharge-result"></strong></p>
+                            <p>Trainingsaufschlag: <strong id="training-surcharge-result"></strong></p>
                             <p>Geschätzte <span id="maintenance-label">Erhaltung</span>: <strong id="maintenance-result"></strong></p>
+                            <p>Abnehmstartwert: <strong id="weight-loss-start-result"></strong></p>
                         </div>
                         <p><strong>1. Ruhebedarf:</strong> Zuerst schätzt NOURA, wie viel Energie dein Körper in vollständiger Ruhe benötigt.</p>
                         <p><strong>2. Dein tatsächlicher Alltag:</strong> Danach fließen Alltag, Schritte und Training ein. Ein überwiegend sitzender Alltag ist dabei nicht dasselbe wie vollständige Bewegungslosigkeit – auch Aufstehen, kurze Wege und alltägliche Aufgaben benötigen Energie.</p>
@@ -419,6 +433,10 @@
                         <div class="start-value-test__follow-up" data-follow-up-slot hidden></div>
                     </div>
                 </details>
+            </div>
+
+            <div class="weekly-planner-entry deficit-result">
+                <button class="secondary" type="button" id="weekly-planner-launch" hidden>Meine Woche planen</button>
             </div>
 
             <div class="card result-overview">
@@ -508,6 +526,77 @@
             <button class="text-button" type="button" id="restart">Neu berechnen</button>
             <p class="fine-print">Die Berechnung ist eine allgemeine Schätzung, keine Diagnose, Therapie oder Abnahmegarantie. Bei Beschwerden oder besonderen gesundheitlichen Situationen kann eine medizinische oder ernährungsfachliche Einordnung sinnvoll sein.</p>
         </section>
+
+        <section class="weekly-planner" id="weekly-planner" hidden aria-labelledby="weekly-planner-title">
+            <header class="weekly-planner__header">
+                <button class="button-secondary-back" type="button" id="weekly-planner-close"><span aria-hidden="true">←</span><span>Zurück zum Ergebnis</span></button>
+                <span class="eyebrow">Deine Woche</span>
+                <h1 id="weekly-planner-title">Ein einfacher Plan für sieben Tage.</h1>
+                <p>Du wählst einen Frühstücksrahmen und vier Gerichte für zwei Kochsessions. NOURA verteilt sie ruhig über deine Woche.</p>
+            </header>
+
+            <div class="weekly-planner__budget" aria-label="Dein persönliches Wochenplan-Budget">
+                <div><span>Tagesbudget</span><strong id="planner-daily-budget"></strong></div>
+                <div><span>Geplant</span><strong id="planner-planned-budget"></strong></div>
+                <div><span>Flex-Budget</span><strong id="planner-flex-budget"></strong></div>
+            </div>
+            <p class="weekly-planner__principle">Das 80/20-Prinzip ist eine NOURA-Produktregel für mehr Alltagsspielraum – keine wissenschaftliche Berechnungsformel.</p>
+            <p class="field-error weekly-planner__error" id="weekly-planner-error" role="alert" aria-live="polite"></p>
+
+            <section class="weekly-planner__step" data-planner-step="1">
+                <span class="weekly-planner__step-label">Schritt 1 von 3</span>
+                <h2 tabindex="-1">Welches Frühstück möchtest du überwiegend nutzen?</h2>
+                <fieldset>
+                    <legend class="sr-only">Frühstücksbaustein wählen</legend>
+                    <div class="choice-list form-choice-list">
+                        <label class="choice form-choice"><input type="radio" name="plannerBreakfast" value="purple"><span><strong>Purple / leicht</strong><small>Stoffwechselshake · 260 kcal</small></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="plannerBreakfast" value="normal"><span><strong>Normales Frühstück</strong><small>Mukis Porridge · 339 kcal</small></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="plannerBreakfast" value="flexible"><span><strong>Flexibel</strong><small>Leichtes und normales Frühstück wechseln sich ab.</small></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                    </div>
+                </fieldset>
+                <div class="actions"><button class="primary" type="button" id="planner-breakfast-next">Weiter zu Kochsession 1</button></div>
+            </section>
+
+            <section class="weekly-planner__step" data-planner-step="2" hidden>
+                <span class="weekly-planner__step-label">Schritt 2 von 3</span>
+                <h2 tabindex="-1">Kochsession 1</h2>
+                <p>Diese beiden Gerichte versorgen Sonntag bis Dienstag.</p>
+                <div class="weekly-planner__selects">
+                    <label for="planner-recipe-a">Gericht A<select id="planner-recipe-a"><option value="">Gericht auswählen</option></select></label>
+                    <label for="planner-recipe-b">Gericht B<select id="planner-recipe-b"><option value="">Zuerst Gericht A wählen</option></select></label>
+                </div>
+                <div class="actions">
+                    <button class="button-secondary-back" type="button" data-planner-back="1"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                    <button class="primary" type="button" id="planner-session-one-next">Weiter zu Kochsession 2</button>
+                </div>
+            </section>
+
+            <section class="weekly-planner__step" data-planner-step="3" hidden>
+                <span class="weekly-planner__step-label">Schritt 3 von 3</span>
+                <h2 tabindex="-1">Kochsession 2</h2>
+                <p>Diese beiden Gerichte versorgen Mittwoch bis Freitag. Samstag nutzt du flexibel oder für Reste.</p>
+                <div class="weekly-planner__selects">
+                    <label for="planner-recipe-c">Gericht C<select id="planner-recipe-c"><option value="">Gericht auswählen</option></select></label>
+                    <label for="planner-recipe-d">Gericht D<select id="planner-recipe-d"><option value="">Zuerst Gericht C wählen</option></select></label>
+                </div>
+                <div class="actions">
+                    <button class="button-secondary-back" type="button" data-planner-back="2"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                    <button class="primary" type="button" id="planner-create">Wochenplan erstellen</button>
+                </div>
+            </section>
+
+            <section class="weekly-planner__step weekly-planner__overview" data-planner-step="4" hidden>
+                <span class="weekly-planner__step-label">Deine Übersicht</span>
+                <h2 tabindex="-1">Montag bis Sonntag</h2>
+                <div class="weekly-plan-days" id="weekly-plan-days"></div>
+                <p class="weekly-planner__storage-note">Gespeichert werden nur Tagesbudget, Frühstücksauswahl und vier Rezept-IDs – keine Körper- oder Lebensphasenangaben.</p>
+                <p class="weekly-planner__save-status" id="weekly-planner-save-status" role="status" aria-live="polite"></p>
+                <div class="actions weekly-planner__overview-actions">
+                    <button class="button-secondary-back" type="button" id="planner-new"><span aria-hidden="true">←</span><span>Auswahl ändern</span></button>
+                    <button class="primary" type="button" id="planner-save">Plan lokal speichern</button>
+                </div>
+            </section>
+        </section>
         <nav class="legal-links" aria-label="Rechtliche Informationen">
             <span class="legal-links__brand legal-links__brand--full">© 2026 NOURA <span aria-hidden="true">·</span></span>
             <span class="legal-links__brand legal-links__brand--mobile">© 2026 NOURA <span aria-hidden="true">·</span></span>
@@ -515,12 +604,15 @@
                 <a href="impressum.html">Impressum</a>
                 <span class="legal-links__separator" aria-hidden="true">·</span>
                 <a href="datenschutz.html">Datenschutz</a>
+                <span class="legal-links__separator" aria-hidden="true">·</span>
+                <a href="design-system.html">Designsystem</a>
             </span>
         </nav>
     </main>
 
     <script type="module">
         import { calculateOrientation, distributeProteinAnchors, RESULT_MODES } from './calculator.mjs';
+        import { initWeeklyPlanner } from './weekly-planner-ui.mjs';
 
         const form = document.getElementById('calculator-form');
         const steps = [...document.querySelectorAll('.step')];
@@ -528,6 +620,7 @@
         const progressCopy = document.getElementById('progress-copy');
         const progressValue = document.getElementById('progress-value');
         const resultSection = document.getElementById('result');
+        const weeklyPlanner = initWeeklyPlanner({ resultSection });
         const startValueTest = document.getElementById('start-value-test');
         const startValueTestToggle = document.getElementById('start-value-test-toggle');
         startValueTest.addEventListener('toggle', () => {
@@ -614,6 +707,7 @@
                 age: form.elements.age.value,
                 heightCm: form.elements.heightCm.value,
                 weightKg: form.elements.weightKg.value,
+                sex: selectedValue('sex'),
                 pregnant: 'no',
                 trimester: '',
                 birthWithin12Months: 'no',
@@ -653,7 +747,8 @@
             bodyNext.disabled = !(
                 Number.isFinite(age) && age > 0 && age <= 80 &&
                 Number.isFinite(height) && height >= 130 && height <= 220 &&
-                Number.isFinite(weight) && weight >= 35 && weight <= 300
+                Number.isFinite(weight) && weight >= 35 && weight <= 300 &&
+                (age < 18 || Boolean(selectedValue('sex')))
             );
 
             const stepsNext = document.querySelector('[data-step="3"] [data-next]');
@@ -1108,7 +1203,7 @@
                 obstacle: data.obstacle || 'unsure'
             });
             const requiredByStep = {
-                1: ['age', 'heightCm', 'weightKg'],
+                1: ['age', 'heightCm', 'weightKg', 'sex'],
                 2: ['dailyActivity'],
                 3: [],
                 4: ['trainingSessions'],
@@ -1245,6 +1340,7 @@
                 RESULT_MODES.EXCLUSIVE_BREASTFEEDING,
                 RESULT_MODES.PARTIAL_BREASTFEEDING
             ].includes(result.mode);
+            weeklyPlanner.setDailyTarget(deficitMode ? result.targetCalories : null);
             if (result.mode === RESULT_MODES.POSTPARTUM_LOSS) {
                 setText('result-heading', 'Ein vorsichtiger Start nach deiner Erholungsphase.');
                 setText('result-intro', 'Wenn du dich körperlich ausreichend erholt fühlst und dein persönlicher Verlauf nicht dagegenspricht, kann ein moderater Startbereich eine vorsichtige Orientierung sein. Diese Auswahl ersetzt keine medizinische Einordnung.');
@@ -1269,7 +1365,12 @@
 
             if (showsEnergy) {
                 setText('resting-result', formatKcal(result.resting));
+                setText('basis-factor-result', result.breakdown.baseActivityFactor.toFixed(2).replace('.', ','));
+                setText('everyday-base-result', formatKcal(result.breakdown.everydayBase));
+                setText('step-surcharge-result', formatKcal(result.breakdown.additionalStepCalories));
+                setText('training-surcharge-result', formatKcal(result.breakdown.averageDailyTrainingCalories));
                 setText('maintenance-result', formatRange(result.maintenance));
+                setText('weight-loss-start-result', result.breakdown.weightLossStart === null ? 'Kein automatisches Abnehmziel' : formatKcal(result.breakdown.weightLossStart));
                 setText('maintenance-label', breastfeedingMode ? 'Grundbedarf im Alltag' : 'Erhaltung');
             }
 
@@ -1379,6 +1480,7 @@
         });
 
         document.getElementById('restart').addEventListener('click', () => {
+            weeklyPlanner.setDailyTarget(null);
             form.reset();
             directAnswers.dailyActivity = '';
             directAnswers.obstacle = '';
