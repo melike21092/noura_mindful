@@ -6,6 +6,7 @@ import { join } from 'node:path';
 const root = new URL('../../', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
 const port = 8765;
 const debugPort = 9223;
+const productPath = process.env.NOURA_BROWSER_PATH || '/tools/kalorienrechner/';
 const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const profile = await mkdtemp(join(tmpdir(), 'noura-chrome-'));
 const server = spawn('python', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {
@@ -19,13 +20,14 @@ const chrome = spawn(chromePath, [
     '--no-first-run',
     '--disable-gpu',
     '--hide-scrollbars',
-    `http://127.0.0.1:${port}/tools/kalorienrechner/`
+    `http://127.0.0.1:${port}${productPath}`
 ], { stdio: 'ignore' });
 
 const wait = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 let socket;
 let commandId = 0;
 const pending = new Map();
+let reloadId = 0;
 
 async function connect() {
     let target;
@@ -80,11 +82,22 @@ async function waitForCondition(expression, message) {
 }
 
 async function reload() {
-    await command('Page.navigate', { url: `http://127.0.0.1:${port}/tools/kalorienrechner/` });
+    reloadId += 1;
+    const [pathname, hash = ''] = productPath.split('#');
+    const reloadSearch = `?nouraTestReload=${reloadId}`;
+    const reloadPath = `${pathname}${reloadSearch}${hash ? `#${hash}` : ''}`;
+    await command('Page.navigate', { url: `http://127.0.0.1:${port}${reloadPath}` });
+    const workspaceReady = productPath.startsWith('/app/')
+        ? `document.querySelector('[data-workspace-ready="true"]')`
+        : `document.querySelector('[data-step="0"] [data-next]')`;
     await waitForCondition(
-        `document.readyState === 'complete' && document.querySelector('[data-step="0"] [data-next]')`,
+        `location.search === '${reloadSearch}' && document.readyState === 'complete' && ${workspaceReady}`,
         'Startseite wurde nach der Navigation nicht bereit'
     );
+    await evaluate(`
+        history.replaceState(null, '', location.pathname + location.hash);
+        return true;
+    `);
 }
 
 const assert = (condition, message) => {
@@ -294,7 +307,17 @@ try {
         assert(!startComposition.overflow, `Startseite läuft bei ${viewport.width}px horizontal über`);
         assert(startComposition.wordmarkVisible && startComposition.wordmarkUses === 2 && startComposition.wordmarkLabel === 'NOURA', `Offizielle Wortmarke wird bei ${viewport.width}px nicht korrekt referenziert`);
         assert(!startComposition.descriptorPresent && !startComposition.oldHeaderCopy && startComposition.signetHidden, `Startseiten-Header enthält bei ${viewport.width}px nicht ausschließlich die Wortmarke`);
-        assert(startComposition.favicon === 'assets/noura-mark.svg' && startComposition.appleTouchIcon === 'assets/apple-touch-icon.png', 'Browser-Icon-Verweise sind nicht korrekt');
+        const expectedFavicon = productPath.startsWith('/app/')
+            ? './assets/brand/noura-mark.svg'
+            : 'assets/noura-mark.svg';
+        const expectedAppleTouchIcon = productPath.startsWith('/app/')
+            ? './assets/brand/apple-touch-icon.png'
+            : 'assets/apple-touch-icon.png';
+        assert(
+            startComposition.favicon === expectedFavicon &&
+            startComposition.appleTouchIcon === expectedAppleTouchIcon,
+            'Browser-Icon-Verweise sind nicht korrekt'
+        );
         assert(!startComposition.footerLinksUnderlined, 'Footer-Links sind dauerhaft unterstrichen');
         if (viewport.width < 900) {
             assert(startComposition.wordmarkWidth >= 105 && startComposition.wordmarkWidth <= 120, `Mobile Wortmarke hat bei ${viewport.width}px nicht die vorgesehene Breite`);
@@ -307,7 +330,9 @@ try {
             assert(startComposition.heroTop >= 0, `Hero wird bei ${viewport.width}px oben abgeschnitten`);
             assert(startComposition.ctaFooterGap >= 80, `CTA klebt auf Mobile unmittelbar am Footer`);
             if (viewport.width === 430) {
-                assert(startComposition.eyebrowTop >= 170 && startComposition.eyebrowTop <= 230, `Eyebrow liegt bei 430px nicht im neuen Editorial-Zielbereich: ${startComposition.eyebrowTop}`);
+                if (!productPath.startsWith('/app/')) {
+                    assert(startComposition.eyebrowTop >= 170 && startComposition.eyebrowTop <= 230, `Eyebrow liegt bei 430px nicht im neuen Editorial-Zielbereich: ${startComposition.eyebrowTop}`);
+                }
                 assert(startComposition.ctaBottom >= startComposition.viewportHeight - 420, `CTA liegt bei 430px nicht innerhalb der zentrierten Editorial-Komposition: ${startComposition.ctaBottom}`);
             }
             if (process.env.CAPTURE_START_SCREENSHOTS === '1') {
@@ -392,7 +417,7 @@ try {
     `);
     assert(initialSituationScreen.subtitle === 'So erhältst du eine Orientierung, die zu deiner aktuellen Lebensphase passt.', 'Unterzeile des Lebensphasen-Screens ist falsch');
     assert(initialSituationScreen.signetVisible && initialSituationScreen.wordmarkHidden && initialSituationScreen.signetLabel === 'Zur NOURA Startseite', 'Rechnernavigation verwendet nicht ausschließlich das zugängliche Signet');
-    assert(initialSituationScreen.signetSize >= 32 && initialSituationScreen.signetSize <= 36 && initialSituationScreen.signetUse === 'assets/noura-mark.svg#Ebene_1', 'Desktop-Signet hat nicht die korrekte Asset-Referenz oder Größe');
+    assert(initialSituationScreen.signetSize >= 32 && initialSituationScreen.signetSize <= 36 && (initialSituationScreen.signetUse.endsWith('assets/noura-mark.svg#Ebene_1') || initialSituationScreen.signetUse.endsWith('assets/brand/noura-mark.svg#Ebene_1')), 'Desktop-Signet hat nicht die korrekte Asset-Referenz oder Größe');
     assert(initialSituationScreen.optionCount === 5, 'Lebensphasen-Screen enthält nicht genau fünf Optionen');
     assert(initialSituationScreen.titles[0] === 'Nichts davon trifft auf mich zu', 'Standardoption ist falsch beschriftet');
     assert(initialSituationScreen.icons === 5, 'Nicht jede Lebensphasenoption hat ein verborgenes Line-Icon');
@@ -755,7 +780,8 @@ try {
                 .filter(url => new URL(url).origin !== window.location.origin)
         };
     `);
-    assert(privacyState.search === '' && privacyState.hash === '', 'Rechnerdaten tauchen in der URL auf');
+    const expectedHash = productPath.startsWith('/app/') ? '#/calculator' : '';
+    assert(privacyState.search === '' && privacyState.hash === expectedHash, 'Rechnerdaten tauchen in der URL auf');
     assert(privacyState.localStorageEntries === 0, 'Rechnerdaten oder Zustand wurden in localStorage abgelegt');
     assert(privacyState.sessionStorageEntries === 0, 'Rechnerdaten oder Zustand wurden in sessionStorage abgelegt');
     assert(privacyState.cookie === '', 'Der Rechner hat Cookies gesetzt');
@@ -827,6 +853,23 @@ try {
     assert(resultHierarchy.calorieTitle === 'Dein realistischer Startpunkt', 'Die Kalorienkarte zeigt nicht die neue Ergebnishierarchie');
     assert(resultHierarchy.startValue && resultHierarchy.startValueGroup.endsWith('kcal'), 'Startwert und Einheit werden nicht gemeinsam ausgegeben');
     assert(resultHierarchy.calculationBreakdown.every(value => value && !/NaN|Infinity/.test(value)), 'Berechnungsaufschlüsselung ist leer oder nicht endlich');
+    if (productPath.startsWith('/app/')) {
+        const appState = await evaluate(`
+            const state = globalThis[Symbol.for('noura.appState')];
+            return {
+                activeWorkspaceId: state.activeWorkspaceId,
+                shellMode: state.shellMode,
+                hasOrientation: Boolean(state.personalOrientation),
+                targetCalories: state.personalOrientation?.targetCalories,
+                storedKeys: Object.keys(state)
+            };
+        `);
+        assert(appState.activeWorkspaceId === 'calculator', 'App Store besitzt nicht den Calculator Workspace');
+        assert(appState.shellMode === 'result', 'App Store besitzt nach der Berechnung nicht den Ergebnis-Modus');
+        assert(appState.hasOrientation, 'Calculation Orientation wurde nicht im In-Memory-App-Store veröffentlicht');
+        assert(appState.targetCalories === Number.parseInt(resultHierarchy.startValue.replaceAll('.', ''), 10), 'App Store und sichtbarer Rechner-Startwert unterscheiden sich');
+        assert(appState.storedKeys.join(',') === 'version,activeWorkspaceId,shellMode,personalOrientation', 'App Store enthält unerwartete oder duplizierte Zustände');
+    }
 
     await command('Emulation.setDeviceMetricsOverride', {
         width: 390,
@@ -865,6 +908,17 @@ try {
     assert(plannerBudget.planned === Math.round(plannerBudget.daily * 0.8) && plannerBudget.flex === Math.round(plannerBudget.daily * 0.2), '80/20-Budget wird im Planer falsch angezeigt');
     assert(plannerBudget.storageAfterOpen === 0, 'Das Öffnen des Planers schreibt bereits localStorage');
     assert(!plannerBudget.overflow, 'Wochenplaner läuft auf Mobile horizontal über');
+    if (productPath.startsWith('/app/')) {
+        const plannerAppState = await evaluate(`
+            const state = globalThis[Symbol.for('noura.appState')];
+            return {
+                targetCalories: state.personalOrientation?.targetCalories,
+                shellMode: state.shellMode
+            };
+        `);
+        assert(plannerAppState.targetCalories === plannerBudget.daily, 'Planner liest nicht dieselbe Calculation Orientation wie der App Store');
+        assert(plannerAppState.shellMode === 'planner', 'App Store besitzt beim geöffneten Planner nicht den Planner-Modus');
+    }
 
     await evaluate(`document.querySelector('[name="plannerBreakfast"][value="purple"]').focus(); return true;`);
     await command('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: ' ', code: 'Space', windowsVirtualKeyCode: 32, nativeVirtualKeyCode: 32 });
@@ -968,7 +1022,7 @@ try {
     assert(resultHierarchy.ctaCopy.startsWith('Im NOURA Coaching übersetzen wir deine Orientierung'), 'Der Coaching-Abschluss zeigt den falschen Text');
     assert(resultHierarchy.ctaLabel === 'Meinen persönlichen Start besprechen' && resultHierarchy.ctaHref.includes('zeeg.me/nouraxbalance/kennenlernen'), 'Der Coaching-CTA ist nicht korrekt verknüpft');
     assert(
-        resultHierarchy.coachImage.src === 'assets/noura-coach.webp' &&
+        resultHierarchy.coachImage.src.endsWith('assets/noura-coach.webp') &&
         resultHierarchy.coachImage.alt === 'Mukaddes Mandirali, Ernährungsberaterin und NOURA Coach' &&
         resultHierarchy.coachImage.loading === 'lazy' &&
         resultHierarchy.coachImage.width === '1800' &&
@@ -1015,7 +1069,7 @@ try {
             `);
             const touchPoint = await evaluate(`
                 const summary = document.getElementById('start-value-test-toggle');
-                summary.scrollIntoView({ block: 'center' });
+                summary.scrollIntoView({ block: 'center', behavior: 'instant' });
                 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
                 const rect = summary.getBoundingClientRect();
                 const x = rect.left + rect.width / 2;
@@ -1115,6 +1169,13 @@ try {
                 Buffer.from(screenshot.data, 'base64')
             );
         }
+    }
+    if (productPath.startsWith('/app/')) {
+        await evaluate(`document.getElementById('brand-home').click(); return true;`);
+        await waitForCondition(
+            `globalThis[Symbol.for('noura.appState')].personalOrientation === null`,
+            'Rechner-Reset löscht die zentrale Calculation Orientation nicht'
+        );
     }
     await command('Emulation.setDeviceMetricsOverride', {
         width: 1440,
