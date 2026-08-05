@@ -374,9 +374,9 @@
                     <div class="calibration-details-content">
                         <div class="calibration-basis">
                             <p>Geschätzter Ruhebedarf: <strong id="resting-result"></strong></p>
-                            <p>Basisfaktor Alltag: <strong id="basis-factor-result"></strong></p>
-                            <p>Alltagsbasis: <strong id="everyday-base-result"></strong></p>
-                            <p>Schrittaufschlag: <strong id="step-surcharge-result"></strong></p>
+                            <p>Basisfaktor Alltag und Schritte: <strong id="basis-factor-result"></strong></p>
+                            <p>Alltagsbasis inklusive Schritte: <strong id="everyday-base-result"></strong></p>
+                            <p>Schritte: <strong id="step-surcharge-result"></strong></p>
                             <p>Trainingsaufschlag: <strong id="training-surcharge-result"></strong></p>
                             <p>Geschätzte <span id="maintenance-label">Erhaltung</span>: <strong id="maintenance-result"></strong></p>
                             <p>Abnehmstartwert: <strong id="weight-loss-start-result"></strong></p>
@@ -611,7 +611,7 @@
     </main>
 
     <script type="module">
-        import { calculateOrientation, distributeProteinAnchors, RESULT_MODES } from './calculator.mjs';
+        import { calculateOrientation, distributeProteinAnchors, RESULT_MODES, roundTo } from './calculator.mjs';
         import { initWeeklyPlanner } from './weekly-planner-ui.mjs';
 
         const form = document.getElementById('calculator-form');
@@ -1365,12 +1365,17 @@
 
             if (showsEnergy) {
                 setText('resting-result', formatKcal(result.resting));
-                setText('basis-factor-result', result.breakdown.baseActivityFactor.toFixed(2).replace('.', ','));
-                setText('everyday-base-result', formatKcal(result.breakdown.everydayBase));
-                setText('step-surcharge-result', formatKcal(result.breakdown.additionalStepCalories));
-                setText('training-surcharge-result', formatKcal(result.breakdown.averageDailyTrainingCalories));
+                const basisFactor = result.activity.basisFactor;
+                const everydayBase = {
+                    low: roundTo(result.resting * basisFactor.min, 50),
+                    high: roundTo(result.resting * basisFactor.max, 50)
+                };
+                setText('basis-factor-result', `${basisFactor.min.toFixed(2).replace('.', ',')}–${basisFactor.max.toFixed(2).replace('.', ',')}`);
+                setText('everyday-base-result', formatRange(everydayBase));
+                setText('step-surcharge-result', 'Im Basisfaktor enthalten');
+                setText('training-surcharge-result', formatRange(result.activity.trainingDaily));
                 setText('maintenance-result', formatRange(result.maintenance));
-                setText('weight-loss-start-result', result.breakdown.weightLossStart === null ? 'Kein automatisches Abnehmziel' : formatKcal(result.breakdown.weightLossStart));
+                setText('weight-loss-start-result', Number.isFinite(result.targetCalories) ? formatKcal(result.targetCalories) : 'Kein automatisches Abnehmziel');
                 setText('maintenance-label', breastfeedingMode ? 'Grundbedarf im Alltag' : 'Erhaltung');
             }
 

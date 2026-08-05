@@ -14,7 +14,7 @@ const [appEngine, legacyEngine, resultBridge, plannerBridge] = await Promise.all
 ]);
 
 const hash = content => createHash('sha256').update(content).digest('hex');
-const expectedHash = '9c46e1f826d33c9354713bc9e2fd4651453ca04a24fdcdbb14ddc3ae194a5759';
+const expectedHash = '69277fedf7df3ea8c441db2bff13d886a4d50ff777403bc6c27b217718cd4e9d';
 assert.equal(hash(appEngine), expectedHash);
 assert.equal(hash(legacyEngine), expectedHash);
 assert.equal(hash(appEngine), hash(legacyEngine));

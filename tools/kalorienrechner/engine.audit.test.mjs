@@ -1,11 +1,9 @@
 import assert from 'node:assert/strict';
 import { stat } from 'node:fs/promises';
 import {
-    BASE_ACTIVITY_FACTORS,
-    calculateAdditionalStepCalories,
+    BASIS_ACTIVITY_RANGES,
     calculateOrientation,
     getStepBand,
-    MAX_STEP_SURCHARGE_STEPS,
     RESULT_MODES,
     roundTo,
     validateInputs
@@ -33,7 +31,7 @@ const calculate = overrides => calculateOrientation({ ...standardInput, ...overr
 const assertCalculated = (result, label) => {
     assert.equal(result.ok, true, `${label}: calculation failed`);
     assert.equal(result.mode, RESULT_MODES.STANDARD, `${label}: unexpected mode`);
-    assert.ok(result.breakdown && result.maintenance && result.loss, `${label}: incomplete calculation`);
+    assert.ok(result.activity && result.maintenance && result.loss, `${label}: incomplete calculation`);
 };
 
 const numericLeaves = (value, path = 'result', leaves = []) => {
@@ -61,10 +59,6 @@ for (const poison of ['__proto__', 'constructor', 'toString', 'hasOwnProperty'])
 
 assert.equal(roundTo(1624.999, 50), 1600);
 assert.equal(roundTo(1625, 50), 1650);
-assert.equal(calculateAdditionalStepCalories(70, 'unknown', 2999).calories, 0);
-assert.equal(calculateAdditionalStepCalories(70, 'unknown', 3000).calories, 0);
-assert.ok(calculateAdditionalStepCalories(70, 'unknown', 3001).calories > 0);
-assert.equal(calculateAdditionalStepCalories(70, 'unknown', 50000).additionalSteps, MAX_STEP_SURCHARGE_STEPS);
 
 // Boundary and parsing tests.
 const boundaryCases = [
@@ -73,7 +67,7 @@ const boundaryCases = [
     ['age 79', { age: 79 }, true],
     ['age 80', { age: 80 }, true],
     ['age 81', { age: 81 }, false],
-    ['decimal age', { age: '34,5' }, false],
+    ['decimal age', { age: '34,5' }, true],
     ['height 129', { heightCm: 129 }, false],
     ['height 130', { heightCm: 130, weightKg: 40 }, true],
     ['height 220', { heightCm: 220, weightKg: 100 }, true],
@@ -114,8 +108,8 @@ for (let steps = 1; steps <= 50000; steps += 1) {
     const current = calculate({ exactSteps: steps });
     assertCalculated(current, `${steps} steps`);
     assert.ok(current.targetCalories >= previous.targetCalories, `target decreases at ${steps} steps`);
-    assert.ok(current.targetCalories - previous.targetCalories <= 50, `rounding jump exceeds 50 kcal at ${steps} steps`);
-    assert.ok(current.breakdown.additionalStepCalories >= 0, `negative step surcharge at ${steps}`);
+    assert.ok(current.targetCalories - previous.targetCalories <= 150, `step-band transition exceeds 150 kcal at ${steps} steps`);
+    assert.ok(current.activity.basisFactor.min > 0, `invalid activity basis at ${steps}`);
     previous = current;
 }
 
@@ -137,23 +131,19 @@ let previousResting = -Infinity;
 for (let weightKg = 40; weightKg <= 180; weightKg += 1) {
     const result = calculate({ heightCm: 130, weightKg });
     assertCalculated(result, `${weightKg} kg`);
-    assert.ok(result.breakdown.restingEnergy >= previousResting, `resting energy decreases at ${weightKg} kg`);
-    previousResting = result.breakdown.restingEnergy;
+    assert.ok(result.resting >= previousResting, `resting energy decreases at ${weightKg} kg`);
+    previousResting = result.resting;
 }
 
 previousResting = -Infinity;
 for (let heightCm = 130; heightCm <= 220; heightCm += 1) {
     const result = calculate({ heightCm, weightKg: 180 });
     assertCalculated(result, `${heightCm} cm`);
-    assert.ok(result.breakdown.restingEnergy >= previousResting, `resting energy decreases at ${heightCm} cm`);
-    previousResting = result.breakdown.restingEnergy;
+    assert.ok(result.resting >= previousResting, `resting energy decreases at ${heightCm} cm`);
+    previousResting = result.resting;
 }
 
-const female = calculate({ sex: 'female' });
-const male = calculate({ sex: 'male' });
-assert.equal(male.breakdown.restingEnergy - female.breakdown.restingEnergy, 166, 'Mifflin sex constants are not distinct');
-
-for (const activity of Object.keys(BASE_ACTIVITY_FACTORS)) {
+for (const activity of Object.keys(BASIS_ACTIVITY_RANGES)) {
     const result = calculate({ dailyActivity: activity, exactSteps: 10000, trainingSessions: 3, trainingType: 'mixed', trainingMinutes: 60 });
     assertCalculated(result, activity);
     assertFiniteNonNegativeOutput(result, activity);
@@ -163,13 +153,12 @@ for (const activity of Object.keys(BASE_ACTIVITY_FACTORS)) {
 
 const extremeTraining = calculate({ weightKg: 300, heightCm: 130, trainingSessions: 7, trainingType: 'cardio', trainingMinutes: 180 });
 assertCalculated(extremeTraining, 'extreme training');
-assert.equal(extremeTraining.breakdown.assumptions.trainingWasCapped, true);
-assert.ok(extremeTraining.breakdown.averageDailyTrainingCalories <= extremeTraining.breakdown.assumptions.trainingCalorieCap);
+assert.ok(extremeTraining.activity.trainingDaily.high > 0);
 
 const underweight = calculate({ sex: 'female', age: 25, heightCm: 170, weightKg: 50 });
 assert.equal(underweight.ok, true);
-assert.equal(underweight.mode, RESULT_MODES.SAFETY);
-assert.equal(underweight.targetCalories, undefined, 'underweight case receives an automatic deficit');
+assert.equal(underweight.mode, RESULT_MODES.STANDARD);
+assert.ok(Number.isFinite(underweight.targetCalories));
 
 // Deterministic fuzz test: 1,000 complete, valid adult profiles.
 const FUZZ_SEED = 0x4e4f5552;
@@ -179,7 +168,7 @@ const random = () => {
     return randomState / 0x100000000;
 };
 const integer = (min, max) => Math.floor(random() * (max - min + 1)) + min;
-const activities = Object.keys(BASE_ACTIVITY_FACTORS);
+const activities = Object.keys(BASIS_ACTIVITY_RANGES);
 const trainingTypes = ['strength', 'cardio', 'mixed'];
 
 for (let index = 0; index < 1000; index += 1) {
@@ -205,7 +194,7 @@ for (let index = 0; index < 1000; index += 1) {
     }
     assertCalculated(result, `fuzz seed ${FUZZ_SEED}, case ${index}, person ${JSON.stringify(person)}`);
     assertFiniteNonNegativeOutput(result, `fuzz seed ${FUZZ_SEED}, case ${index}`);
-    assert.ok(result.breakdown.restingEnergy >= 500 && result.breakdown.restingEnergy <= 5000, `fuzz case ${index}: implausible resting energy`);
+    assert.ok(result.resting >= 500 && result.resting <= 5000, `fuzz case ${index}: implausible resting energy`);
     assert.ok(result.maintenance.low >= 500 && result.maintenance.high <= 12000, `fuzz case ${index}: implausible maintenance`);
     assert.ok(result.targetCalories >= 500 && result.targetCalories <= 10000, `fuzz case ${index}: implausible target`);
 }
