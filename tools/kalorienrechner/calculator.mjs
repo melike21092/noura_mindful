@@ -471,7 +471,9 @@ export function validateInputs(input) {
     }
     const mode = Object.keys(errors).length ? null : determineResultMode(input);
     if (mode && CALCULATED_MODES.has(mode)) {
-        const activityRange = BASIS_ACTIVITY_RANGES[input.dailyActivity];
+        const activityRange = Object.hasOwn(BASIS_ACTIVITY_RANGES, input.dailyActivity)
+            ? BASIS_ACTIVITY_RANGES[input.dailyActivity]
+            : null;
         const exactStepsProvided = String(input.exactSteps ?? '').trim() !== '';
         const exactSteps = parseGermanNumber(input.exactSteps);
         const stepBand = getStepBand(input.stepBand, input.exactSteps);
@@ -483,13 +485,13 @@ export function validateInputs(input) {
         }
         if (exactStepsProvided && (!Number.isFinite(exactSteps) || exactSteps < 0 || exactSteps > 50000)) {
             errors.exactSteps = 'Bitte gib eine durchschnittliche Schrittzahl zwischen 0 und 50.000 an.';
-        } else if (!activityRange?.[stepBand]) {
+        } else if (!activityRange || !Object.hasOwn(activityRange, stepBand)) {
             errors.stepBand = 'Bitte wähle deinen ungefähren täglichen Schrittbereich.';
         }
         if (!Number.isInteger(sessions) || sessions < 0 || sessions > 7) {
             errors.trainingSessions = 'Bitte gib eine ganze Zahl zwischen 0 und 7 an.';
         } else if (sessions > 0) {
-            if (!TRAINING_MET_RANGES[input.trainingType]) {
+            if (!Object.hasOwn(TRAINING_MET_RANGES, input.trainingType)) {
                 errors.trainingType = 'Bitte wähle die Trainingsart, die am besten passt.';
             }
             if (!Number.isFinite(minutes) || minutes < 10 || minutes > 180) {
@@ -497,7 +499,7 @@ export function validateInputs(input) {
             }
         }
     }
-    if (mode && DEFICIT_MODES.has(mode) && !MISSIONS[input.obstacle]) {
+    if (mode && DEFICIT_MODES.has(mode) && !Object.hasOwn(MISSIONS, input.obstacle)) {
         errors.obstacle = 'Bitte wähle die Herausforderung, die dich aktuell am meisten beschäftigt.';
     }
 

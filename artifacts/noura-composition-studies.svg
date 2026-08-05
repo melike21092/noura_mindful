@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1620" viewBox="0 0 1536 1620">
+  <defs>
+    <style>
+      .bg{fill:#f3f0eb}.frame{fill:#fcfaf7;stroke:rgba(31,33,31,.16);stroke-width:1}.surface{fill:#fff;stroke:rgba(31,33,31,.13)}
+      .subtle{fill:#f3efe9}.accent{fill:#925126}.positive{fill:#668f57}.ink{fill:#1f211f}.muted{fill:#747872}
+      .t{font-family:Inter,Arial,sans-serif;fill:#1f211f}.label{font-size:11px;font-weight:700;letter-spacing:1.3px;fill:#925126}
+      .h1{font-size:24px;font-weight:600}.h2{font-size:17px;font-weight:600}.body{font-size:10px;fill:#555a56}.tiny{font-size:8px;fill:#747872}
+      .line{stroke:rgba(31,33,31,.16);stroke-width:1}.screen-title{font-size:12px;font-weight:700}.dir{font-size:28px;font-weight:650}.dircopy{font-size:13px;fill:#555a56}
+    </style>
+    <filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1f211f" flood-opacity=".08"/></filter>
+  </defs>
+  <rect width="1536" height="1620" class="bg"/>
+  <text x="64" y="54" class="t label">NOURA · ART-DIRECTION-STUDIEN</text>
+  <text x="64" y="92" class="t dir">Drei Kompositionsrichtungen · fünf Kernmomente</text>
+  <text x="64" y="119" class="t dircopy">Low Fidelity: Hierarchie, Zonen, Rhythmus und Übergänge – keine neue visuelle Sprache.</text>
+
+  <!-- Direction A -->
+  <text x="64" y="180" class="t label">RICHTUNG A</text><text x="64" y="212" class="t dir">Ruhiger Assistent</text>
+  <text x="64" y="235" class="t dircopy">Eine geführte Entscheidung pro Moment. Marke als ruhiger Begleiter.</text>
+  <g transform="translate(64 264)">
+    <!-- A1 -->
+    <g><text y="-12" class="t screen-title">1 · RECHNER-START</text><rect width="256" height="384" rx="18" class="frame" filter="url(#shadow)"/>
+      <text x="20" y="30" class="t label">NOURA</text><rect x="16" y="48" width="224" height="164" rx="14" fill="#66503a"/>
+      <text x="32" y="81" class="t label" fill="#ead0b9">ORIENTIERUNG</text><text x="32" y="112" class="t h1" fill="#fffdf8">Was braucht dein</text><text x="32" y="140" class="t h1" fill="#fffdf8">Körper wirklich?</text>
+      <rect x="32" y="163" width="126" height="32" rx="9" fill="#fffdf8"/><text x="48" y="184" class="t body">Bedarf berechnen →</text>
+      <text x="24" y="246" class="t h2">Ein ruhiger Start</text><text x="24" y="267" class="t body">Vertrauen vor Eingabe.</text><rect x="24" y="294" width="208" height="52" rx="12" class="subtle"/>
+    </g>
+    <!-- A2 -->
+    <g transform="translate(280)"><text y="-12" class="t screen-title">2 · ENTSCHEIDUNG</text><rect width="256" height="384" rx="18" class="frame" filter="url(#shadow)"/>
+      <text x="18" y="28" class="t label">N</text><text x="198" y="28" class="t tiny">1 VON 5</text><rect x="18" y="40" width="220" height="3" rx="2" class="subtle"/><rect x="18" y="40" width="44" height="3" rx="2" class="accent"/>
+      <text x="20" y="78" class="t label">DEIN ALLTAG</text><text x="20" y="108" class="t h1">Wie sieht dein</text><text x="20" y="136" class="t h1">normaler Tag aus?</text>
+      <g transform="translate(18 164)"><rect width="220" height="48" rx="12" class="surface"/><text x="14" y="28" class="t body">Überwiegend sitzend</text><text x="201" y="28" class="t label">›</text></g>
+      <g transform="translate(18 220)"><rect width="220" height="48" rx="12" class="surface"/><text x="14" y="28" class="t body">Gemischt aktiv</text><text x="201" y="28" class="t label">›</text></g>
+      <g transform="translate(18 276)"><rect width="220" height="48" rx="12" class="surface"/><text x="14" y="28" class="t body">Überwiegend stehend</text><text x="201" y="28" class="t label">›</text></g>
+      <text x="20" y="360" class="t body">← Zurück</text>
+    </g>
+    <!-- A3 -->
+    <g transform="translate(560)"><text y="-12" class="t screen-title">3 · ERGEBNIS</text><rect width="256" height="384" rx="18" class="frame" filter="url(#shadow)"/>
+      <text x="18" y="28" class="t label">N</text><text x="20" y="68" class="t label">DEINE ORIENTIERUNG</text><text x="20" y="98" class="t h1">Dein Startpunkt</text>
+      <rect x="18" y="120" width="220" height="112" rx="16" class="surface"/><text x="34" y="150" class="t body">Tageskorridor</text><text x="34" y="190" class="t h1">1.650–1.850</text><text x="34" y="211" class="t body">kcal pro Tag</text>
+      <rect x="18" y="246" width="220" height="72" rx="14" class="subtle"/><text x="32" y="270" class="t label">DEIN NÄCHSTER SCHRITT</text><text x="32" y="292" class="t body">Plane eine ruhige Woche.</text>
+      <rect x="18" y="330" width="220" height="36" rx="10" class="accent"/><text x="72" y="353" class="t body" fill="#fff">Woche planen →</text>
+    </g>
+    <!-- A4 -->
+    <g transform="translate(840)"><text y="-12" class="t screen-title">4 · WOCHENPLAN</text><rect width="256" height="384" rx="18" class="frame" filter="url(#shadow)"/>
+      <text x="18" y="28" class="t label">N</text><text x="20" y="66" class="t label">DEINE WOCHE</text><text x="20" y="94" class="t h1">Sieben ruhige Tage</text>
+      <rect x="18" y="112" width="220" height="58" rx="13" class="subtle"/><text x="32" y="136" class="t body">Budget</text><text x="32" y="157" class="t h2">1.750 kcal · 350 frei</text>
+      <g transform="translate(18 184)"><rect width="220" height="38" rx="10" class="surface"/><text x="12" y="24" class="t body">Mo · Linsensuppe / Lasagne</text></g>
+      <g transform="translate(18 230)"><rect width="220" height="38" rx="10" class="surface"/><text x="12" y="24" class="t body">Di · Linsensuppe / Lasagne</text></g>
+      <g transform="translate(18 276)"><rect width="220" height="38" rx="10" class="surface"/><text x="12" y="24" class="t body">Mi · Udon / Kung Pao</text></g>
+      <text x="20" y="354" class="t body">Weitere Tage ↓</text>
+    </g>
+    <!-- A5 -->
+    <g transform="translate(1120)"><text y="-12" class="t screen-title">5 · TAGESDETAIL</text><rect width="256" height="384" rx="18" class="frame" filter="url(#shadow)"/>
+      <text x="18" y="28" class="t body">← Woche</text><text x="20" y="70" class="t h1">Mittwoch</text><rect x="162" y="49" width="50" height="24" rx="12" fill="#e5edde"/><text x="175" y="65" class="t tiny">HEUTE</text>
+      <text x="20" y="101" class="t label">1.320 KCAL GEPLANT</text><rect x="20" y="116" width="216" height="5" rx="3" class="subtle"/><rect x="20" y="116" width="160" height="5" rx="3" class="positive"/>
+      <rect x="18" y="145" width="220" height="70" rx="13" class="surface"/><text x="32" y="170" class="t tiny">MITTAG</text><text x="32" y="194" class="t h2">Erdnuss-Udon</text>
+      <rect x="18" y="225" width="220" height="70" rx="13" class="surface"/><text x="32" y="250" class="t tiny">ABEND</text><text x="32" y="274" class="t h2">Kung Pao Chicken</text>
+      <rect x="18" y="311" width="220" height="50" rx="12" class="subtle"/><text x="32" y="341" class="t body">300 kcal Freiraum</text>
+    </g>
+  </g>
+
+  <!-- Direction B -->
+  <text x="64" y="714" class="t label">RICHTUNG B</text><text x="64" y="746" class="t dir">Premium Workspace</text>
+  <text x="64" y="769" class="t dircopy">Stabile App-Zonen, schneller Überblick, wiederkehrende Navigation.</text>
+  <g transform="translate(64 798)">
+    <g><text y="-12" class="t screen-title">1 · RECHNER-START</text><rect width="256" height="384" rx="18" class="frame"/><rect width="48" height="384" rx="18" class="subtle"/><text x="14" y="30" class="t label">N</text><circle cx="24" cy="92" r="11" fill="#f1e4d8"/><circle cx="24" cy="132" r="9" class="surface"/><circle cx="24" cy="172" r="9" class="surface"/>
+      <text x="68" y="38" class="t label">KALORIENRECHNER</text><text x="68" y="82" class="t h1">Klar starten.</text><text x="68" y="108" class="t h1">Alltag verstehen.</text><rect x="68" y="136" width="168" height="120" rx="14" fill="#66503a"/><rect x="68" y="274" width="168" height="40" rx="10" class="accent"/><text x="104" y="299" class="t body" fill="#fff">Berechnung starten</text><rect x="68" y="330" width="168" height="30" rx="10" class="subtle"/></g>
+    <g transform="translate(280)"><text y="-12" class="t screen-title">2 · ENTSCHEIDUNG</text><rect width="256" height="384" rx="18" class="frame"/><rect width="48" height="384" rx="18" class="subtle"/><text x="14" y="30" class="t label">N</text><circle cx="24" cy="92" r="11" fill="#f1e4d8"/>
+      <text x="68" y="34" class="t tiny">SCHRITT 2 VON 5</text><text x="68" y="68" class="t h1">Dein Alltag</text><rect x="68" y="88" width="168" height="3" class="subtle"/><rect x="68" y="88" width="67" height="3" class="accent"/>
+      <rect x="68" y="112" width="168" height="54" rx="11" class="surface"/><rect x="68" y="174" width="168" height="54" rx="11" class="surface"/><rect x="68" y="236" width="168" height="54" rx="11" class="surface"/><rect x="68" y="306" width="168" height="38" rx="10" class="accent"/>
+    </g>
+    <g transform="translate(560)"><text y="-12" class="t screen-title">3 · ERGEBNIS</text><rect width="256" height="384" rx="18" class="frame"/><rect width="48" height="384" rx="18" class="subtle"/><text x="14" y="30" class="t label">N</text>
+      <text x="68" y="38" class="t label">ERGEBNIS</text><text x="68" y="72" class="t h1">Deine Basis</text><rect x="68" y="94" width="168" height="78" rx="13" class="surface"/><text x="82" y="122" class="t tiny">STARTWERT</text><text x="82" y="151" class="t h1">1.750 kcal</text>
+      <rect x="68" y="184" width="80" height="70" rx="12" class="subtle"/><rect x="156" y="184" width="80" height="70" rx="12" class="subtle"/><rect x="68" y="266" width="168" height="54" rx="12" class="surface"/><rect x="68" y="332" width="168" height="34" rx="10" class="accent"/>
+    </g>
+    <g transform="translate(840)"><text y="-12" class="t screen-title">4 · WOCHENPLAN</text><rect width="256" height="384" rx="18" class="frame"/><rect width="48" height="384" rx="18" class="subtle"/><text x="14" y="30" class="t label">N</text><circle cx="24" cy="132" r="11" fill="#f1e4d8"/>
+      <text x="68" y="34" class="t label">WOCHENPLAN</text><text x="68" y="66" class="t h1">Diese Woche</text><rect x="68" y="84" width="168" height="60" rx="12" class="subtle"/>
+      <g transform="translate(68 158)"><rect width="50" height="90" rx="10" class="surface"/><rect x="58" width="50" height="90" rx="10" class="surface"/><rect x="116" width="50" height="90" rx="10" class="surface"/></g>
+      <g transform="translate(68 258)"><rect width="50" height="90" rx="10" class="surface"/><rect x="58" width="50" height="90" rx="10" class="surface"/><rect x="116" width="50" height="90" rx="10" class="surface"/></g>
+    </g>
+    <g transform="translate(1120)"><text y="-12" class="t screen-title">5 · TAGESDETAIL</text><rect width="256" height="384" rx="18" class="frame"/><rect width="48" height="384" rx="18" class="subtle"/><text x="14" y="30" class="t label">N</text>
+      <text x="68" y="34" class="t body">← Wochenplan</text><text x="68" y="74" class="t h1">Mittwoch</text><rect x="68" y="94" width="168" height="86" rx="14" class="subtle"/><text x="82" y="124" class="t tiny">GEPLANT</text><text x="82" y="155" class="t h1">1.320 kcal</text>
+      <rect x="68" y="194" width="168" height="62" rx="12" class="surface"/><rect x="68" y="266" width="168" height="62" rx="12" class="surface"/><text x="68" y="354" class="t body">300 kcal Freiraum</text>
+    </g>
+  </g>
+
+  <!-- Direction C -->
+  <text x="64" y="1248" class="t label">RICHTUNG C</text><text x="64" y="1280" class="t dir">Editorial Utility</text>
+  <text x="64" y="1303" class="t dircopy">Typografie als Anker, Atmosphäre an Übergängen, ruhige Utility-Flächen im Kern.</text>
+  <g transform="translate(64 1332)">
+    <g><text y="-12" class="t screen-title">1 · RECHNER-START</text><rect width="256" height="240" rx="18" class="frame"/><rect width="256" height="128" rx="18" fill="#4b3b2d"/><text x="20" y="28" class="t label" fill="#ead0b9">NOURA</text><text x="20" y="65" class="t h1" fill="#fff">Ruhige Klarheit.</text><text x="20" y="94" class="t h1" fill="#fff">Für deinen Alltag.</text><text x="20" y="158" class="t h2">Berechnung als Orientierung</text><text x="20" y="180" class="t body">Kein Versprechen. Ein Startpunkt.</text><rect x="20" y="196" width="150" height="30" rx="9" class="accent"/></g>
+    <g transform="translate(280)"><text y="-12" class="t screen-title">2 · ENTSCHEIDUNG</text><rect width="256" height="240" rx="18" class="frame"/><text x="18" y="28" class="t label">02 · ALLTAG</text><text x="18" y="62" class="t h1">Wie bewegt sich</text><text x="18" y="89" class="t h1">dein Tag?</text><line x1="18" y1="110" x2="238" y2="110" class="line"/><rect x="18" y="126" width="220" height="38" rx="10" class="surface"/><rect x="18" y="172" width="220" height="38" rx="10" class="surface"/><text x="18" y="228" class="t body">← Zurück</text></g>
+    <g transform="translate(560)"><text y="-12" class="t screen-title">3 · ERGEBNIS</text><rect width="256" height="240" rx="18" class="frame"/><text x="18" y="28" class="t label">DEIN STARTPUNKT</text><text x="18" y="74" class="t h1">1.750</text><text x="95" y="74" class="t body">kcal / Tag</text><line x1="18" y1="94" x2="238" y2="94" class="line"/><text x="18" y="122" class="t h2">Was diese Zahl bedeutet</text><text x="18" y="143" class="t body">Ein flexibler Korridor, kein Urteil.</text><rect x="18" y="164" width="220" height="56" rx="12" class="subtle"/></g>
+    <g transform="translate(840)"><text y="-12" class="t screen-title">4 · WOCHENPLAN</text><rect width="256" height="240" rx="18" class="frame"/><text x="18" y="28" class="t label">DEINE WOCHE</text><text x="18" y="61" class="t h1">Zweimal kochen.</text><text x="18" y="88" class="t h1">Sieben Tage leben.</text><line x1="18" y1="106" x2="238" y2="106" class="line"/><rect x="18" y="122" width="104" height="92" rx="12" class="surface"/><rect x="134" y="122" width="104" height="92" rx="12" class="surface"/></g>
+    <g transform="translate(1120)"><text y="-12" class="t screen-title">5 · TAGESDETAIL</text><rect width="256" height="240" rx="18" class="frame"/><text x="18" y="28" class="t body">MITTWOCH · HEUTE</text><text x="18" y="68" class="t h1">Ein Tag mit</text><text x="18" y="95" class="t h1">300 kcal Freiraum.</text><rect x="18" y="118" width="220" height="42" rx="10" class="surface"/><rect x="18" y="168" width="220" height="42" rx="10" class="surface"/><circle cx="226" cy="224" r="7" class="positive"/></g>
+  </g>
+</svg>

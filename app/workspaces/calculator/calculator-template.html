@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <meta name="description" content="NOURA Kalorienrechner: eine ruhige Orientierung für Energie, Protein, Makros und deinen nächsten realistischen Schritt.">
+    <title>NOURA – Kalorienorientierung</title>
+    <link rel="icon" type="image/svg+xml" href="assets/noura-mark.svg">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="stylesheet" href="noura-product.css?v=20260801-1">
+</head>
+  <body class="noura-product">
+    <video class="dawn-mist-layer" aria-hidden="true" autoplay muted loop playsinline preload="metadata">
+      <source src="assets/321946_medium.mp4" type="video/mp4">
+    </video>
+    <div class="dawn-fog-layer" aria-hidden="true"></div>
+    <div class="dawn-scene" aria-hidden="true">
+        <span class="dawn-image"></span>
+        <span class="dawn-fog dawn-fog--far"></span>
+        <span class="dawn-fog dawn-fog--near"></span>
+    </div>
+    <main class="page-shell">
+        <header class="brand">
+            <span class="brand-wordmark">
+                <svg viewBox="0 0 357.94 83.3" width="358" height="83" role="img" aria-label="NOURA">
+                    <use href="assets/noura-wordmark.svg#Ebene_1"></use>
+                    <use href="assets/noura-wordmark.svg#Ebene_2"></use>
+                </svg>
+            </span>
+            <button class="brand-home" id="brand-home" type="button" aria-label="Zur NOURA Startseite">
+                <svg viewBox="0 0 500 500" width="500" height="500" aria-hidden="true">
+                    <use href="assets/noura-mark.svg#Ebene_1"></use>
+                </svg>
+            </button>
+        </header>
+
+        <div class="progress" id="progress" aria-live="polite" hidden>
+            <span class="progress-copy" id="progress-copy">Schritt 1 von 5</span>
+            <span class="progress-track" aria-hidden="true"><span id="progress-value"></span></span>
+        </div>
+
+        <form id="calculator-form" novalidate>
+            <section class="card step start-hero" data-step="0">
+                <div class="start-hero__content">
+                    <span class="start-hero__topic">Kalorienbedarf</span>
+                    <h1>Was braucht<br class="mobile-title-break"> dein <br class="desktop-title-break">Körper<br class="mobile-title-break"> wirklich?</h1>
+                    <p class="lead">Ein realistischer Startwert – berechnet aus deinem Alltag, deinen Schritten und deinem Training.</p>
+                    <div class="actions">
+                        <button class="primary" type="button" data-next>
+                            <span>Bedarf berechnen</span>
+                            <span class="start-hero__arrow" aria-hidden="true">→</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card safety-gate" id="safety-gate" hidden>
+                <div class="safety-gate__question">
+                    <span class="eyebrow">Kurz vorab</span>
+                    <h2 id="situation-heading" tabindex="-1">Was beschreibt deine aktuelle Situation?</h2>
+                    <p>So erhältst du eine Orientierung, die zu deiner aktuellen Lebensphase passt.</p>
+                    <div class="situation-options" aria-labelledby="situation-heading">
+                            <button class="situation-option" type="button" data-target-situation="standard">
+                                <span class="situation-option__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m14.8 9.2-1.6 4-4 1.6 1.6-4 4-1.6Z"/></svg></span>
+                                <span class="situation-option__content"><strong>Nichts davon trifft auf mich zu</strong><small>Ich möchte meinen normalen Bedarf berechnen.</small></span>
+                                <span class="situation-option__chevron" aria-hidden="true">›</span>
+                            </button>
+                            <button class="situation-option" type="button" data-target-situation="pregnant">
+                                <span class="situation-option__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 5.5c-6.4.2-10 3.2-10 7.6 0 2.6 1.8 4.4 4.2 4.4 4.3 0 5.8-4.6 5.8-12Z"/><path d="M5.5 19c2.1-4.2 5.1-7 9-8.6"/></svg></span>
+                                <span class="situation-option__content"><strong>Ich bin schwanger</strong><small>Ich wünsche mir eine passende Orientierung für meine Schwangerschaft.</small></span>
+                                <span class="situation-option__chevron" aria-hidden="true">›</span>
+                            </button>
+                            <button class="situation-option" type="button" data-target-situation="exclusive">
+                                <span class="situation-option__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5Z"/></svg></span>
+                                <span class="situation-option__content"><strong>Ich stille vollständig</strong><small>Mein Kind erhält ausschließlich oder nahezu ausschließlich Muttermilch.</small></span>
+                                <span class="situation-option__chevron" aria-hidden="true">›</span>
+                            </button>
+                            <button class="situation-option" type="button" data-target-situation="partial">
+                                <span class="situation-option__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 4.5s4.5 4.8 4.5 7.8a4.5 4.5 0 0 1-9 0c0-3 4.5-7.8 4.5-7.8Z"/><path d="M15.7 8.3s3.3 3.6 3.3 5.8a3.3 3.3 0 0 1-5.6 2.4"/></svg></span>
+                                <span class="situation-option__content"><strong>Ich stille teilweise</strong><small>Ich kombiniere Stillen mit Säuglingsnahrung oder Beikost.</small></span>
+                                <span class="situation-option__chevron" aria-hidden="true">›</span>
+                            </button>
+                            <button class="situation-option" type="button" data-target-situation="postpartum">
+                                <span class="situation-option__icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8V4l-1.7 1.7A8 8 0 1 0 20 13"/><path d="M5 16v4l1.7-1.7"/></svg></span>
+                                <span class="situation-option__content"><strong>Ich habe vor Kurzem entbunden und stille nicht</strong><small>Mein Körper befindet sich noch in der Erholung nach der Geburt.</small></span>
+                                <span class="situation-option__chevron" aria-hidden="true">›</span>
+                            </button>
+                    </div>
+                    <div class="actions safety-gate__question-actions">
+                        <button class="button-secondary-back" type="button" id="safety-gate-back"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                    </div>
+                </div>
+
+                <div class="safety-gate__confirmation form-step" hidden>
+                    <span class="eyebrow">Kurz vorab</span>
+                    <h2 id="general-confirmation-heading" tabindex="-1">Allgemeine Orientierung</h2>
+                    <fieldset aria-labelledby="general-confirmation-heading">
+                        <legend class="sr-only">Nutzungshinweis bestätigen</legend>
+                        <div class="choice-list">
+                            <label class="choice">
+                                <input type="checkbox" name="generalConfirmation" value="yes">
+                                <span>
+                                    <strong>Ich habe verstanden, wofür dieser Rechner gedacht ist.</strong>
+                                    <small>Dieser Rechner bietet eine allgemeine Orientierung für Erwachsene. Er berücksichtigt keine Erkrankungen, Medikamente oder therapeutischen Ernährungsanforderungen.</small>
+                                </span>
+                            </label>
+                        </div>
+                        <p class="fine-print">Wenn Erkrankungen, Medikamente, eine Essstörung oder ungeklärte Beschwerden deine Ernährung oder Gewichtsentwicklung beeinflussen, lass dein persönliches Ziel fachlich einordnen.</p>
+                        <span class="field-error" data-error="generalConfirmation"></span>
+                    </fieldset>
+                    <div class="actions">
+                        <button class="button-secondary-back" type="button" id="general-confirmation-back"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                        <button class="primary" type="button" id="general-confirmation-continue" disabled>Weiter</button>
+                    </div>
+                </div>
+
+                <div class="safety-gate__timing form-step" hidden>
+                    <span class="eyebrow">Deine Erholung</span>
+                    <h2 id="postpartum-timing-heading" tabindex="-1">Wie lange ist die Geburt ungefähr her?</h2>
+                    <fieldset aria-labelledby="postpartum-timing-heading" aria-describedby="postpartum-timing-error">
+                        <legend class="sr-only">Zeitraum seit der Geburt auswählen</legend>
+                        <div class="choice-list form-choice-list">
+                            <label class="choice form-choice"><input type="radio" name="postpartumTiming" value="under6"><span><strong>Weniger als 6 Wochen</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                            <label class="choice form-choice"><input type="radio" name="postpartumTiming" value="over6"><span><strong>6 Wochen oder länger</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        </div>
+                        <span class="field-error" id="postpartum-timing-error" role="alert"></span>
+                    </fieldset>
+                    <div class="actions">
+                        <button class="button-secondary-back" type="button" id="postpartum-timing-back"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                        <button class="primary" type="button" id="postpartum-timing-continue" disabled>Weiter</button>
+                    </div>
+                </div>
+
+                <div class="safety-gate__readiness" hidden>
+                    <span class="eyebrow">Deine Erholung</span>
+                    <h2 tabindex="-1">Fühlst du dich bereit für eine erste Orientierung?</h2>
+                    <p>Erholung verläuft individuell. Wenn medizinisch nichts dagegenspricht und du dich ausreichend erholt fühlst, kannst du den normalen Rechner als vorsichtigen Startpunkt nutzen.</p>
+                    <div class="actions">
+                        <button class="button-secondary-back" type="button" id="postpartum-readiness-back"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                        <button class="primary" type="button" id="postpartum-readiness-continue">Mit dem Rechner fortfahren</button>
+                    </div>
+                </div>
+
+                <div class="guidance-view" hidden>
+                    <span class="guidance-view__eyebrow eyebrow" id="safety-gate-guidance-eyebrow"></span>
+                    <h2 class="guidance-view__title" id="safety-gate-guidance-title" tabindex="-1"></h2>
+                    <p class="guidance-view__intro" id="safety-gate-guidance-copy"></p>
+                    <p class="guidance-view__notice" id="safety-gate-guidance-notice" hidden></p>
+                    <h3 class="guidance-view__section-title" id="safety-gate-guidance-section-title" hidden></h3>
+                    <ul class="guidance-view__items" id="safety-gate-guidance-points" hidden></ul>
+                    <p class="guidance-view__closing" id="safety-gate-guidance-conclusion"></p>
+                    <div class="guidance-view__cta" id="safety-gate-guidance-cta" hidden>
+                        <span class="guidance-view__cta-eyebrow eyebrow" id="safety-gate-guidance-cta-eyebrow" hidden></span>
+                        <h3 id="safety-gate-guidance-cta-title"></h3>
+                        <p id="safety-gate-guidance-cta-copy" hidden></p>
+                        <a class="guidance-view__cta-button" id="safety-gate-guidance-cta-button" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">
+                            <span id="safety-gate-guidance-cta-label"></span>
+                            <span class="guidance-view__cta-chevron" aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                    <section class="guidance-view__accordion" id="safety-gate-guidance-accordion" hidden>
+                        <button type="button" id="safety-gate-guidance-accordion-toggle" aria-expanded="false" aria-controls="safety-gate-guidance-accordion-content">
+                            <span id="safety-gate-guidance-accordion-label"></span>
+                            <span class="guidance-view__accordion-chevron" aria-hidden="true"></span>
+                        </button>
+                        <div id="safety-gate-guidance-accordion-content" hidden>
+                            <ul id="safety-gate-guidance-accordion-items"></ul>
+                        </div>
+                    </section>
+                    <div class="actions">
+                        <button class="button-secondary-back" type="button" id="safety-gate-change">
+                            <span aria-hidden="true">←</span>
+                            <span>Zurück zur Auswahl</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card step body-data-step" data-step="1" hidden>
+                <span class="eyebrow">Deine Basis</span>
+                <h2>Erzähl mir kurz von deinem Körper.</h2>
+                <p class="body-data-step__privacy">
+                    <span class="body-data-step__privacy-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                    </span>
+                    <span>Deine Angaben bleiben in diesem Browser und werden nicht gespeichert.</span>
+                </p>
+                <div class="fields">
+                    <div class="field">
+                        <label for="age">Alter</label>
+                        <span class="body-data-step__input">
+                            <input id="age" name="age" type="number" inputmode="numeric" min="18" max="80" placeholder="z. B. 34" autocomplete="off">
+                            <span aria-hidden="true">Jahre</span>
+                        </span>
+                        <span class="field-error" data-error="age"></span>
+                    </div>
+                    <div class="field">
+                        <label for="heightCm">Größe</label>
+                        <span class="body-data-step__input">
+                            <input id="heightCm" name="heightCm" type="number" inputmode="decimal" min="130" max="220" placeholder="z. B. 165" autocomplete="off">
+                            <span aria-hidden="true">cm</span>
+                        </span>
+                        <span class="field-error" data-error="heightCm"></span>
+                    </div>
+                    <div class="field">
+                        <label for="weightKg">Gewicht</label>
+                        <span class="body-data-step__input">
+                            <input id="weightKg" name="weightKg" type="text" inputmode="decimal" placeholder="z. B. 82,5" autocomplete="off">
+                            <span aria-hidden="true">kg</span>
+                        </span>
+                        <span class="field-error" data-error="weightKg"></span>
+                    </div>
+                </div>
+                <fieldset class="sex-selection" aria-describedby="sex-note sex-error">
+                    <legend>Welches biologische Geschlecht wurde dir bei der Geburt zugewiesen?</legend>
+                    <div class="choice-list form-choice-list sex-selection__choices">
+                        <label class="choice form-choice"><input type="radio" name="sex" value="female"><span><strong>Weiblich</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="sex" value="male"><span><strong>Männlich</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                    </div>
+                    <p class="fine-print" id="sex-note">Diese Angabe wird ausschließlich für die Berechnungsformel verwendet.</p>
+                    <span class="field-error" id="sex-error" data-error="sex"></span>
+                </fieldset>
+                <div class="actions body-data-step__actions">
+                    <button class="button-secondary-back" type="button" data-back><span aria-hidden="true">←</span><span>Zurück</span></button>
+                    <button class="primary" type="button" data-next disabled>Weiter</button>
+                </div>
+            </section>
+
+            <section class="card step direct-step" data-step="2" hidden>
+                <span class="eyebrow">Dein Alltag</span>
+                <h2 tabindex="-1">Wie sieht dein normaler Alltag aus?</h2>
+                <p>Denke an einen typischen Tag ohne Training. Wähle, was die meiste Zeit deines Tages beschreibt – nicht die aktivste Stunde.</p>
+                <div class="direct-choice-list" aria-label="Was passt am ehesten?">
+                    <button class="direct-choice" type="button" data-daily-activity="sedentary"><span><strong>Überwiegend sitzend</strong><small>Du sitzt an einem typischen Tag insgesamt etwa 6 Stunden oder länger. Auch Homeoffice, Studium, Kinderbetreuung und normaler Haushalt gehören hierher, wenn du den Großteil des Tages sitzt.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="mixed"><span><strong>Teils sitzend, teils auf den Beinen</strong><small>Du verbringst an einem typischen Tag tatsächlich mehrere Stunden stehend oder gehend – nicht nur durch normale Haushaltswege oder kurze Unterbrechungen des Sitzens.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="standing"><span><strong>Überwiegend auf den Beinen</strong><small>Du bist an einem typischen Tag ungefähr 5 Stunden oder länger überwiegend stehend oder gehend, etwa in Verkauf, Pflege oder Gastronomie.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-daily-activity="strenuous"><span><strong>Körperlich anstrengend</strong><small>Du verrichtest über mehrere Stunden körperlich belastende Arbeit mit regelmäßigem Heben, Tragen oder intensiver Bewegung.</small></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                </div>
+                <p class="direct-choice-note">Deine Schritte werden separat berücksichtigt. Wähle hier nur, wie du deinen Tag überwiegend verbringst.</p>
+                <div class="actions direct-step__actions">
+                    <button class="button-secondary-back" type="button" data-back><span aria-hidden="true">←</span><span>Zurück</span></button>
+                </div>
+            </section>
+
+            <section class="card step form-step steps-form-step" data-step="3" hidden>
+                <span class="eyebrow">Deine Alltagsbewegung</span>
+                <h2>Wie viele Schritte kommen ungefähr zusammen?</h2>
+                    <p>Ein ungefährer Durchschnitt reicht für diese Orientierung aus.</p>
+                <fieldset>
+                    <legend>Schritte pro Tag</legend>
+                    <div class="choice-list form-choice-list">
+                        <label class="choice form-choice"><input type="radio" name="stepBand" value="under4000"><span><strong>Unter 4.000</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="stepBand" value="from4000to7000"><span><strong>4.000–7.000</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="stepBand" value="from7000to10000"><span><strong>7.000–10.000</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="stepBand" value="over10000"><span><strong>Über 10.000</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="stepBand" value="unknown"><span><strong>Weiß ich nicht</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                    </div>
+                    <span class="field-error" data-error="stepBand"></span>
+                    <div class="field optional-activity-input">
+                        <span class="form-step__separator">Oder gib deinen Durchschnitt ein</span>
+                        <label for="exactSteps">Konkrete Schrittzahl</label>
+                        <span class="number-field">
+                            <input id="exactSteps" name="exactSteps" type="number" inputmode="numeric" min="0" max="50000" placeholder="z. B. 8000" autocomplete="off">
+                            <span aria-hidden="true">Schritte</span>
+                        </span>
+                        <span class="field-error" data-error="exactSteps"></span>
+                    </div>
+                </fieldset>
+                <div class="actions">
+                    <button class="button-secondary-back" type="button" data-back><span aria-hidden="true">←</span><span>Zurück</span></button>
+                    <button class="primary" type="button" data-next disabled>Weiter</button>
+                </div>
+            </section>
+
+            <section class="card step form-step training-form-step" data-step="4" hidden>
+                <span class="eyebrow">Dein Training</span>
+                <h2>Wie oft trainierst du aktiv?</h2>
+                <p>Gemeint ist bewusstes Training zusätzlich zu deinem normalen Alltag.</p>
+                <fieldset>
+                    <legend>Durchschnittliche Trainingswoche</legend>
+                    <div class="field">
+                        <label for="trainingSessions">Einheiten pro Woche</label>
+                        <span class="number-field">
+                            <input id="trainingSessions" name="trainingSessions" type="number" inputmode="numeric" min="0" max="7" placeholder="z. B. 0" autocomplete="off">
+                            <span aria-hidden="true">pro Woche</span>
+                        </span>
+                        <span class="field-error" data-error="trainingSessions"></span>
+                    </div>
+                    <div data-when="training">
+                        <div class="choice-list form-choice-list">
+                            <label class="choice form-choice"><input type="radio" name="trainingType" value="strength"><span><strong>Krafttraining</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                            <label class="choice form-choice"><input type="radio" name="trainingType" value="cardio"><span><strong>Ausdauertraining</strong></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                            <label class="choice form-choice"><input type="radio" name="trainingType" value="mixed"><span><strong>Gemischtes Training</strong><small>Zum Beispiel Krafttraining mit anschließendem Cardio.</small></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        </div>
+                        <span class="field-error" data-error="trainingType"></span>
+                        <div class="field optional-activity-input">
+                            <label for="trainingMinutes">Durchschnittliche Minuten pro Einheit</label>
+                            <span class="number-field">
+                                <input id="trainingMinutes" name="trainingMinutes" type="number" inputmode="numeric" min="10" max="180" placeholder="z. B. 60" autocomplete="off">
+                                <span aria-hidden="true">Minuten</span>
+                            </span>
+                            <span class="field-error" data-error="trainingMinutes"></span>
+                        </div>
+                    </div>
+                </fieldset>
+                <p class="fine-print">Training wird vorsichtig geschätzt und nicht doppelt zu Alltag und Schritten addiert.</p>
+                <div class="actions">
+                    <button class="button-secondary-back" type="button" data-back><span aria-hidden="true">←</span><span>Zurück</span></button>
+                    <button class="primary" type="button" data-next disabled>Weiter</button>
+                </div>
+            </section>
+
+            <section class="card step direct-step challenge-step" data-step="5" hidden>
+                <span class="eyebrow">Dein Alltag im Fokus</span>
+                <h2>Wo kippt dein Plan meistens?</h2>
+                <p>Ich suche mit dir nicht nach Schuld, sondern nach dem wahrscheinlich sinnvollsten ersten Hebel.</p>
+                <div class="direct-choice-list challenge-step__choices" aria-label="Größte aktuelle Herausforderung">
+                    <button class="direct-choice" type="button" data-obstacle="hunger"><span><strong>Ich habe ständig Hunger</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-obstacle="cravings"><span><strong>Abends kommt starker Essdrang</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-obstacle="irregular"><span><strong>Ich esse unregelmäßig oder lasse Mahlzeiten aus</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-obstacle="family"><span><strong>Familienessen macht die Planung schwierig</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-obstacle="stress"><span><strong>Stress führt bei mir zum Essen</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-obstacle="weekend"><span><strong>Am Wochenende verliere ich meine Struktur</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-obstacle="consistency"><span><strong>Ich halte ein paar Tage durch und breche dann ab</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                    <button class="direct-choice" type="button" data-obstacle="unsure"><span><strong>Ich weiß es noch nicht</strong></span><span class="direct-choice__chevron" aria-hidden="true">›</span></button>
+                </div>
+                <div class="actions direct-step__actions">
+                    <button class="button-secondary-back" type="button" data-back><span aria-hidden="true">←</span><span>Zurück</span></button>
+                </div>
+            </section>
+        </form>
+
+        <section id="result" class="results" hidden aria-live="polite">
+            <div class="result-card start-result-card energy-result">
+                <div class="breastfeeding-basis" hidden>
+                    <span class="eyebrow">Deine Basisorientierung</span>
+                    <h3>Grundbedarf ohne zusätzlichen Stillbedarf</h3>
+                    <p>Diese Schätzung beschreibt deinen normalen Alltag. Der zusätzliche Energiebedarf durch das Stillen ist darin nicht enthalten.</p>
+                </div>
+                <div class="deficit-result">
+                    <span class="eyebrow">Deine Kalorienorientierung</span>
+                    <h2 class="calorie-result-title">Dein realistischer Startpunkt</h2>
+                    <div class="primary-metric">
+                        <strong><span id="start-result-number"></span><span class="metric-unit">kcal</span></strong>
+                    </div>
+                    <span class="metric-period">pro Tag</span>
+
+                    <div class="calorie-range" id="calorie-range">
+                        <span class="calorie-range__label">Dein flexibler Tageskorridor</span>
+                        <div class="calorie-range__visual" aria-hidden="true">
+                            <div class="calorie-range__track">
+                                <span class="calorie-range__marker" id="calorie-range-marker">
+                                    <span id="calorie-range-marker-value"></span>
+                                </span>
+                            </div>
+                            <div class="calorie-range__bounds">
+                                <span id="calorie-range-low"></span>
+                                <span id="calorie-range-high"></span>
+                            </div>
+                        </div>
+                        <p>Einzelne Tage können abweichen. Entscheidend ist dein Durchschnitt.</p>
+                        <p class="sr-only" id="calorie-range-description"></p>
+                    </div>
+                </div>
+
+                <div class="activity-summary deficit-result">
+                    <span>Berücksichtigt</span>
+                    <div class="activity-chips" id="activity-summary" aria-label="In der Schätzung berücksichtigt"></div>
+                </div>
+
+                <details class="calibration-details deficit-result">
+                    <summary>Wie wurden meine Kalorien berechnet?</summary>
+                    <div class="calibration-details-content">
+                        <div class="calibration-basis">
+                            <p>Geschätzter Ruhebedarf: <strong id="resting-result"></strong></p>
+                            <p>Basisfaktor Alltag und Schritte: <strong id="basis-factor-result"></strong></p>
+                            <p>Alltagsbasis inklusive Schritte: <strong id="everyday-base-result"></strong></p>
+                            <p>Schritte: <strong id="step-surcharge-result"></strong></p>
+                            <p>Trainingsaufschlag: <strong id="training-surcharge-result"></strong></p>
+                            <p>Geschätzte <span id="maintenance-label">Erhaltung</span>: <strong id="maintenance-result"></strong></p>
+                            <p>Abnehmstartwert: <strong id="weight-loss-start-result"></strong></p>
+                        </div>
+                        <p><strong>1. Ruhebedarf:</strong> Zuerst schätzt NOURA, wie viel Energie dein Körper in vollständiger Ruhe benötigt.</p>
+                        <p><strong>2. Dein tatsächlicher Alltag:</strong> Danach fließen Alltag, Schritte und Training ein. Ein überwiegend sitzender Alltag ist dabei nicht dasselbe wie vollständige Bewegungslosigkeit – auch Aufstehen, kurze Wege und alltägliche Aufgaben benötigen Energie.</p>
+                        <p><strong>3. Moderater Startpunkt:</strong> Dein Startwert liegt 15 % unter der Mitte deiner geschätzten Erhaltung. Das ist ein moderater Einstieg, der Raum für sättigende und alltagstaugliche Mahlzeiten lässt.</p>
+                        <p>Alle Werte bleiben Schätzungen für Erwachsene und ersetzen keine medizinische oder ernährungstherapeutische Einordnung.</p>
+                    </div>
+                </details>
+
+                <details class="calibration-details deficit-result start-value-test" id="start-value-test">
+                    <summary id="start-value-test-toggle" aria-expanded="false" aria-controls="start-value-test-content">Dein 21-Tage-Test</summary>
+                    <div class="calibration-details-content start-value-test__content" id="start-value-test-content" role="region" aria-labelledby="start-value-test-toggle">
+                        <p class="start-value-test__intro">Nutze deinen Startwert drei Wochen lang als durchschnittliche Orientierung. Einzelne Tage dürfen abweichen – gleiche sie nicht nachträglich aus.</p>
+                        <ol class="start-value-test__steps">
+                            <li>
+                                <div>
+                                    <h4>Orientiere dich an deinem Korridor.</h4>
+                                    <p>Versuche, im Durchschnitt in deinem angezeigten Kalorienbereich zu bleiben.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <h4>Wiege dich regelmäßig.</h4>
+                                    <p>Drei bis vier Messungen pro Woche unter ähnlichen Bedingungen reichen aus.</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <h4>Vergleiche Wochendurchschnitte.</h4>
+                                    <p>Einzelne Waagentage schwanken. Entscheidend ist, wie sich dein durchschnittliches Gewicht entwickelt.</p>
+                                </div>
+                            </li>
+                        </ol>
+                        <p class="start-value-test__note">Bei starken zyklusbedingten Schwankungen können vier Wochen aussagekräftiger sein.</p>
+                        <section class="start-value-test__evaluation" aria-labelledby="start-value-test-trend-heading">
+                            <h3 id="start-value-test-trend-heading">Was sagt dir dein Trend?</h3>
+                            <div class="start-value-test__states">
+                                <div class="start-value-test__state">
+                                    <h4>Der Trend sinkt langsam und du fühlst dich gut?</h4>
+                                    <p>Behalte deinen Startwert bei.</p>
+                                </div>
+                                <div class="start-value-test__state">
+                                    <h4>Kein klarer Trend?</h4>
+                                    <p>Prüfe zuerst deine Portionsgrößen, Getränke, Wochenstruktur und durchschnittlichen Schritte. Wenn deine Umsetzung konstant war, verändere nur einen Hebel: Reduziere deinen Startwert vorsichtig um 100–150 kcal oder erhöhe deine Alltagsbewegung leicht.</p>
+                                </div>
+                                <div class="start-value-test__state">
+                                    <h4>Starker Hunger, wenig Energie oder deutlicher Leistungsabfall?</h4>
+                                    <p>Reduziere nicht weiter. Nutze zunächst das obere Ende deines Korridors und lass deine Situation bei Bedarf persönlich einordnen.</p>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="start-value-test__follow-up" data-follow-up-slot hidden></div>
+                    </div>
+                </details>
+            </div>
+
+            <div class="weekly-planner-entry deficit-result">
+                <button class="secondary" type="button" id="weekly-planner-launch" hidden>Meine Woche planen</button>
+            </div>
+
+            <div class="card result-overview">
+                <span class="eyebrow">Deine Orientierung</span>
+                <h2 id="result-heading">Ein realistischer Rahmen für deinen Alltag.</h2>
+                <p id="result-intro">Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.</p>
+            </div>
+
+            <div id="standard-results">
+                <div class="result-card result-lever" id="mission-result">
+                    <span class="eyebrow">DEIN ERSTER HEBEL</span>
+                    <h3 id="mission-title"></h3>
+                    <p id="mission-intro"></p>
+                    <h4>Teste diesen Hebel 7 Tage</h4>
+                    <ol class="mission-list" id="mission-actions"></ol>
+                    <div class="reflection">
+                        <span class="eyebrow">ACHTE DIESE WOCHE DARAUF</span>
+                        <p id="mission-question"></p>
+                    </div>
+                </div>
+
+                <div class="result-card protein-card">
+                    <span class="eyebrow">Dein Proteinrahmen</span>
+                    <h3>Etwa <span id="protein-result"></span> g Protein pro Tag</h3>
+                    <p class="protein-range">Orientierung: <strong id="protein-range"></strong></p>
+                    <p>Denk in 3–4 Proteinankern über den Tag statt in täglicher Perfektion.</p>
+
+                    <div class="protein-anchor-grid" aria-label="Beispielverteilung der Proteinanker">
+                        <div><span>Frühstück</span><strong id="protein-breakfast"></strong></div>
+                        <div><span>Mittagessen</span><strong id="protein-lunch"></strong></div>
+                        <div><span>Snack</span><strong id="protein-snack"></strong></div>
+                        <div><span>Abendessen</span><strong id="protein-dinner"></strong></div>
+                    </div>
+                </div>
+
+                <details class="result-card calibration-details macro-details">
+                    <summary>Weitere Nährwertdetails</summary>
+                    <div class="calibration-details-content">
+                        <div class="macro-grid">
+                            <div class="macro"><span>Protein</span><strong id="macro-protein"></strong></div>
+                            <div class="macro"><span>Fett</span><strong id="macro-fat"></strong></div>
+                            <div class="macro"><span>Kohlenhydrate</span><strong id="macro-carbs"></strong></div>
+                            <div class="macro"><span>Ballaststoffe</span><strong id="macro-fiber"></strong></div>
+                        </div>
+                        <p class="fine-print" id="macro-note"></p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="result-card notice" id="special-result" hidden>
+                <span class="eyebrow">Deine Lebensphase</span>
+                <h3 id="special-title"></h3>
+                <p id="special-copy"></p>
+                <div class="insight-list" id="special-insights"></div>
+                <div class="breastfeeding-focus" hidden>
+                    <span class="eyebrow">Dein Versorgungsfokus</span>
+                    <ul class="mission-list">
+                        <li>Plane drei verlässliche Mahlzeiten.</li>
+                        <li>Verteile Proteinanker über den Tag.</li>
+                        <li>Beobachte Hunger, Energie und Wohlbefinden.</li>
+                        <li>Halte ein Getränk am Stillplatz bereit.</li>
+                    </ul>
+                </div>
+                <p class="reflection" id="special-reflection"></p>
+            </div>
+
+            <div class="result-card cta">
+                <div class="coaching-cta__image">
+                    <img
+                        src="assets/noura-coach.webp"
+                        width="1800"
+                        height="1200"
+                        loading="lazy"
+                        decoding="async"
+                        alt="Mukaddes Mandirali, Ernährungsberaterin und NOURA Coach"
+                    >
+                </div>
+                <div class="coaching-cta__content">
+                    <span class="eyebrow" id="cta-eyebrow">Persönliche Begleitung</span>
+                    <h3 id="cta-title">Eine Zahl ist ein Startpunkt. Dein Alltag entscheidet, ob sie funktioniert.</h3>
+                    <p id="cta-copy">Im NOURA Coaching übersetzen wir deine Orientierung in Mahlzeiten, Familienessen und Strategien, die zu deinem tatsächlichen Alltag passen.</p>
+                    <a class="secondary" id="cta-button" href="https://zeeg.me/nouraxbalance/kennenlernen" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Meinen persönlichen Start besprechen</a>
+                    <p class="external-note">Externe Terminbuchung über Zeeg. Bitte übermittle dort keine Diagnosen, Befunde oder anderen nicht erforderlichen Gesundheitsdaten.</p>
+                </div>
+            </div>
+
+            <button class="text-button" type="button" id="restart">Neu berechnen</button>
+            <p class="fine-print">Die Berechnung ist eine allgemeine Schätzung, keine Diagnose, Therapie oder Abnahmegarantie. Bei Beschwerden oder besonderen gesundheitlichen Situationen kann eine medizinische oder ernährungsfachliche Einordnung sinnvoll sein.</p>
+        </section>
+
+        <section class="weekly-planner" id="weekly-planner" hidden aria-labelledby="weekly-planner-title">
+            <header class="weekly-planner__header">
+                <button class="button-secondary-back" type="button" id="weekly-planner-close"><span aria-hidden="true">←</span><span>Zurück zum Ergebnis</span></button>
+                <span class="eyebrow">Deine Woche</span>
+                <h1 id="weekly-planner-title">Ein einfacher Plan für sieben Tage.</h1>
+                <p>Du wählst einen Frühstücksrahmen und vier Gerichte für zwei Kochsessions. NOURA verteilt sie ruhig über deine Woche.</p>
+            </header>
+
+            <div class="weekly-planner__budget" aria-label="Dein persönliches Wochenplan-Budget">
+                <div><span>Tagesbudget</span><strong id="planner-daily-budget"></strong></div>
+                <div><span>Geplant</span><strong id="planner-planned-budget"></strong></div>
+                <div><span>Flex-Budget</span><strong id="planner-flex-budget"></strong></div>
+            </div>
+            <p class="weekly-planner__principle">Das 80/20-Prinzip ist eine NOURA-Produktregel für mehr Alltagsspielraum – keine wissenschaftliche Berechnungsformel.</p>
+            <p class="field-error weekly-planner__error" id="weekly-planner-error" role="alert" aria-live="polite"></p>
+
+            <section class="weekly-planner__step" data-planner-step="1">
+                <span class="weekly-planner__step-label">Schritt 1 von 3</span>
+                <h2 tabindex="-1">Welches Frühstück möchtest du überwiegend nutzen?</h2>
+                <fieldset>
+                    <legend class="sr-only">Frühstücksbaustein wählen</legend>
+                    <div class="choice-list form-choice-list">
+                        <label class="choice form-choice"><input type="radio" name="plannerBreakfast" value="purple"><span><strong>Purple / leicht</strong><small>Stoffwechselshake · 260 kcal</small></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="plannerBreakfast" value="normal"><span><strong>Normales Frühstück</strong><small>Mukis Porridge · 339 kcal</small></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                        <label class="choice form-choice"><input type="radio" name="plannerBreakfast" value="flexible"><span><strong>Flexibel</strong><small>Leichtes und normales Frühstück wechseln sich ab.</small></span><span class="form-choice__indicator" aria-hidden="true"></span></label>
+                    </div>
+                </fieldset>
+                <div class="actions"><button class="primary" type="button" id="planner-breakfast-next">Weiter zu Kochsession 1</button></div>
+            </section>
+
+            <section class="weekly-planner__step" data-planner-step="2" hidden>
+                <span class="weekly-planner__step-label">Schritt 2 von 3</span>
+                <h2 tabindex="-1">Kochsession 1</h2>
+                <p>Diese beiden Gerichte versorgen Sonntag bis Dienstag.</p>
+                <div class="weekly-planner__selects">
+                    <label for="planner-recipe-a">Gericht A<select id="planner-recipe-a"><option value="">Gericht auswählen</option></select></label>
+                    <label for="planner-recipe-b">Gericht B<select id="planner-recipe-b"><option value="">Zuerst Gericht A wählen</option></select></label>
+                </div>
+                <div class="actions">
+                    <button class="button-secondary-back" type="button" data-planner-back="1"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                    <button class="primary" type="button" id="planner-session-one-next">Weiter zu Kochsession 2</button>
+                </div>
+            </section>
+
+            <section class="weekly-planner__step" data-planner-step="3" hidden>
+                <span class="weekly-planner__step-label">Schritt 3 von 3</span>
+                <h2 tabindex="-1">Kochsession 2</h2>
+                <p>Diese beiden Gerichte versorgen Mittwoch bis Freitag. Samstag nutzt du flexibel oder für Reste.</p>
+                <div class="weekly-planner__selects">
+                    <label for="planner-recipe-c">Gericht C<select id="planner-recipe-c"><option value="">Gericht auswählen</option></select></label>
+                    <label for="planner-recipe-d">Gericht D<select id="planner-recipe-d"><option value="">Zuerst Gericht C wählen</option></select></label>
+                </div>
+                <div class="actions">
+                    <button class="button-secondary-back" type="button" data-planner-back="2"><span aria-hidden="true">←</span><span>Zurück</span></button>
+                    <button class="primary" type="button" id="planner-create">Wochenplan erstellen</button>
+                </div>
+            </section>
+
+            <section class="weekly-planner__step weekly-planner__overview" data-planner-step="4" hidden>
+                <span class="weekly-planner__step-label">Deine Übersicht</span>
+                <h2 tabindex="-1">Montag bis Sonntag</h2>
+                <div class="weekly-plan-days" id="weekly-plan-days"></div>
+                <p class="weekly-planner__storage-note">Gespeichert werden nur Tagesbudget, Frühstücksauswahl und vier Rezept-IDs – keine Körper- oder Lebensphasenangaben.</p>
+                <p class="weekly-planner__save-status" id="weekly-planner-save-status" role="status" aria-live="polite"></p>
+                <div class="actions weekly-planner__overview-actions">
+                    <button class="button-secondary-back" type="button" id="planner-new"><span aria-hidden="true">←</span><span>Auswahl ändern</span></button>
+                    <button class="primary" type="button" id="planner-save">Plan lokal speichern</button>
+                </div>
+            </section>
+        </section>
+        <nav class="legal-links" aria-label="Rechtliche Informationen">
+            <span class="legal-links__brand legal-links__brand--full">© 2026 NOURA <span aria-hidden="true">·</span></span>
+            <span class="legal-links__brand legal-links__brand--mobile">© 2026 NOURA <span aria-hidden="true">·</span></span>
+            <span class="legal-links__items">
+                <a href="impressum.html">Impressum</a>
+                <span class="legal-links__separator" aria-hidden="true">·</span>
+                <a href="datenschutz.html">Datenschutz</a>
+                <span class="legal-links__separator" aria-hidden="true">·</span>
+                <a href="design-system.html">Designsystem</a>
+            </span>
+        </nav>
+    </main>
+
+    <script type="module">
+        import { calculateOrientation, distributeProteinAnchors, RESULT_MODES, roundTo } from './calculator.mjs';
+        import { initWeeklyPlanner } from './weekly-planner-ui.mjs';
+
+        const form = document.getElementById('calculator-form');
+        const steps = [...document.querySelectorAll('.step')];
+        const progressElement = document.getElementById('progress');
+        const progressCopy = document.getElementById('progress-copy');
+        const progressValue = document.getElementById('progress-value');
+        const resultSection = document.getElementById('result');
+        const weeklyPlanner = initWeeklyPlanner({ resultSection });
+        const startValueTest = document.getElementById('start-value-test');
+        const startValueTestToggle = document.getElementById('start-value-test-toggle');
+        startValueTest.addEventListener('toggle', () => {
+            startValueTestToggle.setAttribute('aria-expanded', String(startValueTest.open));
+        });
+        const safetyGate = document.getElementById('safety-gate');
+        const safetyGateQuestion = safetyGate.querySelector('.safety-gate__question');
+        const safetyGateConfirmation = safetyGate.querySelector('.safety-gate__confirmation');
+        const safetyGateTiming = safetyGate.querySelector('.safety-gate__timing');
+        const safetyGateReadiness = safetyGate.querySelector('.safety-gate__readiness');
+        const safetyGateGuidance = safetyGate.querySelector('.guidance-view');
+        const generalConfirmationContinue = document.getElementById('general-confirmation-continue');
+        const postpartumTimingError = document.getElementById('postpartum-timing-error');
+        const postpartumTimingContinue = document.getElementById('postpartum-timing-continue');
+        let guidanceReturnTarget = 'selection';
+        let confirmationReturnTarget = 'selection';
+        let gateTransitioning = false;
+        let currentStep = 0;
+        let directNavigationLocked = false;
+        const directAnswers = {
+            dailyActivity: '',
+            obstacle: ''
+        };
+
+        document.querySelectorAll('[data-error]').forEach((node, index) => {
+            const fieldName = node.dataset.error;
+            node.id = `error-${fieldName}-${index}`;
+            node.setAttribute('role', 'alert');
+            form.querySelectorAll(`[name="${fieldName}"]`).forEach(input => {
+                input.setAttribute('aria-describedby', node.id);
+            });
+        });
+
+        const selectedValue = name => form.querySelector(`[name="${name}"]:checked`)?.value || '';
+        const setText = (id, value) => { document.getElementById(id).textContent = value; };
+        const formatKcal = value => `${new Intl.NumberFormat('de-DE').format(value)} kcal`;
+        const formatRange = range => `${new Intl.NumberFormat('de-DE').format(range.low)}–${new Intl.NumberFormat('de-DE').format(range.high)} kcal`;
+        const formatNumber = value => new Intl.NumberFormat('de-DE').format(value);
+
+        function renderCalorieRange(startValue, range) {
+            const span = range.high - range.low;
+            const rawPosition = span > 0 ? (startValue - range.low) / span : 0.5;
+            const position = Math.min(1, Math.max(0, rawPosition));
+            const positionPercent = position * 100;
+            const marker = document.getElementById('calorie-range-marker');
+            const rangeElement = document.getElementById('calorie-range');
+            const startValueElement = document.getElementById('start-result-number');
+
+            setText('calorie-range-low', formatNumber(range.low));
+            setText('calorie-range-high', formatNumber(range.high));
+            setText('calorie-range-marker-value', formatNumber(startValue));
+            setText(
+                'calorie-range-description',
+                `Dein flexibler Orientierungskorridor liegt zwischen ${formatNumber(range.low)} und ${formatNumber(range.high)} Kilokalorien. Dein vorgeschlagener Startwert liegt bei ${formatNumber(startValue)} Kilokalorien.`
+            );
+            rangeElement.dataset.position = String(position);
+            rangeElement.dataset.low = String(range.low);
+            rangeElement.dataset.high = String(range.high);
+            rangeElement.dataset.start = String(startValue);
+            marker.style.left = `${positionPercent}%`;
+
+            marker.getAnimations().forEach(animation => animation.cancel());
+            startValueElement.getAnimations().forEach(animation => animation.cancel());
+            if (!reduceMotion.matches) {
+                marker.animate(
+                    [
+                        { left: '0%', opacity: 0.35 },
+                        { left: `${positionPercent}%`, opacity: 1 }
+                    ],
+                    { duration: 820, easing: 'cubic-bezier(.2, .75, .25, 1)', fill: 'none' }
+                );
+                startValueElement.animate(
+                    [
+                        { opacity: 0, transform: 'translateY(8px)' },
+                        { opacity: 1, transform: 'translateY(0)' }
+                    ],
+                    { duration: 650, easing: 'cubic-bezier(.2, .75, .25, 1)' }
+                );
+            }
+        }
+
+        function values() {
+            return {
+                age: form.elements.age.value,
+                heightCm: form.elements.heightCm.value,
+                weightKg: form.elements.weightKg.value,
+                sex: selectedValue('sex'),
+                pregnant: 'no',
+                trimester: '',
+                birthWithin12Months: 'no',
+                weeksPostpartum: '',
+                breastfeeding: 'no',
+                recovered: '',
+                complications: '',
+                advisedAgainstLoss: '',
+                dailyActivity: directAnswers.dailyActivity,
+                stepBand: selectedValue('stepBand'),
+                exactSteps: form.elements.exactSteps.value,
+                trainingSessions: form.elements.trainingSessions.value,
+                trainingType: selectedValue('trainingType'),
+                trainingMinutes: form.elements.trainingMinutes.value,
+                obstacle: directAnswers.obstacle,
+                generalConfirmation: selectedValue('generalConfirmation')
+            };
+        }
+
+        function updateProgressiveFields() {
+            const trainingVisible = Number(form.elements.trainingSessions.value) > 0;
+            document.querySelectorAll('[data-when="training"]').forEach(node => {
+                node.hidden = !trainingVisible;
+            });
+        }
+
+        const parseInputNumber = value => {
+            const normalized = String(value).trim().replace(',', '.');
+            return normalized === '' ? Number.NaN : Number(normalized);
+        };
+
+        function updateFormActions() {
+            const bodyNext = document.querySelector('[data-step="1"] [data-next]');
+            const age = parseInputNumber(form.elements.age.value);
+            const height = parseInputNumber(form.elements.heightCm.value);
+            const weight = parseInputNumber(form.elements.weightKg.value);
+            bodyNext.disabled = !(
+                Number.isFinite(age) && age > 0 && age <= 80 &&
+                Number.isFinite(height) && height >= 130 && height <= 220 &&
+                Number.isFinite(weight) && weight >= 35 && weight <= 300 &&
+                (age < 18 || Boolean(selectedValue('sex')))
+            );
+
+            const stepsNext = document.querySelector('[data-step="3"] [data-next]');
+            const exactStepsRaw = form.elements.exactSteps.value.trim();
+            const exactSteps = parseInputNumber(exactStepsRaw);
+            stepsNext.disabled = exactStepsRaw
+                ? !(Number.isFinite(exactSteps) && exactSteps >= 0 && exactSteps <= 50000)
+                : !selectedValue('stepBand');
+
+            const trainingNext = document.querySelector('[data-step="4"] [data-next]');
+            const sessions = parseInputNumber(form.elements.trainingSessions.value);
+            const sessionsValid = Number.isInteger(sessions) && sessions >= 0 && sessions <= 7;
+            if (!sessionsValid) {
+                trainingNext.disabled = true;
+            } else if (sessions === 0) {
+                trainingNext.disabled = false;
+            } else {
+                const minutes = parseInputNumber(form.elements.trainingMinutes.value);
+                trainingNext.disabled = !(
+                    selectedValue('trainingType') &&
+                    Number.isFinite(minutes) &&
+                    minutes >= 10 &&
+                    minutes <= 180
+                );
+            }
+        }
+
+        form.addEventListener('change', event => {
+            if (event.target.name === 'trainingSessions' && Number(event.target.value) === 0) {
+                form.querySelectorAll('[name="trainingType"]').forEach(input => { input.checked = false; });
+                form.elements.trainingMinutes.value = '';
+            }
+            if (event.target.name === 'stepBand') {
+                form.elements.exactSteps.value = '';
+            }
+            if (event.target.name === 'generalConfirmation' && event.target.checked) {
+                document.querySelector('[data-error="generalConfirmation"]').textContent = '';
+            }
+            if (event.target.name === 'generalConfirmation') {
+                generalConfirmationContinue.disabled = !event.target.checked;
+            }
+            updateProgressiveFields();
+            updateFormActions();
+        });
+        form.addEventListener('input', updateFormActions);
+        form.elements.trainingSessions.addEventListener('input', () => {
+            updateProgressiveFields();
+            updateFormActions();
+        });
+        form.elements.exactSteps.addEventListener('input', event => {
+            if (event.target.value !== '') {
+                form.querySelectorAll('[name="stepBand"]').forEach(input => { input.checked = false; });
+            }
+        });
+        updateProgressiveFields();
+        updateFormActions();
+
+        function showStep(index) {
+            currentStep = Math.max(0, Math.min(index, steps.length - 1));
+            directNavigationLocked = false;
+            steps.forEach((step, stepIndex) => { step.hidden = stepIndex !== currentStep; });
+            if (currentStep === 0) steps[0].classList.remove('is-leaving');
+            const totalInputSteps = steps.length - 1;
+            progressElement.hidden = currentStep === 0;
+            if (currentStep > 0) {
+                progressCopy.textContent = `Schritt ${currentStep} von ${totalInputSteps}`;
+                progressValue.style.width = `${(currentStep / totalInputSteps) * 100}%`;
+                progressElement.setAttribute('aria-label', `Schritt ${currentStep} von ${totalInputSteps}`);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (currentStep > 0) {
+                const heading = steps[currentStep].querySelector('h2');
+                heading?.setAttribute('tabindex', '-1');
+                heading?.focus({ preventScroll: true });
+            }
+        }
+
+        function showGateView(view, focusHeading = true) {
+            [safetyGateQuestion, safetyGateConfirmation, safetyGateTiming, safetyGateReadiness, safetyGateGuidance]
+                .forEach(node => { node.hidden = node !== view; });
+            if (view === safetyGateConfirmation) {
+                generalConfirmationContinue.disabled = selectedValue('generalConfirmation') !== 'yes';
+            }
+            if (view === safetyGateTiming) {
+                postpartumTimingContinue.disabled = !selectedValue('postpartumTiming');
+            }
+            if (focusHeading) view.querySelector('h2')?.focus({ preventScroll: true });
+        }
+
+        async function transitionGateView(view) {
+            if (gateTransitioning) return;
+            if (reduceMotion.matches || safetyGate.hidden) {
+                showGateView(view);
+                return;
+            }
+
+            gateTransitioning = true;
+            safetyGate.classList.add('is-gate-transitioning');
+            const exitAnimation = safetyGate.animate([
+                { opacity: 1, transform: 'translate3d(0, 0, 0)' },
+                { opacity: 0, transform: 'translate3d(-36px, 0, 0)' }
+            ], {
+                duration: 210,
+                easing: 'cubic-bezier(.4, 0, 1, 1)',
+                fill: 'forwards'
+            });
+
+            try {
+                await exitAnimation.finished;
+                exitAnimation.cancel();
+                showGateView(view, false);
+                const enterAnimation = safetyGate.animate([
+                    { opacity: 0, transform: 'translate3d(32px, 0, 0)' },
+                    { opacity: 1, transform: 'translate3d(0, 0, 0)' }
+                ], {
+                    duration: 330,
+                    easing: 'cubic-bezier(.22, 1, .36, 1)',
+                    fill: 'both'
+                });
+                await enterAnimation.finished;
+                enterAnimation.cancel();
+                view.querySelector('h2')?.focus({ preventScroll: true });
+            } finally {
+                safetyGate.classList.remove('is-gate-transitioning');
+                gateTransitioning = false;
+            }
+        }
+
+        function showSafetyGate() {
+            steps.forEach(step => { step.hidden = true; });
+            steps[0].classList.remove('is-leaving');
+            safetyGate.hidden = false;
+            showGateView(safetyGateQuestion);
+            progressElement.hidden = true;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showGeneralConfirmation(returnTarget = 'selection') {
+            confirmationReturnTarget = returnTarget;
+            transitionGateView(safetyGateConfirmation);
+        }
+
+        function enterStandardCalculator() {
+            form.classList.add('target-gate-cleared');
+            updateProgressiveFields();
+            safetyGate.hidden = true;
+            showStep(1);
+            const heading = steps[1].querySelector('h2');
+            heading.setAttribute('tabindex', '-1');
+            heading.focus({ preventScroll: true });
+        }
+
+        const GUIDANCE_ICONS = Object.freeze({
+            meal: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11h16M6 11a6 6 0 0 1 12 0M3 15h18M8 19h8"/></svg>',
+            hydration: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5Z"/><path d="M9.2 15.2c.5 1.1 1.4 1.7 2.8 1.8"/></svg>',
+            leaf: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5c-7 .2-11 3.4-11 8.2 0 2.4 1.7 4.3 4.1 4.3C17 17.5 19 12.8 19 5Z"/><path d="M5 20c2.1-4.1 5.1-6.9 9.2-8.6"/></svg>',
+            'body-signal': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5c2.2 0 2.2 2 4.5 2s2.2-2 4.5-2 2.2 2 4.5 2 2.2-2 4.5-2M3 14.5c2.2 0 2.2 2 4.5 2s2.2-2 4.5-2 2.2 2 4.5 2 2.2-2 4.5-2"/></svg>',
+            guidance: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 19 6v5.2c0 4.4-2.8 7.7-7 9.3-4.2-1.6-7-4.9-7-9.3V6l7-2.5Z"/><path d="m9.2 12 1.8 1.8 3.9-4"/></svg>',
+            conversation: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 16.5 4 19v-4.2A6 6 0 0 1 3 11.5C3 7.9 6.6 5 11 5s8 2.9 8 6.5-3.6 6.5-8 6.5c-1.3 0-2.5-.2-3.5-.6Z"/><path d="M8 11.5h.01M12 11.5h.01M16 11.5h.01"/></svg>',
+            recovery: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.3-7-9.5A4 4 0 0 1 12 8a4 4 0 0 1 7 2.5C19 15.7 12 20 12 20Z"/><path d="M12 10v5M9.5 12.5h5"/></svg>',
+            'scale-wave': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18h14l-1.2-9H6.2L5 18Z"/><path d="M9 9a3 3 0 0 1 6 0M10.5 13.5c1 0 1 1 2 1s1-1 2-1"/></svg>',
+            adjust: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M7 14v6"/></svg>'
+        });
+
+        const COACHING_URL = 'https://zeeg.me/nouraxbalance/kennenlernen';
+
+        const GUIDANCE_VIEWS = Object.freeze({
+            pregnant: {
+                layout: 'core',
+                eyebrow: 'Deine Schwangerschaft',
+                title: 'Dein Bedarf verändert sich. Dein Fokus auch.',
+                intro: 'In der Schwangerschaft geht es nicht um ein Kaloriendefizit, sondern darum, dich und dein Baby zuverlässig zu versorgen.',
+                notice: 'NOURA berechnet deshalb keine Abnehmkalorienzahl.',
+                emphasizedNoticeText: ['keine Abnehmkalorienzahl'],
+                sectionTitle: '',
+                items: [],
+                closingText: '',
+                cta: {
+                    eyebrow: '',
+                    title: '',
+                    text: '',
+                    label: 'Ernährung persönlich besprechen'
+                },
+                accordion: {
+                    label: 'Was jetzt wichtig ist',
+                    items: [
+                        'Plane nährstoffreiche und regelmäßige Mahlzeiten.',
+                        'Beobachte deine Gewichtsentwicklung gemeinsam mit deiner Hebamme oder ärztlichen Betreuung.',
+                        'Die Ernährungsbegleitung ersetzt keine medizinische Behandlung und ist kein Abnehmprogramm während der Schwangerschaft.'
+                    ]
+                },
+                backLabel: 'Zurück zur Auswahl',
+                backAction: 'selection',
+                visualVariant: 'sage'
+            },
+            exclusive: {
+                layout: 'core',
+                eyebrow: 'Deine Stillzeit',
+                title: 'Dein Körper versorgt gerade nicht nur dich.',
+                intro: 'Beim vollständigen Stillen kann dein Energiebedarf erhöht sein. Wie viel du persönlich brauchst, hängt von deinem Alltag, deiner Erholung und deinem Stillverlauf ab.',
+                notice: 'NOURA zeigt dir deshalb keine pauschale Abnehmkalorienzahl.',
+                emphasizedNoticeText: ['keine pauschale Abnehmkalorienzahl'],
+                sectionTitle: '',
+                items: [],
+                closingText: '',
+                cta: {
+                    eyebrow: '',
+                    title: '',
+                    text: '',
+                    label: 'Stillzeit persönlich besprechen',
+                },
+                accordion: {
+                    label: 'Was jetzt wichtig ist',
+                    items: [
+                        'Plane regelmäßige, sättigende und nährstoffreiche Mahlzeiten.',
+                        'Beobachte Hunger, Energie, Wohlbefinden und Stillverlauf.',
+                        'Bei Stillproblemen oder gesundheitlichen Beschwerden bitte zusätzlich eine Hebamme oder ärztliche Betreuung einbeziehen.'
+                    ]
+                },
+                backLabel: 'Zurück zur Auswahl',
+                backAction: 'selection',
+                visualVariant: 'sage'
+            },
+            partial: {
+                layout: 'core',
+                eyebrow: 'Deine Stillzeit',
+                title: 'Teilstillen ist individuell.',
+                intro: 'Wie viel zusätzliche Energie du brauchst, hängt davon ab, wie häufig du stillst, wie dein Alltag aussieht und wie sich dein Stillverlauf entwickelt.',
+                notice: 'NOURA zeigt dir deshalb keine pauschale Abnehmkalorienzahl.',
+                emphasizedNoticeText: ['keine pauschale Abnehmkalorienzahl'],
+                sectionTitle: '',
+                items: [],
+                closingText: '',
+                cta: {
+                    eyebrow: '',
+                    title: '',
+                    text: '',
+                    label: 'Stillzeit persönlich besprechen',
+                },
+                accordion: {
+                    label: 'Was jetzt wichtig ist',
+                    items: [
+                        'Vermeide starke Einschränkungen und achte auf eine ausreichende Versorgung.',
+                        'Beobachte Hunger, Energie und Veränderungen deines Stillverlaufs.',
+                        'Bei Stillproblemen oder gesundheitlichen Beschwerden bitte zusätzlich eine Hebamme oder ärztliche Betreuung einbeziehen.'
+                    ]
+                },
+                backLabel: 'Zurück zur Auswahl',
+                backAction: 'selection',
+                visualVariant: 'sage'
+            },
+            earlyPostpartum: {
+                layout: 'core',
+                eyebrow: 'Deine Erholung',
+                title: 'Dein Körper darf gerade regenerieren.',
+                intro: 'In den ersten Wochen nach der Geburt können Wundheilung, Rückbildung und Flüssigkeitsverschiebungen deinen Körper und dein Gewicht beeinflussen.',
+                notice: 'NOURA gibt dir deshalb aktuell keine Abnehmzahl.',
+                emphasizedNoticeText: ['keine Abnehmzahl'],
+                sectionTitle: '',
+                items: [],
+                closingText: '',
+                accordion: {
+                    label: 'Was jetzt wichtig ist',
+                    items: [
+                        'Regelmäßige Mahlzeiten, Protein, nährstoffreiche Lebensmittel und ausreichend Flüssigkeit können deine Regeneration unterstützen.',
+                        'Flüssigkeit und körperliche Veränderungen können die Waage vorübergehend merklich beeinflussen.',
+                        'Wenn du dich später ausreichend erholt fühlst, kannst du NOURA erneut nutzen. Nach einem Kaiserschnitt, bei Komplikationen oder Beschwerden besprich den passenden Zeitpunkt bitte mit deiner ärztlichen Betreuung oder Hebamme.'
+                    ]
+                },
+                backLabel: 'Zurück zur Auswahl',
+                backAction: 'selection',
+                visualVariant: 'terracotta'
+            }
+        });
+
+        const UNDER_18_GUIDANCE = Object.freeze({
+            eyebrow: 'Deine Orientierung',
+            title: 'Dieser Rechner ist für deine Lebensphase nicht ausgelegt.',
+            intro: 'Im Wachstum kann sich der Energiebedarf besonders individuell entwickeln. Eine Ärztin, ein Arzt oder eine qualifizierte Ernährungsfachkraft kann dein Anliegen persönlicher einordnen.',
+            items: [],
+            closingText: '',
+            backLabel: 'Zurück',
+            backAction: 'age',
+            visualVariant: 'sage'
+        });
+
+        function appendTextWithEmphasis(node, text, emphasizedText = []) {
+            const phrases = emphasizedText.filter(phrase => text.includes(phrase));
+            if (phrases.length === 0) {
+                node.textContent = text;
+                return;
+            }
+            const pattern = new RegExp(`(${phrases.map(phrase => phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');
+            node.replaceChildren(...text.split(pattern).filter(Boolean).map(part => {
+                if (!phrases.includes(part)) return document.createTextNode(part);
+                const strong = document.createElement('strong');
+                strong.textContent = part;
+                return strong;
+            }));
+        }
+
+        function renderGuidanceView(config) {
+            guidanceReturnTarget = config.backAction;
+            safetyGateGuidance.dataset.guidanceRenderer = 'renderGuidanceView';
+            safetyGateGuidance.dataset.visualVariant = config.visualVariant;
+            safetyGateGuidance.dataset.layout = config.layout || 'detailed';
+            setText('safety-gate-guidance-eyebrow', config.eyebrow);
+            setText('safety-gate-guidance-title', config.title);
+            setText('safety-gate-guidance-copy', config.intro);
+
+            const notice = document.getElementById('safety-gate-guidance-notice');
+            notice.hidden = !config.notice;
+            appendTextWithEmphasis(notice, config.notice || '', config.emphasizedNoticeText);
+
+            const sectionTitle = document.getElementById('safety-gate-guidance-section-title');
+            sectionTitle.hidden = !config.sectionTitle;
+            sectionTitle.textContent = config.sectionTitle || '';
+
+            const items = document.getElementById('safety-gate-guidance-points');
+            items.hidden = config.items.length === 0;
+            items.replaceChildren(...config.items.map(itemConfig => {
+                const item = document.createElement('li');
+                item.className = 'guidance-item';
+                item.dataset.icon = itemConfig.icon;
+                const icon = document.createElement('span');
+                icon.className = 'guidance-item__icon';
+                icon.innerHTML = GUIDANCE_ICONS[itemConfig.icon];
+                const content = document.createElement('span');
+                content.className = 'guidance-item__content';
+                const title = document.createElement('strong');
+                title.className = 'guidance-item__title';
+                title.textContent = itemConfig.title;
+                const text = document.createElement('span');
+                text.className = 'guidance-item__text';
+                text.textContent = itemConfig.text;
+                content.append(title);
+                if (itemConfig.text) content.append(text);
+                item.append(icon, content);
+                return item;
+            }));
+
+            const closing = document.getElementById('safety-gate-guidance-conclusion');
+            appendTextWithEmphasis(closing, config.closingText, config.emphasizedClosingText);
+
+            const cta = document.getElementById('safety-gate-guidance-cta');
+            const ctaEyebrow = document.getElementById('safety-gate-guidance-cta-eyebrow');
+            const ctaTitle = document.getElementById('safety-gate-guidance-cta-title');
+            const ctaCopy = document.getElementById('safety-gate-guidance-cta-copy');
+            cta.hidden = !config.cta;
+            if (config.cta) {
+                ctaEyebrow.hidden = !config.cta.eyebrow;
+                ctaTitle.hidden = !config.cta.title;
+                ctaCopy.hidden = !config.cta.text;
+                setText('safety-gate-guidance-cta-eyebrow', config.cta.eyebrow || '');
+                setText('safety-gate-guidance-cta-title', config.cta.title);
+                setText('safety-gate-guidance-cta-copy', config.cta.text || '');
+                setText('safety-gate-guidance-cta-label', config.cta.label);
+                document.getElementById('safety-gate-guidance-cta-button').href = COACHING_URL;
+            } else {
+                ctaEyebrow.hidden = true;
+                ctaTitle.hidden = true;
+                ctaCopy.hidden = true;
+                setText('safety-gate-guidance-cta-eyebrow', '');
+                setText('safety-gate-guidance-cta-title', '');
+                setText('safety-gate-guidance-cta-copy', '');
+                setText('safety-gate-guidance-cta-label', '');
+                document.getElementById('safety-gate-guidance-cta-button').removeAttribute('href');
+            }
+
+            const accordion = document.getElementById('safety-gate-guidance-accordion');
+            const accordionToggle = document.getElementById('safety-gate-guidance-accordion-toggle');
+            const accordionContent = document.getElementById('safety-gate-guidance-accordion-content');
+            const accordionItems = document.getElementById('safety-gate-guidance-accordion-items');
+            accordion.hidden = !config.accordion;
+            accordionToggle.setAttribute('aria-expanded', 'false');
+            accordionContent.hidden = true;
+            setText('safety-gate-guidance-accordion-label', config.accordion?.label || '');
+            accordionItems.replaceChildren(...(config.accordion?.items || []).map(copy => {
+                const item = document.createElement('li');
+                item.textContent = copy;
+                return item;
+            }));
+
+            const back = document.getElementById('safety-gate-change');
+            back.className = 'button-secondary-back';
+            back.replaceChildren(
+                Object.assign(document.createElement('span'), { textContent: '←' }),
+                Object.assign(document.createElement('span'), { textContent: config.backLabel })
+            );
+            back.firstElementChild.setAttribute('aria-hidden', 'true');
+        }
+
+        document.getElementById('safety-gate-guidance-accordion-toggle').addEventListener('click', event => {
+            const toggle = event.currentTarget;
+            const content = document.getElementById(toggle.getAttribute('aria-controls'));
+            const expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', String(!expanded));
+            content.hidden = expanded;
+        });
+
+        function renderGateGuidance(type, returnTarget = 'selection', animateTransition = false) {
+            const config = GUIDANCE_VIEWS[type] || { ...UNDER_18_GUIDANCE, backAction: returnTarget };
+            steps.forEach(step => { step.hidden = true; });
+            safetyGate.hidden = false;
+            progressElement.hidden = true;
+            renderGuidanceView(config);
+            if (animateTransition) transitionGateView(safetyGateGuidance);
+            else showGateView(safetyGateGuidance);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openTargetSituation(selection) {
+            if (selection === 'standard') {
+                showGeneralConfirmation('selection');
+                return;
+            }
+            if (selection === 'postpartum') {
+                transitionGateView(safetyGateTiming);
+                return;
+            }
+            renderGateGuidance(selection, 'selection', true);
+        }
+
+        function continuePostpartumTiming() {
+            const timing = selectedValue('postpartumTiming');
+            postpartumTimingError.textContent = '';
+            if (!timing) {
+                postpartumTimingError.textContent = 'Bitte triff eine Auswahl.';
+                safetyGate.querySelector('[name="postpartumTiming"]')?.focus();
+                return;
+            }
+            if (timing === 'under6') {
+                renderGateGuidance('earlyPostpartum', 'selection', true);
+                return;
+            }
+            transitionGateView(safetyGateReadiness);
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('[data-error]').forEach(node => { node.textContent = ''; });
+            form.querySelectorAll('[aria-invalid="true"]').forEach(input => input.removeAttribute('aria-invalid'));
+        }
+
+        function validateCurrentStep() {
+            clearErrors();
+            const data = values();
+            const result = calculateOrientation({
+                ...data,
+                dailyActivity: data.dailyActivity || 'sedentary',
+                stepBand: data.stepBand || 'unknown',
+                trainingSessions: data.trainingSessions || '0',
+                obstacle: data.obstacle || 'unsure'
+            });
+            const requiredByStep = {
+                1: ['age', 'heightCm', 'weightKg', 'sex'],
+                2: ['dailyActivity'],
+                3: [],
+                4: ['trainingSessions'],
+                5: ['obstacle']
+            };
+            if (currentStep === 3) {
+                requiredByStep[3].push(data.exactSteps ? 'exactSteps' : 'stepBand');
+            }
+            if (currentStep === 4) {
+                if (Number(data.trainingSessions) > 0) {
+                    requiredByStep[4].push('trainingType', 'trainingMinutes');
+                }
+            }
+            let valid = true;
+            for (const key of requiredByStep[currentStep] || []) {
+                let message = result.errors?.[key] || '';
+                if (!data[key] && !message) message = 'Bitte triff eine Auswahl.';
+                if (message) {
+                    document.querySelector(`[data-error="${key}"]`).textContent = message;
+                    form.querySelectorAll(`[name="${key}"]`).forEach(input => input.setAttribute('aria-invalid', 'true'));
+                    valid = false;
+                }
+            }
+            if (!valid) form.querySelector('[aria-invalid="true"]')?.focus();
+            return valid;
+        }
+
+        document.querySelectorAll('[data-next]').forEach(button => {
+            button.addEventListener('click', () => {
+                if (currentStep === 0) {
+                    const startHero = steps[0];
+                    if (startHero.classList.contains('is-leaving')) return;
+                    startHero.classList.add('is-leaving');
+                    const transitionDelay = reduceMotion.matches ? 100 : 320;
+                    window.setTimeout(showSafetyGate, transitionDelay);
+                    return;
+                }
+                const enteredAge = form.elements.age.value.trim();
+                if (currentStep === 1 && enteredAge !== '' && Number(enteredAge) < 18) {
+                    renderGateGuidance('under18', 'age');
+                    return;
+                }
+                if (!validateCurrentStep()) return;
+
+                showStep(currentStep + 1);
+            });
+        });
+        document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => {
+            if (currentStep === 1 && form.classList.contains('target-gate-cleared')) {
+                showSafetyGate();
+                return;
+            }
+            showStep(currentStep - 1);
+        }));
+        document.querySelectorAll('[data-target-situation]').forEach(button => {
+            button.addEventListener('click', () => openTargetSituation(button.dataset.targetSituation));
+            button.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                button.click();
+            });
+        });
+        document.querySelectorAll('[data-daily-activity]').forEach(button => {
+            button.addEventListener('click', () => {
+                if (directNavigationLocked || currentStep !== 2) return;
+                directNavigationLocked = true;
+                directAnswers.dailyActivity = button.dataset.dailyActivity;
+                showStep(3);
+            });
+        });
+        document.querySelectorAll('[data-obstacle]').forEach(button => {
+            button.addEventListener('click', () => {
+                if (directNavigationLocked || currentStep !== 5) return;
+                directNavigationLocked = true;
+                directAnswers.obstacle = button.dataset.obstacle;
+                if (!validateCurrentStep()) {
+                    directNavigationLocked = false;
+                    return;
+                }
+                const data = values();
+                const result = calculateOrientation(data);
+                if (result.ok) renderResult(result, data);
+                else directNavigationLocked = false;
+            });
+        });
+        document.querySelectorAll('.direct-choice').forEach(button => {
+            button.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                button.click();
+            });
+        });
+        postpartumTimingContinue.addEventListener('click', continuePostpartumTiming);
+        document.getElementById('postpartum-readiness-continue').addEventListener('click', () => showGeneralConfirmation('readiness'));
+        generalConfirmationContinue.addEventListener('click', () => {
+            if (selectedValue('generalConfirmation') !== 'yes') {
+                document.querySelector('[data-error="generalConfirmation"]').textContent = 'Bitte bestätige den Hinweis, um fortzufahren.';
+                form.elements.generalConfirmation.focus();
+                return;
+            }
+            enterStandardCalculator();
+        });
+        safetyGate.addEventListener('change', event => {
+            if (event.target.name === 'postpartumTiming') {
+                postpartumTimingError.textContent = '';
+                postpartumTimingContinue.disabled = false;
+            }
+        });
+        document.getElementById('safety-gate-back').addEventListener('click', () => {
+            safetyGate.hidden = true;
+            showStep(0);
+            steps[0].querySelector('[data-next]').focus({ preventScroll: true });
+        });
+        document.getElementById('postpartum-timing-back').addEventListener('click', () => showGateView(safetyGateQuestion));
+        document.getElementById('postpartum-readiness-back').addEventListener('click', () => showGateView(safetyGateTiming));
+        document.getElementById('general-confirmation-back').addEventListener('click', () => {
+            showGateView(confirmationReturnTarget === 'readiness' ? safetyGateReadiness : safetyGateQuestion);
+        });
+        document.getElementById('safety-gate-change').addEventListener('click', () => {
+            if (guidanceReturnTarget === 'age') {
+                safetyGate.hidden = true;
+                showStep(1);
+                form.elements.age.focus({ preventScroll: true });
+                return;
+            }
+            showGateView(safetyGateQuestion);
+        });
+
+        function renderResult(result, data) {
+            const deficitMode = [RESULT_MODES.STANDARD, RESULT_MODES.POSTPARTUM_LOSS].includes(result.mode);
+            const guidanceMode = !deficitMode;
+            const showsEnergy = Boolean(result.maintenance);
+            const breastfeedingMode = [
+                RESULT_MODES.EXCLUSIVE_BREASTFEEDING,
+                RESULT_MODES.PARTIAL_BREASTFEEDING
+            ].includes(result.mode);
+            weeklyPlanner.setDailyTarget(deficitMode ? result.targetCalories : null);
+            if (result.mode === RESULT_MODES.POSTPARTUM_LOSS) {
+                setText('result-heading', 'Ein vorsichtiger Start nach deiner Erholungsphase.');
+                setText('result-intro', 'Wenn du dich körperlich ausreichend erholt fühlst und dein persönlicher Verlauf nicht dagegenspricht, kann ein moderater Startbereich eine vorsichtige Orientierung sein. Diese Auswahl ersetzt keine medizinische Einordnung.');
+            } else if (guidanceMode) {
+                setText('result-heading', 'Nicht jede Frau braucht gerade ein Kaloriendefizit.');
+                setText('result-intro', 'Du bekommst eine Orientierung, die zu deiner aktuellen Lebensphase passt – ohne Scheingenauigkeit, Druck oder Abnahmeversprechen.');
+            } else {
+                setText('result-heading', 'Ein realistischer Rahmen für deinen Alltag.');
+                setText('result-intro', 'Keine Formel kennt deinen tatsächlichen Bedarf exakt. Nutze diese Werte als Startorientierung und beobachte Energie, Hunger, Essdrang und Entwicklung über mehrere Wochen.');
+            }
+            document.querySelectorAll('.energy-result').forEach(card => { card.hidden = !showsEnergy; });
+            document.querySelectorAll('.deficit-result').forEach(card => { card.hidden = !deficitMode; });
+            document.querySelector('.breastfeeding-basis').hidden = !breastfeedingMode;
+            document.querySelector('.breastfeeding-focus').hidden = !breastfeedingMode;
+            document.querySelector('.result-overview').hidden = deficitMode || breastfeedingMode;
+            document.getElementById('standard-results').hidden = !deficitMode;
+            document.getElementById('special-result').hidden = !guidanceMode;
+            document.getElementById('mission-result').hidden = !deficitMode;
+            resultSection.querySelectorAll('details').forEach(details => {
+                details.open = false;
+            });
+
+            if (showsEnergy) {
+                setText('resting-result', formatKcal(result.resting));
+                const basisFactor = result.activity.basisFactor;
+                const everydayBase = {
+                    low: roundTo(result.resting * basisFactor.min, 50),
+                    high: roundTo(result.resting * basisFactor.max, 50)
+                };
+                setText('basis-factor-result', `${basisFactor.min.toFixed(2).replace('.', ',')}–${basisFactor.max.toFixed(2).replace('.', ',')}`);
+                setText('everyday-base-result', formatRange(everydayBase));
+                setText('step-surcharge-result', 'Im Basisfaktor enthalten');
+                setText('training-surcharge-result', formatRange(result.activity.trainingDaily));
+                setText('maintenance-result', formatRange(result.maintenance));
+                setText('weight-loss-start-result', Number.isFinite(result.targetCalories) ? formatKcal(result.targetCalories) : 'Kein automatisches Abnehmziel');
+                setText('maintenance-label', breastfeedingMode ? 'Grundbedarf im Alltag' : 'Erhaltung');
+            }
+
+            if (guidanceMode) {
+                const insightList = document.getElementById('special-insights');
+                setText('special-title', result.guidance.title);
+                setText('special-copy', result.guidance.copy);
+                setText('special-reflection', result.guidance.reflection);
+                document.querySelector('#special-result .eyebrow').textContent = result.guidance.eyebrow;
+                const insights = [...result.guidance.insights];
+                insightList.replaceChildren(...insights.map(insight => {
+                    const card = document.createElement('div');
+                    card.className = 'insight';
+                    const title = document.createElement('strong');
+                    title.textContent = insight.title;
+                    const copy = document.createElement('p');
+                    copy.textContent = insight.copy;
+                    card.append(title, copy);
+                    return card;
+                }));
+            } else {
+                const dailyActivityLabels = {
+                    sedentary: 'Sitzender Alltag',
+                    mixed: 'Gemischter Alltag',
+                    standing: 'Alltag auf den Beinen',
+                    strenuous: 'Körperlich aktiver Alltag'
+                };
+                const stepLabels = {
+                    under4000: 'Unter 4.000 Schritte',
+                    from4000to7000: '4.000–7.000 Schritte',
+                    from7000to10000: '7.000–10.000 Schritte',
+                    over10000: 'Über 10.000 Schritte',
+                    unknown: 'Schritte vorsichtig geschätzt'
+                };
+                const activity = result.activity;
+                const stepsCopy = activity.exactSteps === null
+                    ? stepLabels[activity.stepBand]
+                    : `${new Intl.NumberFormat('de-DE').format(activity.exactSteps)} Schritte`;
+                const trainingCopy = activity.trainingSessions > 0
+                    ? `${activity.trainingSessions}× Training`
+                    : 'Kein Training';
+                const activitySummary = document.getElementById('activity-summary');
+                activitySummary.replaceChildren(
+                    ...[
+                        dailyActivityLabels[activity.dailyActivity],
+                        stepsCopy,
+                        trainingCopy
+                    ].map(label => {
+                        const chip = document.createElement('span');
+                        chip.textContent = label;
+                        return chip;
+                    })
+                );
+                setText('start-result-number', new Intl.NumberFormat('de-DE').format(result.targetCalories));
+                renderCalorieRange(result.targetCalories, result.loss);
+                const proteinAnchors = distributeProteinAnchors(result.protein.target);
+                setText('protein-result', result.protein.target);
+                setText('protein-range', `${result.protein.low}–${result.protein.high} g`);
+                setText('protein-breakfast', `${proteinAnchors.breakfast} g`);
+                setText('protein-lunch', `${proteinAnchors.lunch} g`);
+                setText('protein-snack', `${proteinAnchors.snack} g`);
+                setText('protein-dinner', `${proteinAnchors.dinner} g`);
+                setText('macro-protein', `${result.protein.target} g`);
+                setText('macro-fat', `${result.fat.target} g`);
+                setText('macro-carbs', `${result.carbs.target} g`);
+                setText('macro-fiber', `ca. ${result.fiber} g`);
+                setText('macro-note', `Beispiel auf Basis von etwa ${formatKcal(result.targetCalories)}. Kohlenhydrate dürfen flexibel zu Bewegung, Familienmahlzeiten und deinem Alltag passen.`);
+            }
+
+            if (deficitMode) {
+                const mission = result.mission;
+                setText('mission-title', mission.title);
+                setText('mission-intro', mission.intro);
+                setText('mission-question', mission.question);
+                const actionList = document.getElementById('mission-actions');
+                actionList.replaceChildren(...mission.actions.map(action => {
+                    const item = document.createElement('li');
+                    const text = document.createElement('span');
+                    text.textContent = action;
+                    item.append(text);
+                    return item;
+                }));
+            }
+
+            form.hidden = true;
+            document.getElementById('progress').hidden = true;
+            resultSection.hidden = false;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+            if (!safetyGate.hidden) {
+                if (!safetyGateTiming.hidden) document.getElementById('postpartum-timing-continue').click();
+                else if (!safetyGateReadiness.hidden) document.getElementById('postpartum-readiness-continue').click();
+                else if (!safetyGateConfirmation.hidden) generalConfirmationContinue.click();
+                return;
+            }
+            if (currentStep < steps.length - 1) {
+                steps[currentStep].querySelector('[data-next]')?.click();
+                return;
+            }
+            if (!validateCurrentStep()) return;
+            const data = values();
+            const result = calculateOrientation(data);
+            if (result.ok) renderResult(result, data);
+        });
+
+        document.getElementById('restart').addEventListener('click', () => {
+            weeklyPlanner.setDailyTarget(null);
+            form.reset();
+            directAnswers.dailyActivity = '';
+            directAnswers.obstacle = '';
+            directNavigationLocked = false;
+            form.classList.remove('target-gate-cleared');
+            safetyGate.hidden = true;
+            safetyGateQuestion.hidden = false;
+            safetyGateTiming.hidden = true;
+            safetyGateReadiness.hidden = true;
+            safetyGateGuidance.hidden = true;
+            postpartumTimingError.textContent = '';
+            resultSection.hidden = true;
+            form.hidden = false;
+            document.getElementById('progress').hidden = false;
+            document.querySelectorAll('.energy-result').forEach(card => { card.hidden = false; });
+            document.querySelectorAll('.deficit-result').forEach(card => { card.hidden = false; });
+            document.querySelector('.breastfeeding-basis').hidden = true;
+            document.querySelector('.breastfeeding-focus').hidden = true;
+            document.querySelector('.result-overview').hidden = false;
+            document.getElementById('maintenance-label').textContent = 'Erhaltung';
+            document.getElementById('mission-result').hidden = false;
+            document.querySelector('#special-result .eyebrow').textContent = 'Deine Lebensphase';
+            clearErrors();
+            updateProgressiveFields();
+            updateFormActions();
+            showStep(0);
+        });
+
+        document.getElementById('brand-home').addEventListener('click', () => {
+            document.getElementById('restart').click();
+            steps[0].querySelector('[data-next]')?.focus({ preventScroll: true });
+        });
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    </script>
+</body>
+</html>

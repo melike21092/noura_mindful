@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Die visuelle Sprache und Komponentenbibliothek von NOURA.">
+  <title>NOURA Designsystem</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/brand/noura-mark.svg">
+  <link rel="stylesheet" href="../styles/noura-design-system.css?v=20260801-4">
+  <link rel="stylesheet" href="design-system-showcase.css?v=20260801-1">
+</head>
+<body class="ds-body">
+  <header class="ds-topbar">
+    <a class="ds-brand" href="../#/calculator" aria-label="Zurück zu NOURA">
+      <svg viewBox="0 0 500 500" width="28" height="28" aria-hidden="true"><use href="../assets/brand/noura-mark.svg#Ebene_1"></use></svg>
+      <span>NOURA</span>
+    </a>
+    <nav class="ds-nav" aria-label="Bereiche">
+      <a href="#foundation">Grundlagen</a>
+      <a href="#components">Komponenten</a>
+      <a href="#patterns">Patterns</a>
+    </nav>
+    <a class="ds-back" href="../#/calculator">Zum Produkt <span aria-hidden="true">→</span></a>
+  </header>
+
+  <main>
+    <section class="ds-hero" aria-labelledby="page-title">
+      <div class="ds-hero__glow" aria-hidden="true"></div>
+      <div class="ds-container ds-hero__content">
+        <span class="ds-eyebrow">NOURA Designsystem · Version 2.0</span>
+        <h1 id="page-title">Ruhige Klarheit.<br>Warme Präzision.</h1>
+        <p>Ein flexibles System für fürsorgliche digitale Produkte – entwickelt aus Prinzipien, nicht aus einem einzelnen Screen.</p>
+        <div class="ds-hero__actions">
+          <a class="ds-button ds-button--primary" href="#components">Komponenten ansehen <span aria-hidden="true">↓</span></a>
+          <a class="ds-button ds-button--secondary" href="NOURA_DESIGN_SYSTEM.md">Regeln lesen</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="ds-section ds-container" id="foundation">
+      <header class="ds-section__header">
+        <div><span class="ds-eyebrow">01 · Grundlagen</span><h2>Eine leise visuelle Hierarchie</h2></div>
+        <p>Gebrochene Weißtöne schaffen Wärme. Dunkles Anthrazit gibt Ruhe. Braun führt zu Aktionen, Grün bestätigt positive Zustände.</p>
+      </header>
+
+      <div class="ds-principles">
+        <article><span>01</span><h3>Ruhe vor Dichte</h3><p>Eine Hauptaufgabe, eine dominante Überschrift, eine primäre Aktion.</p></article>
+        <article><span>02</span><h3>Führung ohne Druck</h3><p>Klare nächste Schritte und freundliche Sprache statt künstlicher Dringlichkeit.</p></article>
+        <article><span>03</span><h3>Wärme durch Materialität</h3><p>Warme Flächen, weiche Grenzen und zurückhaltende räumliche Tiefe.</p></article>
+        <article><span>04</span><h3>Hierarchie vor Dekoration</h3><p>Abstand und Typografie tragen die Ordnung. Farbe unterstützt sie.</p></article>
+      </div>
+
+      <div class="ds-block">
+        <div class="ds-block__heading"><h3>Farbe</h3><p>Semantisch statt dekorativ.</p></div>
+        <div class="ds-swatches">
+          <article class="ds-swatch"><div style="--swatch:#F3F0EB"></div><strong>Canvas</strong><code>#F3F0EB</code></article>
+          <article class="ds-swatch"><div style="--swatch:#FCFAF7"></div><strong>Surface</strong><code>#FCFAF7</code></article>
+          <article class="ds-swatch"><div style="--swatch:#1F211F"></div><strong>Text</strong><code>#1F211F</code></article>
+          <article class="ds-swatch"><div style="--swatch:#925126"></div><strong>NOURA</strong><code>#925126</code></article>
+          <article class="ds-swatch"><div style="--swatch:#668F57"></div><strong>Positiv</strong><code>#668F57</code></article>
+          <article class="ds-swatch"><div style="--swatch:#DDAA3D"></div><strong>Hinweis</strong><code>#DDAA3D</code></article>
+        </div>
+      </div>
+
+      <div class="ds-block">
+        <div class="ds-block__heading"><h3>Typografie</h3><p>Humanistisch, offen und selbstverständlich.</p></div>
+        <div class="ds-type-scale">
+          <div><span>Display · 64/67</span><p class="ds-type-display">Essen darf leicht sein.</p></div>
+          <div><span>Heading 1 · 44/49</span><p class="ds-type-h1">Was heute gut für dich ist.</p></div>
+          <div><span>Heading 2 · 32/38</span><p class="ds-type-h2">Deine Woche im Gleichgewicht.</p></div>
+          <div><span>Body · 16/26</span><p>Klare Informationen helfen dir, eine ruhige und realistische Entscheidung zu treffen.</p></div>
+          <div><span>Caption · 12/17</span><p class="ds-caption">SCHRITT 1 VON 3 · ORIENTIERUNG</p></div>
+        </div>
+      </div>
+
+      <div class="ds-block">
+        <div class="ds-block__heading"><h3>Spacing & Form</h3><p>4-px-Basis, 8-px-Produktrhythmus.</p></div>
+        <div class="ds-spacing-row" aria-label="Spacing-Skala">
+          <div><i style="--size:4px"></i><span>4</span></div><div><i style="--size:8px"></i><span>8</span></div>
+          <div><i style="--size:16px"></i><span>16</span></div><div><i style="--size:24px"></i><span>24</span></div>
+          <div><i style="--size:32px"></i><span>32</span></div><div><i style="--size:48px"></i><span>48</span></div>
+          <div><i style="--size:64px"></i><span>64</span></div><div><i style="--size:96px"></i><span>96</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ds-section ds-section--tinted" id="components">
+      <div class="ds-container">
+        <header class="ds-section__header">
+          <div><span class="ds-eyebrow">02 · Komponenten</span><h2>Vertraute Formen, klare Zustände</h2></div>
+          <p>Controls teilen sich Radius, Rhythmus und Fokuslogik. So fühlt sich jeder neue Screen sofort nach NOURA an.</p>
+        </header>
+
+        <div class="ds-component-grid">
+          <article class="ds-demo-card ds-demo-card--wide">
+            <div class="ds-demo-label"><span>Buttons</span><code>Action hierarchy</code></div>
+            <div class="ds-demo-row">
+              <button class="ds-button ds-button--primary">Plan erstellen <span aria-hidden="true">→</span></button>
+              <button class="ds-button ds-button--secondary">Später fortfahren</button>
+              <button class="ds-button ds-button--tertiary">Zurück</button>
+              <button class="ds-button ds-button--primary" disabled>Nicht verfügbar</button>
+            </div>
+          </article>
+
+          <article class="ds-demo-card">
+            <div class="ds-demo-label"><span>Formular</span><code>Default & focus</code></div>
+            <form class="ds-form" onsubmit="return false">
+              <label for="demo-name">Wie dürfen wir dich nennen?</label>
+              <input id="demo-name" type="text" placeholder="Dein Vorname">
+              <small>Damit sich deine Empfehlungen persönlicher anfühlen.</small>
+              <label for="demo-focus">Tagesziel</label>
+              <div class="ds-input-unit"><input id="demo-focus" type="number" value="1750"><span>kcal</span></div>
+            </form>
+          </article>
+
+          <article class="ds-demo-card">
+            <div class="ds-demo-label"><span>Auswahl</span><code>Single select</code></div>
+            <div class="ds-choice-list">
+              <label class="ds-choice"><span class="ds-choice__icon ds-choice__icon--green">⌁</span><span><strong>Ausgewogen</strong><small>Ruhig und sättigend</small></span><input type="radio" name="meal" checked></label>
+              <label class="ds-choice"><span class="ds-choice__icon ds-choice__icon--orange">◇</span><span><strong>Flexibel</strong><small>Abwechslung im Alltag</small></span><input type="radio" name="meal"></label>
+            </div>
+          </article>
+
+          <article class="ds-demo-card ds-demo-card--wide">
+            <div class="ds-demo-label"><span>Informationskarten</span><code>Surface hierarchy</code></div>
+            <div class="ds-metrics">
+              <div class="ds-metric"><span>Tagesbudget</span><strong>1.750 <small>kcal</small></strong><em>Deine Orientierung</em></div>
+              <div class="ds-metric"><span>Geplant</span><strong>1.400 <small>kcal</small></strong><em>≈ 80 % des Budgets</em></div>
+              <div class="ds-metric ds-metric--positive"><span>Freiraum</span><strong>350 <small>kcal</small></strong><em>Flexibel für deinen Alltag</em></div>
+            </div>
+          </article>
+
+          <article class="ds-demo-card">
+            <div class="ds-demo-label"><span>Status</span><code>Semantic feedback</code></div>
+            <div class="ds-statuses"><span class="ds-badge ds-badge--positive">Heute im Plan</span><span class="ds-badge ds-badge--warm">Hinweis</span><span class="ds-badge">Entwurf</span></div>
+            <div class="ds-notice"><span aria-hidden="true">✦</span><div><strong>Ein ruhiger Hinweis</strong><p>Dein Freiraum lässt Platz für spontane Entscheidungen.</p></div></div>
+          </article>
+
+          <article class="ds-demo-card">
+            <div class="ds-demo-label"><span>Fortschritt</span><code>Step feedback</code></div>
+            <div class="ds-progress-copy"><span>Schritt 2 von 3</span><strong>66 %</strong></div>
+            <div class="ds-progress"><i></i></div>
+            <p class="ds-progress-note">Noch eine Entscheidung bis zu deinem Wochenplan.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="ds-section ds-container" id="patterns">
+      <header class="ds-section__header">
+        <div><span class="ds-eyebrow">03 · Patterns</span><h2>Atmosphäre trifft Arbeitsfläche</h2></div>
+        <p>Bilder eröffnen emotional. Entscheidungen bleiben auf stabilen, kontrastsicheren Oberflächen.</p>
+      </header>
+      <article class="ds-pattern">
+        <div class="ds-pattern__visual" aria-hidden="true"><div></div></div>
+        <div class="ds-pattern__content">
+          <span class="ds-eyebrow">Deine Woche</span>
+          <h2>Zweimal kochen.<br>Sieben entspannte Tage.</h2>
+          <p>Ein Hero führt mit Stimmung und einem klaren Versprechen. Die eigentliche Aufgabe beginnt anschließend auf einer ruhigen Arbeitsfläche.</p>
+          <a class="ds-button ds-button--light" href="../#/calculator">Im Produkt erleben <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="ds-footer ds-container"><span>© 2026 NOURA</span><p>Ruhig · warm · modern · menschlich</p><a href="../#/calculator">Zur Anwendung</a></footer>
+</body>
+</html>
